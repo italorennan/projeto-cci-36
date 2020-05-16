@@ -5,7 +5,7 @@ function init() {
     // Camera
     const aspect = window.innerWidth / window.innerHeight;
     var camera = new THREE.PerspectiveCamera(75, aspect, 0.1, 1000);
-    camera.position.set(5, 5, 5);
+    camera.position.set(20, 40, 20);
     camera.lookAt(scene.position);
 
     // Renderer
@@ -19,15 +19,36 @@ function init() {
     var axes = new THREE.AxesHelper(10);
     scene.add(axes);
 
-    // Exemplo: criar objetos e adicionar à cena
-    cube = createCube();
-    scene.add(cube);
+    // Atributos do personagem
+    gender = "F";
+    skinColor = "#ffe4c4";
+    hairColor = "#b8860b";
+    eyeColor = "#006400";
+    mouthColor = "#f08080";
+    bodyColor = "#00ccdd";
+    legColor = "#0000ff";
+    shoeColor =  "#999999";
+    character = createCharacter(gender, skinColor, hairColor, eyeColor, mouthColor, bodyColor, legColor, shoeColor);
+    //scene.add(character);
+
+    sword = createSword();
+    scene.add(sword);
+
+    var count = 0;
 
     // Movimentação dos objetos
     function animate() {
         requestAnimationFrame(animate);
 
+        // Rotação da câmera
+        var cameraX = 30 * Math.cos(0.01 * count);
+        var cameraZ = 30 * Math.sin(0.01 * count);
+        camera.position.set(cameraX, 25, cameraZ);
+        camera.lookAt(0,0,0);
+
         renderer.render(scene, camera);
+
+        count += 1;
     }
 
     animate();
