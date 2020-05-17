@@ -1,6 +1,5 @@
 let camera,scene,renderer;
 let sceneSubjects = {}
-let count = 0;
 
 const setupCamera = () => {
    camera = new THREE.PerspectiveCamera(75, window.innerWidth/window.innerHeight, 0.1, 1000);
@@ -30,7 +29,12 @@ const setupCharacter = () => {
 
 const setupSubjects = () => {
    sceneSubjects.axes = new THREE.AxesHelper(10);
-   sceneSubjects.sword = createSword();  
+   //sceneSubjects.sword = createSword();  
+   //sceneSubjects.axe = createAxe();
+   //sceneSubjects.axe2 = createAxe_2();
+   //sceneSubjects.arrow = createArrow();
+   //sceneSubjects.bow = createBow();
+   //sceneSubjects.shiled = createShield();
    sceneSubjects.character = setupCharacter();
 }
 
@@ -49,20 +53,25 @@ const setupListeners = () => {
    })
 }
 
+var controls = new THREE.OrbitControls( camera, renderer.domElement );
+
 // Movimentação dos objetos
 const animate = () => {
    requestAnimationFrame(animate);
 
    // Rotação da câmera
-   var cameraX = 30 * Math.cos(0.01 * count);
-   var cameraZ = 30 * Math.sin(0.01 * count);
-   camera.position.set(cameraX, 25, cameraZ);
+   var cameraX = 30 * Math.cos(0.1 * count);
+   var cameraZ = 30 * Math.sin(0.1 * count);
+   // camera.position.set(cameraX, 25, cameraZ);
    camera.lookAt(0,0,0);
-   camera.updateProjectionMatrix
+   camera.position.x = cameraX;
+   camera.position.z = cameraZ;
+
+   controls.autoRotate=true;
+
+   controls.update();
 
    renderer.render(scene, camera);
-
-   count += 1;
 }
 function init() {
    setupCamera();
