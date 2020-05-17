@@ -31,20 +31,41 @@ function init() {
     character = createCharacter(gender, skinColor, hairColor, eyeColor, mouthColor, bodyColor, legColor, shoeColor);
     //scene.add(character);
 
-    sword = createSword();
-    scene.add(sword);
+  //  sword = createSword();
+//    scene.add(sword);
+//	axe=createAxe();
+//	scene.add(axe)
+//	axe_2=createAxe_2();
+//	scene.add(axe_2)
+	//arrow=createArrow();
+	//scene.add(arrow)
+//	bow=createBow();
+//	scene.add(bow)
+	shield=createShield();
+	scene.add(shield)
 
     var count = 0;
-
+	var controls = new THREE.OrbitControls( camera, renderer.domElement );
+	
+    
+		
     // Movimentação dos objetos
     function animate() {
         requestAnimationFrame(animate);
 
         // Rotação da câmera
-        var cameraX = 30 * Math.cos(0.01 * count);
-        var cameraZ = 30 * Math.sin(0.01 * count);
-        camera.position.set(cameraX, 25, cameraZ);
-        camera.lookAt(0,0,0);
+		var cameraX = 30 * Math.cos(0.1 * count);
+        var cameraZ = 30 * Math.sin(0.1 * count);
+       // camera.position.set(cameraX, 25, cameraZ);
+		camera.lookAt(0,0,0);
+		camera.position.x = cameraX;
+		camera.position.z = cameraZ;
+		
+		controls.autoRotate=true;
+		
+		controls.update();
+		
+		
 
         renderer.render(scene, camera);
 
