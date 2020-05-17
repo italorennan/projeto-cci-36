@@ -9,7 +9,7 @@ const setupCamera = () => {
 }
 
 const setupRenderer = () => {
-   renderer = new THREE.WebGLRenderer({antialia:true});
+   renderer = new THREE.WebGLRenderer({antialias:true});
    renderer.setSize(window.innerWidth, window.innerHeight);
    renderer.setClearColor("#e5e5e5");
    document.body.appendChild(renderer.domElement);
@@ -38,9 +38,11 @@ const setupSubjects = () => {
    //sceneSubjects.axe = createAxe();
    //sceneSubjects.axe2 = createAxe_2();
    //sceneSubjects.arrow = createArrow();
-   sceneSubjects.bow = createBow();
+	//sceneSubjects.bow = createBow();
    //sceneSubjects.shiled = createShield();
    //sceneSubjects.character = setupCharacter();
+   sceneSubjects.sword=createWeapon(0)
+//   createWeapon(0,scene)
 }
 
 const setupScene = sceneSubjects => {
@@ -56,8 +58,17 @@ const setupListeners = () => {
       renderer.setSize(window.innerWidth,window.innerHeight);
       camera.updateProjectionMatrix();
    })
+   document.querySelector( '#ChangeWeapon').addEventListener('click', ChangeWeapon, false )
+
 }
 
+
+function ChangeWeapon() {
+RandomWeapon(scene)
+}
+
+
+//const button = document.querySelector( '#ChangeWeapon' );
 // Movimentação dos objetos
 const animate = () => {
    requestAnimationFrame(animate);
@@ -71,6 +82,7 @@ const animate = () => {
    camera.position.z = cameraZ;
 
    controls.autoRotate=true;
+	
 
    controls.update();
 
@@ -85,6 +97,7 @@ function init() {
    setupListeners();
    setupSubjects();
    setupScene(sceneSubjects);
+
    animate();
 }
 
