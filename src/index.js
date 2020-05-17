@@ -1,5 +1,6 @@
-let camera,scene,renderer;
-let sceneSubjects = {}
+let camera,scene,renderer,controls;
+let sceneSubjects = {};
+let count = 0;
 
 const setupCamera = () => {
    camera = new THREE.PerspectiveCamera(75, window.innerWidth/window.innerHeight, 0.1, 1000);
@@ -12,6 +13,10 @@ const setupRenderer = () => {
    renderer.setSize(window.innerWidth, window.innerHeight);
    renderer.setClearColor("#e5e5e5");
    document.body.appendChild(renderer.domElement);
+}
+
+const setupControls = () => {
+   controls = new THREE.OrbitControls( camera, renderer.domElement );
 }
 
 const setupCharacter = () => {
@@ -33,9 +38,9 @@ const setupSubjects = () => {
    //sceneSubjects.axe = createAxe();
    //sceneSubjects.axe2 = createAxe_2();
    //sceneSubjects.arrow = createArrow();
-   //sceneSubjects.bow = createBow();
+   sceneSubjects.bow = createBow();
    //sceneSubjects.shiled = createShield();
-   sceneSubjects.character = setupCharacter();
+   //sceneSubjects.character = setupCharacter();
 }
 
 const setupScene = sceneSubjects => {
@@ -52,8 +57,6 @@ const setupListeners = () => {
       camera.updateProjectionMatrix();
    })
 }
-
-var controls = new THREE.OrbitControls( camera, renderer.domElement );
 
 // Movimentação dos objetos
 const animate = () => {
@@ -72,10 +75,13 @@ const animate = () => {
    controls.update();
 
    renderer.render(scene, camera);
+
+   count += 1;
 }
 function init() {
    setupCamera();
    setupRenderer();
+   setupControls();
    setupListeners();
    setupSubjects();
    setupScene(sceneSubjects);
