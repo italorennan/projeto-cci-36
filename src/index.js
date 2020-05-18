@@ -35,7 +35,6 @@ const setupCharacter = () => {
    shoeColor =  "#999999";
    character =  new Character({gender, skinColor, hairColor, eyeColor, mouthColor, bodyColor, legColor, shoeColor});
    character.equipSimpleArmour();
-   character.equipWeapon(weapon.randomWeapon());
    console.log(character);
    return character.entity;
 }
@@ -45,6 +44,7 @@ const setupSubjects = () => {
    sceneSubjects.character = setupCharacter();
 
    sceneSubjects.sword = createSword();
+   character.equipWeaponRight(sceneSubjects.sword)
    //sceneSubjects.axe = createAxe();
    //sceneSubjects.axe2 = createAxe_2();
    //sceneSubjects.arrow = createArrow();
@@ -72,10 +72,6 @@ const setupListeners = () => {
 
 }
 
-function ChangeWeapon() {
-   RandomWeapon(scene)
-}
-
 //const button = document.querySelector( '#ChangeWeapon' );
 // Movimentação dos objetos
 const animate = () => {
@@ -91,8 +87,10 @@ const animate = () => {
 
    controls.autoRotate=false;
 
-   if(character.isEquipped.weapon == true)
-      character.animateWeapon();
+   if(character.isEquipped.weaponRight == true)
+      character.animateWeaponRight();
+   if(character.isEquipped.weaponLeft == true)
+      character.animateWeaponLeft();
 
    controls.update();
 

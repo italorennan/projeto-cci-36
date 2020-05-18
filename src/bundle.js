@@ -25,8 +25,8 @@ class Character {
          shoeColor
       }
       this.entity = new THREE.Group();    
-      this.weapon = null;
-
+      this.weaponRight = null;
+      this.weaponLeft = null;
       // Criação dos membros inferiores
 
       const inferiorLeft = createInferior(legColor, shoeColor);
@@ -79,7 +79,8 @@ class Character {
          superior: false,
          middle: false,
          helmet: false,
-         weapon:false
+         rightWeapon:false,
+         leftWeapon:false
       }
    }
 
@@ -99,10 +100,6 @@ class Character {
          if(forearm.position.z < arm.position.z) this.forearmUp = true;
       }
       return this.forearmUp;
-   }
-
-   equipWeapon(weapon){
-
    }
 
    equipArmor(armour){
@@ -200,27 +197,40 @@ class Character {
       this.equipArmor(armour);
    }
 
-   equipWeapon(weapon){
-      this.weapon = weapon;
-      this.entity.add(weapon);
-      this.isEquipped.weapon = true;
+   equipWeaponRight(weapon){
+      this.weaponRight = weapon;
+      this.isEquipped.weaponRight = true;
    }
 
-   unequipWeapon(){
-      this.weapon = null;
-      this.entity.remove(this.weapon);
-      this.isEquipped.weapon = false;
+   unequipWeaponRight(){
+      this.weaponRight = null;
+      this.isEquipped.weaponRight = false;
    }
 
-   animateWeapon(){
+   equipWeaponLeft(weapon){
+      this.weaponLeft = weapon;
+      this.isEquipped.weaponLeft = true;
+   }
+
+   unequipWeaponLeft(){
+      this.weaponLeft = null;
+      this.isEquipped.weaponLeft = false;
+   }
+
+   animateWeaponRight(){
       this.forearmUp = this.moveForearm();
-      if(this.weapon.name == "arrow") animateArrow(this.entity, this.weapon);
-      else if(this.weapon.name == "axe") animateAxe(this.entity, this.weapon, this.forearmUp);
-      else if(this.weapon.name == "axe2") animateAxe2(this.entity, this.weapon, this.forearmUp);
-      else if(this.weapon.name == "bow") animateBow(this.entity, this.weapon);
-      else if(this.weapon.name == "shield") animateShield(this.entity, this.weapon);
-      else if(this.weapon.name == "sword") animateSword(this.entity, this.weapon, this.forearmUp);
+      if(this.weaponRight.name == "arrow") animateArrow(this.entity, this.weaponRight);
+      else if(this.weaponRight.name == "axe") animateAxe(this.entity, this.weaponRight, this.forearmUp);
+      else if(this.weaponRight.name == "axe2") animateAxe2(this.entity, this.weaponRight, this.forearmUp);
+      else if(this.weaponRight.name == "bow") animateBow(this.entity, this.weaponRight);
+      else if(this.weaponRight.name == "shield") animateShield(this.entity, this.weaponRight);
+      else if(this.weaponRight.name == "sword") animateSword(this.entity, this.weaponRight, this.forearmUp);
 
+   }
+
+   animateWeaponLeft(){
+      if(this.weaponLeft.name == "arrow") animateArrow(this.entity, this.weaponLeft);
+      else if(this.weaponLeft.name == "shield") animateShield(this.entity, this.weaponLeft);
    }
    
 }
@@ -1362,7 +1372,6 @@ const setupCharacter = () => {
    shoeColor =  "#999999";
    character =  new Character({gender, skinColor, hairColor, eyeColor, mouthColor, bodyColor, legColor, shoeColor});
    character.equipSimpleArmour();
-   character.equipWeapon(weapon.randomWeapon());
    console.log(character);
    return character.entity;
 }
@@ -1372,6 +1381,7 @@ const setupSubjects = () => {
    sceneSubjects.character = setupCharacter();
 
    sceneSubjects.sword = createSword();
+   character.equipWeaponRight(sceneSubjects.sword)
    //sceneSubjects.axe = createAxe();
    //sceneSubjects.axe2 = createAxe_2();
    //sceneSubjects.arrow = createArrow();
@@ -1399,10 +1409,6 @@ const setupListeners = () => {
 
 }
 
-function ChangeWeapon() {
-   RandomWeapon(scene)
-}
-
 //const button = document.querySelector( '#ChangeWeapon' );
 // Movimentação dos objetos
 const animate = () => {
@@ -1418,8 +1424,10 @@ const animate = () => {
 
    controls.autoRotate=false;
 
-   if(character.isEquipped.weapon == true)
-      character.animateWeapon();
+   if(character.isEquipped.weaponRight == true)
+      character.animateWeaponRight();
+   if(character.isEquipped.weaponLeft == true)
+      character.animateWeaponLeft();
 
    controls.update();
 
