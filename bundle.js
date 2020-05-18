@@ -118,9 +118,9 @@ class Character {
 
       this.inferior = armour.getObjectByName("inferior");
       this.middle = armour.getObjectByName("middle");
+
       this.superior.getObjectByName("superiorLeft").add(armour.getObjectByName("sleeveLeft"));
       this.superior.getObjectByName("superiorRight").add(armour.getObjectByName("sleeveRight"));
-      
       this.entity.add(armour.getObjectByName("helmet"));
       this.entity.add(armour.getObjectByName("inferior"));
       this.entity.add(armour.getObjectByName("middle"));
@@ -205,12 +205,15 @@ class Character {
    }
 
    equipWeaponRight(weapon){
+      if(this.weapon.name == weapon.name)
+         return;
+      this.forearmUp = true;
+      this.superior.getObjectByName("superiorRight").getObjectByName("forearm").position.set(0,-1.5,0);
+
       if(this.isEquipped.weaponRight){
          this.unequipWeaponRight();
-         this.forearmUp = true;
-         this.superior.getObjectByName("superiorRight").getObjectByName("forearm").position.set(0,-1.5,0);
-         console.log(this.superior.getObjectByName("forearm").position);
       }
+
       this.weaponRight = weapon;
       this.isEquipped.weaponRight = true;
       this.entity.parent.add(weapon);
