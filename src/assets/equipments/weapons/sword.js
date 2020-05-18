@@ -106,12 +106,12 @@ function createSword() {
 }
 
 // Posicionar a espada e rotacionar junto com o movimento do antebraço
-function equipSword(character, sword, forearmUp) {
+function animateSword(character, sword, forearmUp) {
 	var superiorRight = character.getObjectByName("superiorRight");
 	var forearm = superiorRight.getObjectByName("forearm");
 
 	var forearmPosition = new THREE.Vector3(0, 0, 0);
-    forearmPosition.add(forearm.position).add(superiorRight.position).add(character.position);
+   forearmPosition.add(forearm.position).add(superiorRight.position).add(character.position);
 
 	var x = forearmPosition.x;
 	var y = forearmPosition.y - forearm.geometry.parameters.height / 2;
@@ -119,6 +119,11 @@ function equipSword(character, sword, forearmUp) {
 
     sword.position.set(x, y, z);
     
-    if(forearmUp) sword.rotateX(Math.PI/600);
-    else sword.rotateX(-Math.PI/600);
+   if(forearmUp) sword.rotateX(Math.PI/600);
+   else sword.rotateX(-Math.PI/600);
+}
+
+module.exports = {
+   animateSword,
+   createSword
 }

@@ -1,32 +1,30 @@
-function RandomWeapon(scene)
+const {createSword} = require("./sword");
+const {createAxe} = require("./axe");
+const {createAxe2} = require("./axe2");
+const {createArrow} = require("./arrow");
+const {createBow} = require("./bow");
+const {createShield} = require("./shield");
+
+
+function randomWeapon(scene)
 {
-	scene.remove(scene.getObjectByName("arma"));
-	maximum=5
-	minimum=0
+   const maximum = 5;
+   const minimum = 0;
 	numeroaleatorio=randomnumber = Math.floor(Math.random() * (maximum - minimum + 1)) + minimum;	
 	weapon=createWeapon(numeroaleatorio)
-	weapon.name = "arma";
-	scene.add(weapon)	
+   return weapon;
+
 }
 
-
 function createWeapon(indice) {
-	weapons=[createSword(),createAxe(),createAxe_2(),createArrow(),createBow(),createShield()];
+	weapons=[createSword(),createAxe(),createAxe2(),createArrow(),createBow(),createShield()];
 	weapon=weapons[indice];
-	weapon.name = "arma";
+	weapon.name = "weapon";
 	return weapon
 	
 }
 
-function equip(character, subject) {
-	const forearmUp = character.moveForearm();
-
-	if(subject.name == "arrow") equipArrow(character.entity, subject);
-	else if(subject.name == "axe") equipAxe(character.entity, subject, forearmUp);
-	else if(subject.name == "axe2") equipAxe2(character.entity, subject, forearmUp);
-	else if(subject.name == "bow") equipBow(character.entity, subject);
-	else if(subject.name == "shield") equipShield(character.entity, subject);
-	else if(subject.name == "sword") equipSword(character.entity, subject, forearmUp);
-
-	return forearmUp;
+module.exports = {
+   createWeapon,
+   randomWeapon
 }

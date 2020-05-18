@@ -104,7 +104,7 @@ function createBow()
 }
 
 // Posicionar a flecha no antebraço direito
-function equipBow(character, bow) {
+function animateBow(character, bow) {
 	var superiorRight = character.getObjectByName("superiorRight");
 	var forearm = superiorRight.getObjectByName("forearm");
 
@@ -116,4 +116,9 @@ function equipBow(character, bow) {
 	var z = forearmPosition.z + (forearm.geometry.parameters.depth + bow.children[0].children[0].geometry.parameters.depth) / 2;
 
     bow.position.set(x, y, z);
+}
+
+module.exports = {
+   animateBow,
+   createBow
 }

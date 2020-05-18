@@ -3,7 +3,13 @@ const createHead = require('./createHead');
 const createInferior = require('./createInferior');
 const createMiddle = require('./createMiddle');
 const createSuperior = require('./createSuperior');
-const createSimpleArmour = require('../equipments/armour/createSimpleArmour');
+const createSimpleArmor = require('../equipments/armour/createSimpleArmour');
+const {animateSword} = require("../equipments/weapons/sword");
+const {animateAxe} = require("../equipments/weapons/axe");
+const {animateAxe2} = require("../equipments/weapons/axe2");
+const {animateArrow} = require("../equipments/weapons/arrow");
+const {animateBow} = require("../equipments/weapons/bow");
+const {animateShield} = require("../equipments/weapons/shield");
 
 class Character {
    
@@ -19,6 +25,7 @@ class Character {
          shoeColor
       }
       this.entity = new THREE.Group();    
+      this.weapon = null;
 
       // Criação dos membros inferiores
 
@@ -67,11 +74,12 @@ class Character {
       this.entity.add(this.head);
 
       this.forearmUp = false;
-      this.armourEquiped = {
+      this.isEquipped = {
          inferior: false,
          superior: false,
          middle: false,
-         helmet: false
+         helmet: false,
+         weapon:false
       }
    }
 
@@ -93,7 +101,11 @@ class Character {
       return this.forearmUp;
    }
 
-   equipArmour(armour){
+   equipWeapon(weapon){
+
+   }
+
+   equipArmor(armour){
       //Removendo as partes atuais
       this.entity.remove(this.middle);
       this.middle = null;
@@ -113,7 +125,7 @@ class Character {
       this.superior.getObjectByName("superiorRight").add(armour.getObjectByName("sleeveRight"));
       
       this.entity.add(armour);
-      this.armourEquiped = {
+      this.isEquipped = {
          inferior: true,
          superior: true,
          middle: true,
@@ -122,8 +134,8 @@ class Character {
    
    }
 
-   unequipArmour(){
-      if(this.armourEquiped.inferior){
+   unequipArmor(){
+      if(this.isEquipped.inferior){
          this.entity.remove(this.inferior);
          const inferiorLeft = createInferior(this.attributes.legColor, this.attributes.shoeColor);
          inferiorLeft.position.set(1.75, 4, 0);
@@ -138,7 +150,7 @@ class Character {
          this.inferior.add(inferiorRight);
          this.inferior.name = "inferior";
          this.entity.add(this.inferior);
-         this.armourEquiped.inferior = false;
+         this.isEquipped.inferior = false;
       }
 
       if(this.armourEquipped.superior){
@@ -154,9 +166,9 @@ class Character {
          this.superior = new THREE.Group();
          this.superior.add(superiorLeft);
          this.superior.add(superiorRight);
-         this.superior.name = "superior";
+         his.superior.name = "superior";
          this.entity.add(this.superior);
-         this.armourEquiped.superior = false;
+         this.isEquipped.superior = false;
 
       }
       
@@ -171,12 +183,12 @@ class Character {
          this.middle.position.set(0, 12, 0);
          this.middle.name = "middle";
          this.entity.add(this.middle);
-         this.armourEquiped.middle = false;
+         this.isEquipped.middle = false;
       }
 
-      if(this.armourEquiped.helmet){
+      if(this.isEquipped.helmet){
          this.entity.remove(this.entity.getObjectByName(helmet));
-         this.armourEquiped.helmet = false;
+         this.isEquipped.helmet = false;
       }
 
    }
@@ -184,13 +196,36 @@ class Character {
    equipSimpleArmour(){
       const armourColor = "#808080";
       const otherColor = "#4f4f4f";
-      const armour = createSimpleArmour(this.attributes.gender, this.attributes.hairColor, armourColor,otherColor);
-      this.equipArmour(armour);
+      const armour = createSimpleArmor(this.attributes.gender, this.attributes.hairColor, armourColor,otherColor);
+      this.equipArmor(armour);
+   }
+
+   equipWeapon(weapon){
+      this.weapon = weapon;
+      this.entity.add(weapon);
+      this.isEquipped.weapon = true;
+   }
+
+   unequipWeapon(){
+      this.weapon = null;
+      this.entity.remove(this.weapon);
+      this.isEquipped.weapon = false;
+   }
+
+   animateWeapon(){
+      this.forearmUp = this.moveForearm();
+      if(this.weapon.name == "arrow") animateArrow(this.entity, this.weapon);
+      else if(this.weapon.name == "axe") animateAxe(this.entity, this.weapon, this.forearmUp);
+      else if(this.weapon.name == "axe2") animateAxe2(this.entity, this.weapon, this.forearmUp);
+      else if(this.weapon.name == "bow") animateBow(this.entity, this.weapon);
+      else if(this.weapon.name == "shield") animateShield(this.entity, this.weapon);
+      else if(this.weapon.name == "sword") animateSword(this.entity, this.weapon, this.forearmUp);
+
    }
    
 }
 module.exports = Character;
-},{"../equipments/armour/createSimpleArmour":6,"./createHead":2,"./createInferior":3,"./createMiddle":4,"./createSuperior":5}],2:[function(require,module,exports){
+},{"../equipments/armour/createSimpleArmour":6,"../equipments/weapons/arrow":7,"../equipments/weapons/axe":8,"../equipments/weapons/axe2":9,"../equipments/weapons/bow":10,"../equipments/weapons/shield":11,"../equipments/weapons/sword":12,"./createHead":2,"./createInferior":3,"./createMiddle":4,"./createSuperior":5}],2:[function(require,module,exports){
 // Criação do cabelo
 function createHair(gender, hairColor) {
     var hair = new THREE.Group();
@@ -594,7 +629,704 @@ function createSimpleArmour(gender, hairColor, armourColor, otherColor) {
 module.exports = createSimpleArmour;
 
 },{"../../character/createInferior":3,"../../character/createMiddle":4}],7:[function(require,module,exports){
+function createArrow() {
+  var asa = new THREE.Group();
+  //Diagonal Principal
+
+  localizacao = [
+    [0.05, 0.45],
+    [0.15, 0.35],
+    [0.15, 0.15],
+    [0.05, 0.05],
+  ];
+  for (var i = 0; i < 4; i++) {
+    m = criarcubo(0.1, 0.1, 0.1, localizacao[i][0], localizacao[i][1], 0);
+    m.material.color.setHex(0x7b68ee);
+    asa.add(m);
+  }
+
+  var tronco = new THREE.Group();
+
+  tronco.add(criarcubo(0.7, 0.1, 0.1, 0.55, 0.25, 0));
+  tronco.children[0].material.color.setHex(0x4b0082);
+
+  var pena = new THREE.Group();
+
+  localizacao = [
+    [0.95, 0.45],
+    [0.95, 0.35],
+    [0.95, 0.25],
+    [0.95, 0.15],
+    [0.95, 0.05],
+    [1.05, 0.15],
+    [1.05, 0.25],
+    [1.05, 0.35],
+    [1.15, 0.25],
+  ];
+  for (var i = 0; i < localizacao.length; i++) {
+    m = criarcubo(0.1, 0.1, 0.1, localizacao[i][0], localizacao[i][1], 0);
+    m.material.color.setHex(0x7b68ee);
+    pena.add(m);
+  }
+
+  var flecha = new THREE.Group();
+  flecha.add(asa);
+  flecha.add(tronco);
+  flecha.add(pena);
+
+  flecha.scale.set(5, 5, 5);
+  flecha.position.set(-1.25, 0, 0);
+  flecha.rotateZ(-Math.PI / 2);
+  flecha.name = "arrow";
+  return flecha;
+}
+
+// Posicionar a flecha no antebraço esquerdo
+function animateArrow(character, arrow) {
+  var superiorLeft = character.getObjectByName("superiorLeft");
+  var forearm = superiorLeft.getObjectByName("forearm");
+
+  var forearmPosition = new THREE.Vector3(0, 0, 0);
+  forearmPosition
+    .add(forearm.position)
+    .add(superiorLeft.position)
+    .add(character.position);
+
+  var x = forearmPosition.x - 1.25;
+  var y = forearmPosition.y - forearm.geometry.parameters.height / 2;
+  var z =
+    forearmPosition.z +
+    (forearm.geometry.parameters.depth +
+      arrow.children[0].children[0].geometry.parameters.depth) /
+      2;
+
+  arrow.position.set(x, y, z);
+}
+
+module.exports = {
+   animateArrow,
+   createArrow
+}
+},{}],8:[function(require,module,exports){
+function createAxe() {
+
+	//Controles de Camera
+
+	var diagonalprincipal= new THREE.Group();
+	//Diagonal Principal
+	for (var i=0; i<12; i++)
+	{
+	m = criarcubo(0.1,0.1,0.1,0,0,0)
+	m.material.color.setHex(0x696969);
+	m.position.x=0.15+i/10;
+	m.position.y=0.05+i/10;
+	m.position.z=0;
+	diagonalprincipal.add(m);
+	}
+	
+	var diagonalabaixo= new THREE.Group();
+	//Diagonal Principal
+	for (var i=0; i<11; i++)
+	{
+	m = criarcubo(0.1,0.1,0.1,0,0,0)
+	m.material.color.setHex(0x000000);
+	m.position.x=0.25+i/10;
+	m.position.y=0.05+i/10;
+	m.position.z=0;
+	diagonalabaixo.add(m);
+	}
+	
+	var lado1= new THREE.Group();
+	lado1.add(criarcubo(0.1,0.1,0.1,1.05,0.75,0))
+	lado1.add(criarcubo(0.1,0.1,0.1,1.15,0.85,0))
+	lado1.add(criarcubo(0.1,0.1,0.1,1.25,0.95,0))
+	
+	lado1.children[0].material.color.setHex(0xff0000);
+	lado1.children[1].material.color.setHex(0xff0000);
+	lado1.children[2].material.color.setHex(0xff0000);
+	
+	var lado2= new THREE.Group();
+	lado2.add(criarcubo(0.1,0.1,0.1,1.05,0.65,0))
+	lado2.add(criarcubo(0.1,0.1,0.1,1.15,0.75,0))
+	lado2.add(criarcubo(0.1,0.1,0.1,1.25,0.85,0))
+	lado2.add(criarcubo(0.1,0.1,0.1,1.35,0.95,0))
+
+	lado2.children[0].material.color.setHex(0xff00ff);
+	lado2.children[1].material.color.setHex(0xff00ff);
+	lado2.children[2].material.color.setHex(0xff00ff);
+	lado2.children[3].material.color.setHex(0xff00ff);
+
+	var lado3= new THREE.Group();
+	lado3.add(criarcubo(0.1,0.1,0.1,1.05,0.55,0))
+	lado3.add(criarcubo(0.1,0.1,0.1,1.15,0.65,0))
+	lado3.add(criarcubo(0.1,0.1,0.1,1.25,0.75,0))
+	lado3.add(criarcubo(0.1,0.1,0.1,1.35,0.85,0))
+	lado3.add(criarcubo(0.1,0.1,0.1,1.45,0.95,0))
+
+	lado3.children[0].material.color.setHex(0x0000ff);
+	lado3.children[1].material.color.setHex(0x0000ff);
+	lado3.children[2].material.color.setHex(0x0000ff);
+	lado3.children[3].material.color.setHex(0x0000ff);
+	lado3.children[4].material.color.setHex(0x0000ff);
+	
+	var lado4= new THREE.Group();
+
+	lado4.add(criarcubo(0.1,0.1,0.1,1.05,0.45,0))
+	lado4.add(criarcubo(0.1,0.1,0.1,1.15,0.55,0))
+	lado4.add(criarcubo(0.1,0.1,0.1,1.25,0.65,0))
+	lado4.add(criarcubo(0.1,0.1,0.1,1.35,0.75,0))
+	lado4.add(criarcubo(0.1,0.1,0.1,1.45,0.85,0))
+	lado4.add(criarcubo(0.1,0.1,0.1,1.55,0.95,0))
+	
+	lado4.children[0].material.color.setHex(0x000000);
+	lado4.children[1].material.color.setHex(0x000000);
+	lado4.children[2].material.color.setHex(0x000000);
+	lado4.children[3].material.color.setHex(0x000000);
+	lado4.children[4].material.color.setHex(0x000000);
+	lado4.children[5].material.color.setHex(0x000000);
+	
+	var lado5= new THREE.Group();
+
+	lado5.add(criarcubo(0.1,0.1,0.1,1.15,0.45,0))
+	lado5.add(criarcubo(0.1,0.1,0.1,1.25,0.55,0))
+	lado5.add(criarcubo(0.1,0.1,0.1,1.35,0.65,0))
+	lado5.add(criarcubo(0.1,0.1,0.1,1.45,0.75,0))
+	lado5.add(criarcubo(0.1,0.1,0.1,1.55,0.85,0))
+
+	lado5.children[0].material.color.setHex(0xf0000f);
+	lado5.children[1].material.color.setHex(0xf0000f);
+	lado5.children[2].material.color.setHex(0xf0000f);
+	lado5.children[3].material.color.setHex(0xf0000f);
+	lado5.children[4].material.color.setHex(0xf0000f);
+
+	var axe= new THREE.Group();
+	axe.add(lado3);
+	axe.add(lado1);
+	axe.add(lado2);
+	axe.add(lado5);
+	axe.add(lado4);
+	axe.add(diagonalprincipal);
+	axe.add(diagonalabaixo);
+	
+	axe.scale.set(5,5,5);
+	axe.position.set(-0.5,0,0);
+	axe.rotateY(-Math.PI/20);
+	axe.name = "axe";
+	return axe;
+}
+
+// Posicionar o machado e rotacionar junto com o antebraço
+function animateAxe(character, axe, forearmUp) {
+	var superiorRight = character.getObjectByName("superiorRight");
+	var forearm = superiorRight.getObjectByName("forearm");
+
+	var forearmPosition = new THREE.Vector3(0, 0, 0);
+    forearmPosition.add(forearm.position).add(superiorRight.position).add(character.position);
+
+	var x = forearmPosition.x;
+	var y = forearmPosition.y - forearm.geometry.parameters.height / 2;
+	var z = forearmPosition.z + (forearm.geometry.parameters.depth + axe.children[0].children[0].geometry.parameters.depth) / 2;
+
+    axe.position.set(x, y, z);
+    
+    if(forearmUp) axe.rotateY(-9*Math.PI/1600);
+    else axe.rotateY(9*Math.PI/1600);
+}		
+
+module.exports = {
+   animateAxe,
+   createAxe
+}
+},{}],9:[function(require,module,exports){
+function createAxe2() {
+
+	var diagonalprincipal= new THREE.Group();
+	//Diagonal Principal
+	for (var i=0; i<12; i++)
+	{
+	m = criarcubo(0.1,0.1,0.1,0,0,0)
+	m.material.color.setHex(0x696969);
+	m.position.x=0.15+i/10;
+	m.position.y=0.05+i/10;
+	m.position.z=0;
+	diagonalprincipal.add(m);
+	}
+	
+	var diagonalabaixo= new THREE.Group();
+	//Diagonal Principal
+	for (var i=0; i<11; i++)
+	{
+	m = criarcubo(0.1,0.1,0.1,0,0,0)
+	m.material.color.setHex(0x000000);
+	m.position.x=0.25+i/10;
+	m.position.y=0.05+i/10;
+	m.position.z=0;
+	diagonalabaixo.add(m);
+	}
+	
+	
+	var lado1= new THREE.Group();
+	lado1.add(criarcubo(0.1,0.1,0.1,1.05,0.75,0))
+	lado1.add(criarcubo(0.1,0.1,0.1,1.15,0.85,0))
+	lado1.add(criarcubo(0.1,0.1,0.1,1.25,0.95,0))
+	
+	lado1.children[0].material.color.setHex(0xff0000);
+	lado1.children[1].material.color.setHex(0xff0000);
+	lado1.children[2].material.color.setHex(0xff0000);
+
+	
+	
+	var lado2= new THREE.Group();
+	lado2.add(criarcubo(0.1,0.1,0.1,1.05,0.65,0))
+	lado2.add(criarcubo(0.1,0.1,0.1,1.15,0.75,0))
+	lado2.add(criarcubo(0.1,0.1,0.1,1.25,0.85,0))
+	lado2.add(criarcubo(0.1,0.1,0.1,1.35,0.95,0))
+
+	lado2.children[0].material.color.setHex(0xff00ff);
+	lado2.children[1].material.color.setHex(0xff00ff);
+	lado2.children[2].material.color.setHex(0xff00ff);
+	lado2.children[3].material.color.setHex(0xff00ff);
+
+	
+
+
+	var lado3= new THREE.Group();
+	lado3.add(criarcubo(0.1,0.1,0.1,1.05,0.55,0))
+	lado3.add(criarcubo(0.1,0.1,0.1,1.15,0.65,0))
+	lado3.add(criarcubo(0.1,0.1,0.1,1.25,0.75,0))
+	lado3.add(criarcubo(0.1,0.1,0.1,1.35,0.85,0))
+	lado3.add(criarcubo(0.1,0.1,0.1,1.45,0.95,0))
+
+	lado3.children[0].material.color.setHex(0x0000ff);
+	lado3.children[1].material.color.setHex(0x0000ff);
+	lado3.children[2].material.color.setHex(0x0000ff);
+	lado3.children[3].material.color.setHex(0x0000ff);
+	lado3.children[4].material.color.setHex(0x0000ff);
+	
+
+//	scene.add(criarcubo(0.1,0.1,0.1,1.45,0.75,0))
+//	scene.add(criarcubo(0.1,0.1,0.1,1.45,0.85,0))
+//	scene.add(criarcubo(0.1,0.1,0.1,1.45,0.95,0))
+//	scene.add(criarcubo(0.1,0.1,0.1,1.55,1.05,0))
+//	scene.add(criarcubo(0.1,0.1,0.1,1.65,1.15,0))
+	
+	
+	var lado4= new THREE.Group();
+
+	lado4.add(criarcubo(0.1,0.1,0.1,1.05,0.45,0))
+	lado4.add(criarcubo(0.1,0.1,0.1,1.15,0.55,0))
+	lado4.add(criarcubo(0.1,0.1,0.1,1.25,0.65,0))
+	lado4.add(criarcubo(0.1,0.1,0.1,1.35,0.75,0))
+	lado4.add(criarcubo(0.1,0.1,0.1,1.45,0.85,0))
+	lado4.add(criarcubo(0.1,0.1,0.1,1.55,0.95,0))
+	
+	lado4.children[0].material.color.setHex(0x000000);
+	lado4.children[1].material.color.setHex(0x000000);
+	lado4.children[2].material.color.setHex(0x000000);
+	lado4.children[3].material.color.setHex(0x000000);
+	lado4.children[4].material.color.setHex(0x000000);
+	lado4.children[5].material.color.setHex(0x000000);
+	
+	var lado5= new THREE.Group();
+
+	lado5.add(criarcubo(0.1,0.1,0.1,1.15,0.45,0))
+	lado5.add(criarcubo(0.1,0.1,0.1,1.25,0.55,0))
+	lado5.add(criarcubo(0.1,0.1,0.1,1.35,0.65,0))
+	lado5.add(criarcubo(0.1,0.1,0.1,1.45,0.75,0))
+	lado5.add(criarcubo(0.1,0.1,0.1,1.55,0.85,0))
+
+
+	lado5.children[0].material.color.setHex(0xf0000f);
+	lado5.children[1].material.color.setHex(0xf0000f);
+	lado5.children[2].material.color.setHex(0xf0000f);
+	lado5.children[3].material.color.setHex(0xf0000f);
+	lado5.children[4].material.color.setHex(0xf0000f);
+
+	var junto= new THREE.Group();
+
+	junto.add(lado1)
+	junto.add(lado2)
+	junto.add(lado3)
+	junto.add(lado4)
+	junto.add(lado5)
+	junto.add(diagonalabaixo)
+	var replica= new THREE.Group();
+	
+	replica=junto.clone()
+
+	espelhar(replica,[1,-1,1])
+	replica.rotation.z=90*Math.PI/180
+	
+	replica.position.x=0.1
+	replica.position.y=-0.1
+		
+	var axe= new THREE.Group();	
+	axe.add(replica)
+	axe.add(junto)
+	axe.add(diagonalprincipal)
+	axe.add(diagonalabaixo)
+	
+	axe.position.set(-0.5,0,0);
+	axe.rotateY(-Math.PI/20);
+	axe.scale.set(5,5,5)
+	axe.name = "axe2";
+	return axe	
+}
+
+// Posicionar o machado e rotacionar junto com o antebraço
+function animateAxe2(character, axe2, forearmUp) {
+	var superiorRight = character.getObjectByName("superiorRight");
+	var forearm = superiorRight.getObjectByName("forearm");
+
+	var forearmPosition = new THREE.Vector3(0, 0, 0);
+    forearmPosition.add(forearm.position).add(superiorRight.position).add(character.position);
+
+	var x = forearmPosition.x;
+	var y = forearmPosition.y - forearm.geometry.parameters.height / 2;
+	var z = forearmPosition.z + (forearm.geometry.parameters.depth + axe2.children[0].children[0].children[0].geometry.parameters.depth) / 2;
+
+    axe2.position.set(x, y, z);
+    
+    if(forearmUp) axe2.rotateY(-9*Math.PI/1600);
+    else axe2.rotateY(9*Math.PI/1600);
+}	
+
+module.exports = {
+   animateAxe2,
+   createAxe2
+}
+},{}],10:[function(require,module,exports){
+function createBow()
+{
+	var diagonalprincipal= new THREE.Group();
+	//Diagonal Principal
+	for (var i=0; i<14; i++)
+	{
+	m = criarcubo(0.1,0.1,0.1,0,0,0)
+	m.material.color.setHex(0x000080);
+	m.position.x=0.15+i/10;
+	m.position.y=0.05+i/10;
+	m.position.z=0;
+	diagonalprincipal.add(m);
+	}
+	
+	//--------------
+	
+	//Contorno Externo Esquerdo
+	//Contorno Externo Esquerdo Inferior
+	var contornoexternoesquerdoinferior= new THREE.Group();
+	//Diagonal Principal
+	for (var i=0; i<10; i++)
+	{
+	m = criarcubo(0.1,0.1,0.1,0,0,0)
+	m.material.color.setHex(0x000080);
+	m.position.y=0.15+i/10;
+	m.position.z=0;
+	if(i<=3)
+		m.position.x=0.05;
+	else if (i<=6)
+		m.position.x=0.15;
+	else if(i<=8)
+		m.position.x=0.25;
+	else 
+		m.position.x=0.35;
+	contornoexternoesquerdoinferior.add(m);
+	}				
+	//Contorno Externo Esquerdo Superior	
+	var contornoexternoesquerdosuperior=contornoexternoesquerdoinferior.clone()			
+	espelhar(contornoexternoesquerdosuperior,[-1,1,1])
+	contornoexternoesquerdosuperior.rotation.z=90*Math.PI/180;
+	contornoexternoesquerdosuperior.position.x=1.50
+	contornoexternoesquerdosuperior.position.y=1.50
+	var contornoexternoesquerdo= new THREE.Group();
+	contornoexternoesquerdo.add(contornoexternoesquerdoinferior)
+	contornoexternoesquerdo.add(contornoexternoesquerdosuperior)
+
+	//Contorno Externo Direito
+		//Contorno Externo Direito Inferior			
+	contornoexternodireitoinferior=contornoexternoesquerdoinferior.clone()
+	contornoexternodireitoinferior.position.x+=0.2			
+	contornoexternodireitoinferior.remove(contornoexternodireitoinferior.children[8])
+	contornoexternodireitoinferior.children[8].position.y-=0.1	
+	
+		//Contorno Externo Direito Superior
+	var contornoexternodireitosuperior=contornoexternodireitoinferior.clone()
+	espelhar(contornoexternodireitosuperior,[-1,1,1])
+	contornoexternodireitosuperior.rotation.z=90*Math.PI/180;
+	contornoexternodireitosuperior.position.x=1.5
+	contornoexternodireitosuperior.position.y=1.3
+	var contornoexternodireito= new THREE.Group();			
+	contornoexternodireito.add(contornoexternodireitoinferior)
+	contornoexternodireito.add(contornoexternodireitosuperior)
+	
+	//miolo
+		//Miolo Inferior
+	var mioloinferior=contornoexternodireitoinferior.clone()
+	mioloinferior.position.x=0.1
+		//Miolo Superior
+	miolosuperior=mioloinferior.clone()
+	espelhar(miolosuperior,[-1,1,1])
+	miolosuperior.rotation.z=90*Math.PI/180;
+	miolosuperior.position.x=1.5		
+	miolosuperior.position.y=1.4		
+	
+	var miolo= new THREE.Group();			
+	miolo.add(mioloinferior)
+	miolo.add(miolosuperior)
+
+	//Cubos Complementaries
+	var cuboscomplementares= new THREE.Group();
+	cuboscomplementares.add(criarcubo(0.1,0.1,0.1,0.55,1.15,0))
+	cuboscomplementares.add(criarcubo(0.1,0.1,0.1,0.45,1.05,0))
+	cuboscomplementares.add(criarcubo(0.1,0.1,0.1,0.35,0.95,0))
+	changecolorgroup(cuboscomplementares,0x4b0082);
+	
+	//Cores
+	desvincularmaterial(mioloinferior)
+	changecolorgroup(mioloinferior,0x000000)
+	desvincularmaterial(miolosuperior)
+	changecolorgroup(miolosuperior,0x0000ff)
+	
+	var arco= new THREE.Group();
+	arco.add(cuboscomplementares)
+	arco.add(contornoexternoesquerdo)
+	arco.add(contornoexternodireito)
+	arco.add(diagonalprincipal)
+	arco.add(miolo)
+	
+	arco.scale.set(5,5,5);
+	arco.position.set(0,0,0);
+	arco.name = "bow";
+	arco.rotateZ(Math.PI/4);
+	return arco;
+}
+
+// Posicionar a flecha no antebraço direito
+function animateBow(character, bow) {
+	var superiorRight = character.getObjectByName("superiorRight");
+	var forearm = superiorRight.getObjectByName("forearm");
+
+	var forearmPosition = new THREE.Vector3(0, 0, 0);
+    forearmPosition.add(forearm.position).add(superiorRight.position).add(character.position);
+
+	var x = forearmPosition.x;
+	var y = forearmPosition.y - forearm.geometry.parameters.height / 2 - 3.9;
+	var z = forearmPosition.z + (forearm.geometry.parameters.depth + bow.children[0].children[0].geometry.parameters.depth) / 2;
+
+    bow.position.set(x, y, z);
+}
+
+module.exports = {
+   animateBow,
+   createBow
+}
+},{}],11:[function(require,module,exports){
+function createShield()
+{
+	var asa= new THREE.Group();
+	//Diagonal Principal
+	var escudo = new THREE.Group();
+	
+	colunas=[5,9,11,13,13,15,15,15,15,13,13,11,9,5];
+	for (var i=0; i<colunas.length; i++)
+	{	
+		escudo.add(criarcubo(0.1,0.1*colunas[i],0.1,-0.65+0.1*i,0,0));
+	}
+	
+	changecolorgroup(escudo,0x000000)
+	escudo.children[3].material.color.setHex(0x4682b4);
+	escudo.children[5].material.color.setHex(0x4682b4);
+	escudo.children[8].material.color.setHex(0x4682b4);			
+	escudo.children[10].material.color.setHex(0x4682b4);
+
+	escudo.scale.set(5,5,5);
+	escudo.name = "shield";
+	return escudo;
+}
+
+// Posicionar o escudo no centro do antebraço direito do personagem
+function animateShield(character, shield) {
+	var superiorRight = character.getObjectByName("superiorRight");
+	var forearm = superiorRight.getObjectByName("forearm");
+
+	var forearmPosition = new THREE.Vector3(0, 0, 0);
+	forearmPosition.add(forearm.position).add(superiorRight.position).add(character.position);
+
+	var x = forearmPosition.x;
+	var y = forearmPosition.y - forearm.geometry.parameters.height / 2;
+	var z = forearmPosition.z + (forearm.geometry.parameters.depth + shield.children[0].geometry.parameters.depth) / 2;
+
+	shield.position.set(x, y, z);
+}
+
+module.exports = {
+   animateShield,
+   createShield
+}
+},{}],12:[function(require,module,exports){
+function createSword() {
+    var diagonalprincipal= new THREE.Group();
+    //Diagonal Principal
+	
+	medida=1
+    for (var i=0; i<16; i++)
+    {
+    m = criarcubo(medida,medida,medida,0,0,0)
+    m.material.color.setHex(0x00ff00);
+    m.position.x=0.5*medida+i*medida;
+    m.position.y=0.5*medida+i*medida;
+    m.position.z=0;
+    diagonalprincipal.add(m);
+    }
+
+    //Criar as Duas Diagonais Adjacentes
+    var diagonalabaixo= new THREE.Group();		
+    
+    //Clonar Trocando o Material
+    diagonalabaixo = diagonalprincipal.clone();
+    diagonalabaixo.traverse((node) => {if (node.isMesh) {node.material = node.material.clone();}}); 			//Para poder mudar a Cor
+    diagonalabaixo.position.x=diagonalabaixo.position.x+medida
+    diagonalabaixo.position.y=diagonalabaixo.position.y
+    tamanho=diagonalabaixo.children.length
+    diagonalabaixo.remove(diagonalabaixo.children[tamanho-1])
+
+    var diagonalacima= new THREE.Group();					
+    diagonalacima = diagonalprincipal.clone();
+    diagonalacima.traverse((node) => {if (node.isMesh) {node.material = node.material.clone();}});
+
+    diagonalacima.position.x=diagonalacima.position.x
+    diagonalacima.position.y=diagonalacima.position.y+medida
+    tamanho=diagonalacima.children.length
+    diagonalacima.remove(diagonalacima.children[tamanho-1])
+    //-------------------------------------------//		
+                
+                
+    //Criando contorno			
+    var contorno= new THREE.Group();
+    for (var i=0; i<10; i++)
+    {
+        m = criarcubo(medida,medida,medida,0,0,0);
+        m.position.x=4.5*medida+i*medida;
+        m.position.y=6.5*medida+i*medida;
+        m.position.z=0;
+        contorno.add(m);
+    }
+    
+    contorno2=new THREE.Group();
+    contorno2=contorno.clone()
+    contorno2.position.x=contorno2.position.x+2*medida
+    contorno2.position.y=contorno2.position.y-2*medida
+    //------------------------------------------------//
+    
+    var braco= new THREE.Group();
+    
+    for (var i=0; i<8; i++)
+    {
+        m = criarcubo(medida,medida,medida,0,0,0);
+        m.position.x=2.5*medida+i*medida;
+        m.position.y=9.5*medida-i*medida;
+        m.position.z=0;
+        braco.add(m);
+    }
+    
+    //2 Cubinhos Faltando
+    //scene.add(criarcubo(medida,medida,medida,0.25,0.05,0))
+    //scene.add(criarcubo(medida,medida,medida,0.05,0.25,0))
+    
+    
+
+    //Mudando as Cores
+    for (var i=0; i<8; i++)
+    {
+        m = criarcubo(medida,medida,medida,0,0,0);
+        m.position.x=2.5*medida+i*medida;
+        m.position.y=9.5*medida-i*medida;
+        m.position.z=0;
+        braco.add(m);
+    }
+
+    //Mudando as Cores
+    changecolorgroup(diagonalprincipal,0x800000)
+    changecolorgroup(diagonalacima,0xff0000)
+    changecolorgroup(diagonalabaixo,0xff0000)
+    changecolorgroup(contorno,0xff8c00)
+    changecolorgroup(contorno2,0xff8c00)
+    changecolorgroup(braco,0x000000)
+    
+    var espada= new THREE.Group();
+    espada.add(diagonalprincipal)
+    espada.add(diagonalacima)
+    espada.add(diagonalabaixo)
+    espada.add(contorno)
+    espada.add(contorno2)
+    espada.add(braco)
+    
+    espada.position.x=10*medida
+    
+    espada.rotation.z=45*Math.PI/180
+	
+    espada.scale.set(0.6,0.6,0.6)
+    espada.rotateX(Math.PI/20);
+    espada.name = "sword";
+    return espada;
+}
+
+// Posicionar a espada e rotacionar junto com o movimento do antebraço
+function animateSword(character, sword, forearmUp) {
+	var superiorRight = character.getObjectByName("superiorRight");
+	var forearm = superiorRight.getObjectByName("forearm");
+
+	var forearmPosition = new THREE.Vector3(0, 0, 0);
+   forearmPosition.add(forearm.position).add(superiorRight.position).add(character.position);
+
+	var x = forearmPosition.x;
+	var y = forearmPosition.y - forearm.geometry.parameters.height / 2;
+	var z = forearmPosition.z + (forearm.geometry.parameters.depth + sword.children[0].children[0].geometry.parameters.depth) / 2;
+
+    sword.position.set(x, y, z);
+    
+   if(forearmUp) sword.rotateX(Math.PI/600);
+   else sword.rotateX(-Math.PI/600);
+}
+
+module.exports = {
+   animateSword,
+   createSword
+}
+},{}],13:[function(require,module,exports){
+const {createSword} = require("./sword");
+const {createAxe} = require("./axe");
+const {createAxe2} = require("./axe2");
+const {createArrow} = require("./arrow");
+const {createBow} = require("./bow");
+const {createShield} = require("./shield");
+
+
+function randomWeapon(scene)
+{
+   const maximum = 5;
+   const minimum = 0;
+	numeroaleatorio=randomnumber = Math.floor(Math.random() * (maximum - minimum + 1)) + minimum;	
+	weapon=createWeapon(numeroaleatorio)
+   return weapon;
+
+}
+
+function createWeapon(indice) {
+	weapons=[createSword(),createAxe(),createAxe2(),createArrow(),createBow(),createShield()];
+	weapon=weapons[indice];
+	weapon.name = "weapon";
+	return weapon
+	
+}
+
+module.exports = {
+   createWeapon,
+   randomWeapon
+}
+},{"./arrow":7,"./axe":8,"./axe2":9,"./bow":10,"./shield":11,"./sword":12}],14:[function(require,module,exports){
 const Character = require('./assets/character/Character.js');
+const weapon = require('./assets/equipments/weapons/weapons');
 let camera,scene,renderer,controls;
 let sceneSubjects = {};
 let count = 0;
@@ -630,6 +1362,7 @@ const setupCharacter = () => {
    shoeColor =  "#999999";
    character =  new Character({gender, skinColor, hairColor, eyeColor, mouthColor, bodyColor, legColor, shoeColor});
    character.equipSimpleArmour();
+   character.equipWeapon(weapon.randomWeapon());
    console.log(character);
    return character.entity;
 }
@@ -684,11 +1417,9 @@ const animate = () => {
    camera.position.z = cameraZ;
 
    controls.autoRotate=false;
-   
-   // Equipar a arma presente
-   Object.values(sceneSubjects).map( subject => {
-      character.forearmUp = equip(character, subject);
-   });
+
+   if(character.isEquipped.weapon == true)
+      character.animateWeapon();
 
    controls.update();
 
@@ -709,4 +1440,4 @@ function init() {
 }
 
 init();
-},{"./assets/character/Character.js":1}]},{},[7]);
+},{"./assets/character/Character.js":1,"./assets/equipments/weapons/weapons":13}]},{},[14]);

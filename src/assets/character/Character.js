@@ -2,7 +2,13 @@ const createHead = require('./createHead');
 const createInferior = require('./createInferior');
 const createMiddle = require('./createMiddle');
 const createSuperior = require('./createSuperior');
-const createSimpleArmour = require('../equipments/armour/createSimpleArmour');
+const createSimpleArmor = require('../equipments/armour/createSimpleArmour');
+const {animateSword} = require("../equipments/weapons/sword");
+const {animateAxe} = require("../equipments/weapons/axe");
+const {animateAxe2} = require("../equipments/weapons/axe2");
+const {animateArrow} = require("../equipments/weapons/arrow");
+const {animateBow} = require("../equipments/weapons/bow");
+const {animateShield} = require("../equipments/weapons/shield");
 
 class Character {
    
@@ -18,6 +24,7 @@ class Character {
          shoeColor
       }
       this.entity = new THREE.Group();    
+      this.weapon = null;
 
       // Criação dos membros inferiores
 
@@ -66,11 +73,12 @@ class Character {
       this.entity.add(this.head);
 
       this.forearmUp = false;
-      this.armourEquiped = {
+      this.isEquipped = {
          inferior: false,
          superior: false,
          middle: false,
-         helmet: false
+         helmet: false,
+         weapon:false
       }
    }
 
@@ -92,7 +100,11 @@ class Character {
       return this.forearmUp;
    }
 
-   equipArmour(armour){
+   equipWeapon(weapon){
+
+   }
+
+   equipArmor(armour){
       //Removendo as partes atuais
       this.entity.remove(this.middle);
       this.middle = null;
@@ -112,7 +124,7 @@ class Character {
       this.superior.getObjectByName("superiorRight").add(armour.getObjectByName("sleeveRight"));
       
       this.entity.add(armour);
-      this.armourEquiped = {
+      this.isEquipped = {
          inferior: true,
          superior: true,
          middle: true,
@@ -121,8 +133,8 @@ class Character {
    
    }
 
-   unequipArmour(){
-      if(this.armourEquiped.inferior){
+   unequipArmor(){
+      if(this.isEquipped.inferior){
          this.entity.remove(this.inferior);
          const inferiorLeft = createInferior(this.attributes.legColor, this.attributes.shoeColor);
          inferiorLeft.position.set(1.75, 4, 0);
@@ -137,7 +149,7 @@ class Character {
          this.inferior.add(inferiorRight);
          this.inferior.name = "inferior";
          this.entity.add(this.inferior);
-         this.armourEquiped.inferior = false;
+         this.isEquipped.inferior = false;
       }
 
       if(this.armourEquipped.superior){
@@ -153,9 +165,9 @@ class Character {
          this.superior = new THREE.Group();
          this.superior.add(superiorLeft);
          this.superior.add(superiorRight);
-         this.superior.name = "superior";
+         his.superior.name = "superior";
          this.entity.add(this.superior);
-         this.armourEquiped.superior = false;
+         this.isEquipped.superior = false;
 
       }
       
@@ -170,12 +182,12 @@ class Character {
          this.middle.position.set(0, 12, 0);
          this.middle.name = "middle";
          this.entity.add(this.middle);
-         this.armourEquiped.middle = false;
+         this.isEquipped.middle = false;
       }
 
-      if(this.armourEquiped.helmet){
+      if(this.isEquipped.helmet){
          this.entity.remove(this.entity.getObjectByName(helmet));
-         this.armourEquiped.helmet = false;
+         this.isEquipped.helmet = false;
       }
 
    }
@@ -183,8 +195,31 @@ class Character {
    equipSimpleArmour(){
       const armourColor = "#808080";
       const otherColor = "#4f4f4f";
-      const armour = createSimpleArmour(this.attributes.gender, this.attributes.hairColor, armourColor,otherColor);
-      this.equipArmour(armour);
+      const armour = createSimpleArmor(this.attributes.gender, this.attributes.hairColor, armourColor,otherColor);
+      this.equipArmor(armour);
+   }
+
+   equipWeapon(weapon){
+      this.weapon = weapon;
+      this.entity.add(weapon);
+      this.isEquipped.weapon = true;
+   }
+
+   unequipWeapon(){
+      this.weapon = null;
+      this.entity.remove(this.weapon);
+      this.isEquipped.weapon = false;
+   }
+
+   animateWeapon(){
+      this.forearmUp = this.moveForearm();
+      if(this.weapon.name == "arrow") animateArrow(this.entity, this.weapon);
+      else if(this.weapon.name == "axe") animateAxe(this.entity, this.weapon, this.forearmUp);
+      else if(this.weapon.name == "axe2") animateAxe2(this.entity, this.weapon, this.forearmUp);
+      else if(this.weapon.name == "bow") animateBow(this.entity, this.weapon);
+      else if(this.weapon.name == "shield") animateShield(this.entity, this.weapon);
+      else if(this.weapon.name == "sword") animateSword(this.entity, this.weapon, this.forearmUp);
+
    }
    
 }

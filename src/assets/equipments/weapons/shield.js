@@ -22,7 +22,7 @@ function createShield()
 }
 
 // Posicionar o escudo no centro do antebraço direito do personagem
-function equipShield(character, shield) {
+function animateShield(character, shield) {
 	var superiorRight = character.getObjectByName("superiorRight");
 	var forearm = superiorRight.getObjectByName("forearm");
 
@@ -34,4 +34,9 @@ function equipShield(character, shield) {
 	var z = forearmPosition.z + (forearm.geometry.parameters.depth + shield.children[0].geometry.parameters.depth) / 2;
 
 	shield.position.set(x, y, z);
+}
+
+module.exports = {
+   animateShield,
+   createShield
 }

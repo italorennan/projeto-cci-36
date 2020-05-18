@@ -1,4 +1,5 @@
 const Character = require('./assets/character/Character.js');
+const weapon = require('./assets/equipments/weapons/weapons');
 let camera,scene,renderer,controls;
 let sceneSubjects = {};
 let count = 0;
@@ -34,6 +35,7 @@ const setupCharacter = () => {
    shoeColor =  "#999999";
    character =  new Character({gender, skinColor, hairColor, eyeColor, mouthColor, bodyColor, legColor, shoeColor});
    character.equipSimpleArmour();
+   character.equipWeapon(weapon.randomWeapon());
    console.log(character);
    return character.entity;
 }
@@ -88,11 +90,9 @@ const animate = () => {
    camera.position.z = cameraZ;
 
    controls.autoRotate=false;
-   
-   // Equipar a arma presente
-   Object.values(sceneSubjects).map( subject => {
-      character.forearmUp = equip(character, subject);
-   });
+
+   if(character.isEquipped.weapon == true)
+      character.animateWeapon();
 
    controls.update();
 
