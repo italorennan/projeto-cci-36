@@ -121,19 +121,24 @@ class Character {
       this.superior.getObjectByName("superiorLeft").add(armour.getObjectByName("sleeveLeft"));
       this.superior.getObjectByName("superiorRight").add(armour.getObjectByName("sleeveRight"));
       
-      this.entity.add(armour);
+      this.entity.add(armour.getObjectByName("helmet"));
+      this.entity.add(armour.getObjectByName("inferior"));
+      this.entity.add(armour.getObjectByName("middle"));
       this.isEquipped = {
+         ...this.isEquipped,
          inferior: true,
          superior: true,
          middle: true,
-         helmet: true
+         helmet: true,
       }
    
    }
 
-   unequipArmor(){
+   unequipArmour(){
       if(this.isEquipped.inferior){
+         console.log("oi");
          this.entity.remove(this.inferior);
+         this.entity.parent.remove(this.inferior);
          const inferiorLeft = createInferior(this.attributes.legColor, this.attributes.shoeColor);
          inferiorLeft.position.set(1.75, 4, 0);
          inferiorLeft.name = "inferiorLeft";
@@ -150,7 +155,7 @@ class Character {
          this.isEquipped.inferior = false;
       }
 
-      if(this.armourEquipped.superior){
+      if(this.isEquipped.superior){
          this.entity.remove(this.superior);
          const superiorLeft = createSuperior(this.attributes.skinColor, this.attributes.bodyColor);
          superiorLeft.position.set(4.25, 12, 0);
@@ -163,14 +168,14 @@ class Character {
          this.superior = new THREE.Group();
          this.superior.add(superiorLeft);
          this.superior.add(superiorRight);
-         his.superior.name = "superior";
+         this.superior.name = "superior";
          this.entity.add(this.superior);
          this.isEquipped.superior = false;
 
       }
       
-      if(this.armourEquipped.middle){
-         this.entity.remove(this.inferior)
+      if(this.isEquipped.middle){
+         this.entity.remove(this.middle)
          this.middle = createMiddle(
             this.attributes.gender, 
             this.attributes.bodyColor, 
@@ -184,7 +189,9 @@ class Character {
       }
 
       if(this.isEquipped.helmet){
-         this.entity.remove(this.entity.getObjectByName(helmet));
+         console.log(this.entity.getObjectByName("helmet"));
+         this.entity.remove(this.entity.getObjectByName("helmet"));
+         console.log(this.entity.getObjectByName("helmet"))
          this.isEquipped.helmet = false;
       }
 
@@ -198,21 +205,33 @@ class Character {
    }
 
    equipWeaponRight(weapon){
+      if(this.isEquipped.weaponRight){
+         this.unequipWeaponRight();
+         this.forearmUp = true;
+         this.superior.getObjectByName("superiorRight").getObjectByName("forearm").position.set(0,-1.5,0);
+         console.log(this.superior.getObjectByName("forearm").position);
+      }
       this.weaponRight = weapon;
       this.isEquipped.weaponRight = true;
+      this.entity.parent.add(weapon);
    }
 
    unequipWeaponRight(){
+      this.entity.parent.remove(this.weaponRight);
       this.weaponRight = null;
       this.isEquipped.weaponRight = false;
    }
 
    equipWeaponLeft(weapon){
+      if(this.isEquipped.weaponLeft)
+         this.unequipWeaponLeft();
       this.weaponLeft = weapon;
       this.isEquipped.weaponLeft = true;
+      this.entity.parent.add(weapon);
    }
 
    unequipWeaponLeft(){
+      this.entity.parent.remove(this.weaponLeft);
       this.weaponLeft = null;
       this.isEquipped.weaponLeft = false;
    }
@@ -1417,8 +1436,56 @@ module.exports = {
    changecolorgroup
 }
 },{}],16:[function(require,module,exports){
+const {createWeapon} = require('./assets/equipments/weapons/weapons');
+
+const handleClick = (event,character) => {
+   console.log(character);
+   event.preventDefault();
+   switch(event.target.className){
+      case "axe-button":
+         character.equipWeaponRight(createWeapon("axe"));
+         break;
+      case "sword-button":
+         character.equipWeaponRight(createWeapon("sword"));
+         break;
+      case "axe2-button":
+         character.equipWeaponRight(createWeapon("axe2"));
+         break;
+      case "bow-button":
+         character.equipWeaponRight(createWeapon("bow"));
+         break;
+      case "arrow-button":
+         character.equipWeaponLeft(createWeapon("arrow"));
+         break;
+      case "shield-button":
+         character.equipWeaponLeft(createWeapon("shield"));
+         break;
+      case "armor-equip-button":
+         character.equipSimpleArmour();
+         break;
+      case "armor-unequip-button":
+         character.unequipArmour();
+         break;
+      case "weapon-unequip-button":
+         character.unequipWeaponRight();
+         character.unequipWeaponLeft();
+         break;
+   }
+}
+
+const handleResize = () => {
+   camera.aspect = window.innerWidth/window.innerHeight;
+   renderer.setSize(window.innerWidth,window.innerHeight);
+   camera.updateProjectionMatrix();
+}
+
+module.exports = {
+   handleClick,
+   handleResize
+}
+},{"./assets/equipments/weapons/weapons":13}],17:[function(require,module,exports){
 const Character = require('./assets/character/Character.js');
-const weapon = require('./assets/equipments/weapons/weapons');
+const eventHandler = require('./eventHandler');
 let camera,scene,renderer,controls;
 let sceneSubjects = {};
 let count = 0;
@@ -1472,13 +1539,10 @@ const setupScene = sceneSubjects => {
 }
 
 const setupListeners = () => {
-   window.addEventListener('resize', () => { 
-      camera.aspect = window.innerWidth/window.innerHeight;
-      renderer.setSize(window.innerWidth,window.innerHeight);
-      camera.updateProjectionMatrix();
-   })
-   //document.querySelector( '#ChangeWeapon').addEventListener('click', ChangeWeapon, false )
-
+   window.addEventListener('resize', eventHandler.handleResize); 
+   document.body.addEventListener('click', event => {
+      eventHandler.handleClick(event,character);
+   });
 }
 
 //const button = document.querySelector( '#ChangeWeapon' );
@@ -1496,10 +1560,12 @@ const animate = () => {
 
    controls.autoRotate=false;
 
-   if(character.isEquipped.weaponRight == true)
+   if(character.isEquipped.weaponRight == true){
       character.animateWeaponRight();
-   if(character.isEquipped.weaponLeft == true)
+   }
+   if(character.isEquipped.weaponLeft == true){
       character.animateWeaponLeft();
+   }
 
    controls.update();
 
@@ -1520,4 +1586,4 @@ function init() {
 }
 
 init();
-},{"./assets/character/Character.js":1,"./assets/equipments/weapons/weapons":13}]},{},[16]);
+},{"./assets/character/Character.js":1,"./eventHandler":16}]},{},[17]);

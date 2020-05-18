@@ -120,19 +120,24 @@ class Character {
       this.superior.getObjectByName("superiorLeft").add(armour.getObjectByName("sleeveLeft"));
       this.superior.getObjectByName("superiorRight").add(armour.getObjectByName("sleeveRight"));
       
-      this.entity.add(armour);
+      this.entity.add(armour.getObjectByName("helmet"));
+      this.entity.add(armour.getObjectByName("inferior"));
+      this.entity.add(armour.getObjectByName("middle"));
       this.isEquipped = {
+         ...this.isEquipped,
          inferior: true,
          superior: true,
          middle: true,
-         helmet: true
+         helmet: true,
       }
    
    }
 
-   unequipArmor(){
+   unequipArmour(){
       if(this.isEquipped.inferior){
+         console.log("oi");
          this.entity.remove(this.inferior);
+         this.entity.parent.remove(this.inferior);
          const inferiorLeft = createInferior(this.attributes.legColor, this.attributes.shoeColor);
          inferiorLeft.position.set(1.75, 4, 0);
          inferiorLeft.name = "inferiorLeft";
@@ -149,7 +154,7 @@ class Character {
          this.isEquipped.inferior = false;
       }
 
-      if(this.armourEquipped.superior){
+      if(this.isEquipped.superior){
          this.entity.remove(this.superior);
          const superiorLeft = createSuperior(this.attributes.skinColor, this.attributes.bodyColor);
          superiorLeft.position.set(4.25, 12, 0);
@@ -162,14 +167,14 @@ class Character {
          this.superior = new THREE.Group();
          this.superior.add(superiorLeft);
          this.superior.add(superiorRight);
-         his.superior.name = "superior";
+         this.superior.name = "superior";
          this.entity.add(this.superior);
          this.isEquipped.superior = false;
 
       }
       
-      if(this.armourEquipped.middle){
-         this.entity.remove(this.inferior)
+      if(this.isEquipped.middle){
+         this.entity.remove(this.middle)
          this.middle = createMiddle(
             this.attributes.gender, 
             this.attributes.bodyColor, 
@@ -183,7 +188,9 @@ class Character {
       }
 
       if(this.isEquipped.helmet){
-         this.entity.remove(this.entity.getObjectByName(helmet));
+         console.log(this.entity.getObjectByName("helmet"));
+         this.entity.remove(this.entity.getObjectByName("helmet"));
+         console.log(this.entity.getObjectByName("helmet"))
          this.isEquipped.helmet = false;
       }
 
@@ -197,21 +204,33 @@ class Character {
    }
 
    equipWeaponRight(weapon){
+      if(this.isEquipped.weaponRight){
+         this.unequipWeaponRight();
+         this.forearmUp = true;
+         this.superior.getObjectByName("superiorRight").getObjectByName("forearm").position.set(0,-1.5,0);
+         console.log(this.superior.getObjectByName("forearm").position);
+      }
       this.weaponRight = weapon;
       this.isEquipped.weaponRight = true;
+      this.entity.parent.add(weapon);
    }
 
    unequipWeaponRight(){
+      this.entity.parent.remove(this.weaponRight);
       this.weaponRight = null;
       this.isEquipped.weaponRight = false;
    }
 
    equipWeaponLeft(weapon){
+      if(this.isEquipped.weaponLeft)
+         this.unequipWeaponLeft();
       this.weaponLeft = weapon;
       this.isEquipped.weaponLeft = true;
+      this.entity.parent.add(weapon);
    }
 
    unequipWeaponLeft(){
+      this.entity.parent.remove(this.weaponLeft);
       this.weaponLeft = null;
       this.isEquipped.weaponLeft = false;
    }

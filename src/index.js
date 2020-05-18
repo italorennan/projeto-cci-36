@@ -1,5 +1,5 @@
 const Character = require('./assets/character/Character.js');
-const weapon = require('./assets/equipments/weapons/weapons');
+const eventHandler = require('./eventHandler');
 let camera,scene,renderer,controls;
 let sceneSubjects = {};
 let count = 0;
@@ -53,13 +53,10 @@ const setupScene = sceneSubjects => {
 }
 
 const setupListeners = () => {
-   window.addEventListener('resize', () => { 
-      camera.aspect = window.innerWidth/window.innerHeight;
-      renderer.setSize(window.innerWidth,window.innerHeight);
-      camera.updateProjectionMatrix();
-   })
-   //document.querySelector( '#ChangeWeapon').addEventListener('click', ChangeWeapon, false )
-
+   window.addEventListener('resize', eventHandler.handleResize); 
+   document.body.addEventListener('click', event => {
+      eventHandler.handleClick(event,character);
+   });
 }
 
 //const button = document.querySelector( '#ChangeWeapon' );
@@ -77,10 +74,12 @@ const animate = () => {
 
    controls.autoRotate=false;
 
-   if(character.isEquipped.weaponRight == true)
+   if(character.isEquipped.weaponRight == true){
       character.animateWeaponRight();
-   if(character.isEquipped.weaponLeft == true)
+   }
+   if(character.isEquipped.weaponLeft == true){
       character.animateWeaponLeft();
+   }
 
    controls.update();
 
