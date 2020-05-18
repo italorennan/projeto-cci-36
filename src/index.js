@@ -4,7 +4,7 @@ let count = 0;
 
 const setupCamera = () => {
    camera = new THREE.PerspectiveCamera(75, window.innerWidth/window.innerHeight, 0.1, 1000);
-   camera.position.set(20,40,20);
+   camera.position.set(0,0,30);
    camera.lookAt(new THREE.Vector3(0,0,0));
 }
 
@@ -40,8 +40,9 @@ const setupSubjects = () => {
    //sceneSubjects.arrow = createArrow();
 	//sceneSubjects.bow = createBow();
    //sceneSubjects.shiled = createShield();
-   //sceneSubjects.character = setupCharacter();
-   sceneSubjects.sword=createWeapon(0)
+   sceneSubjects.character = setupCharacter();
+
+   sceneSubjects.weapon=createWeapon(5)
 //   createWeapon(0,scene)
 }
 
@@ -78,10 +79,10 @@ const animate = () => {
    var cameraZ = 30 * Math.sin(0.1 * count);
    // camera.position.set(cameraX, 25, cameraZ);
    camera.lookAt(0,0,0);
-   camera.position.x = cameraX;
-   camera.position.z = cameraZ;
+   //camera.position.x = cameraX;
+  // camera.position.z = cameraZ;
 
-   controls.autoRotate=true;
+   controls.autoRotate=false;
 	
 
    controls.update();

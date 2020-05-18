@@ -16,6 +16,8 @@ function createShield()
 			escudo.children[8].material.color.setHex(0x00ff00);			
 			escudo.children[10].material.color.setHex(0x00ff00);
 
+			escudo.position.x=5
+			escudo.scale.set(5,5,5)
 			return escudo
 }
 

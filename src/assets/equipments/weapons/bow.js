@@ -100,6 +100,10 @@ function createBow()
 			arco.add(contornoexternodireito)
 			arco.add(diagonalprincipal)
 			arco.add(miolo)
+			
+			arco.scale.set(5,5,5)
+			
+			arco.position.x=5
 			return arco
 	
 	

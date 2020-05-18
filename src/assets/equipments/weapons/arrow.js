@@ -34,6 +34,9 @@ function createArrow()
 			flecha.add(asa)
 			flecha.add(tronco)
 			flecha.add(pena)
+			
+			flecha.scale.set(5,5,5)
+			flecha.position.x=5
 			return flecha
 	
 	
