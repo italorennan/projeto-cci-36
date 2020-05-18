@@ -217,7 +217,6 @@ class Character {
    }
 
    animateWeaponRight(){
-      console.log("Oi")
       this.forearmUp = this.moveForearm();
       if(this.weaponRight.name == "arrow") animateArrow(this.entity, this.weaponRight);
       else if(this.weaponRight.name == "axe") animateAxe(this.entity, this.weaponRight, this.forearmUp);

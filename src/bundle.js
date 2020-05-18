@@ -218,7 +218,6 @@ class Character {
    }
 
    animateWeaponRight(){
-      console.log("Oi")
       this.forearmUp = this.moveForearm();
       if(this.weaponRight.name == "arrow") animateArrow(this.entity, this.weaponRight);
       else if(this.weaponRight.name == "axe") animateAxe(this.entity, this.weaponRight, this.forearmUp);
@@ -1455,7 +1454,6 @@ const setupCharacter = () => {
       shoeColor:  "#999999"
    }
    character =  new Character(attributes);
-   character.equipSimpleArmour();
    return character.entity;
 }
 
@@ -1463,11 +1461,6 @@ const setupSubjects = () => {
    sceneSubjects.axesHelper = new THREE.AxesHelper(10);
    sceneSubjects.character = setupCharacter();
 
-   sceneSubjects.weapon = weapon.randomWeapon();
-   if(sceneSubjects.weapon.name == "arrow" || sceneSubjects.weapon.name == "shield")
-      character.equipWeaponLeft(sceneSubjects.weapon);
-   else
-      character.equipWeaponRight(sceneSubjects.weapon);
 }
 
 const setupScene = sceneSubjects => {
