@@ -89,6 +89,7 @@ class Character {
   
          if(forearm.position.z < arm.position.z) this.forearmUp = true;
       }
+      return this.forearmUp;
    }
 
    equipArmour(armour){
@@ -99,7 +100,7 @@ class Character {
       this.entity.remove(this.inferior);
       this.inferior = null;
 
-      const sleeveleft = this.superior.getObjectByName("superiorLeft").getObjectByName("sleeve");
+      const sleeveLeft = this.superior.getObjectByName("superiorLeft").getObjectByName("sleeve");
       this.entity.remove(sleeveLeft);
       
       const sleeveRight = this.superior.getObjectByName("superiorRight").getObjectByName("sleeve");
@@ -120,8 +121,69 @@ class Character {
    
    }
 
+   unequipArmour(){
+      if(this.armourEquiped.inferior){
+         this.entity.remove(this.inferior);
+         const inferiorLeft = createInferior(this.attributes.legColor, this.attributes.shoeColor);
+         inferiorLeft.position.set(1.75, 4, 0);
+         inferiorLeft.name = "inferiorLeft";
+
+         const inferiorRight = createInferior(this.attributes.legColor, this.attributes.shoeColor);
+         inferiorRight.position.set(-1.75, 4, 0);
+         inferiorRight.name = "inferiorRight";
+
+         this.inferior = new THREE.Group();
+         this.inferior.add(inferiorLeft);
+         this.inferior.add(inferiorRight);
+         this.inferior.name = "inferior";
+         this.entity.add(this.inferior);
+         this.armourEquiped.inferior = false;
+      }
+
+      if(this.armourEquipped.superior){
+         this.entity.remove(this.superior);
+         const superiorLeft = createSuperior(this.attributes.skinColor, this.attributes.bodyColor);
+         superiorLeft.position.set(4.25, 12, 0);
+         superiorLeft.name = "superiorLeft";
+
+         const superiorRight = createSuperior(this.attributes.skinColor, this.attributes.bodyColor);
+         superiorRight.position.set(-4.25, 12, 0);
+         superiorRight.name = "superiorRight";
+
+         this.superior = new THREE.Group();
+         this.superior.add(superiorLeft);
+         this.superior.add(superiorRight);
+         this.superior.name = "superior";
+         this.entity.add(this.superior);
+         this.armourEquiped.superior = false;
+
+      }
+      
+      if(this.armourEquipped.middle){
+         this.entity.remove(this.inferior)
+         this.middle = createMiddle(
+            this.attributes.gender, 
+            this.attributes.bodyColor, 
+            this.attributes.legColor, 
+            this.attributes.hairColor
+         );
+         this.middle.position.set(0, 12, 0);
+         this.middle.name = "middle";
+         this.entity.add(this.middle);
+         this.armourEquiped.middle = false;
+      }
+
+      if(this.armourEquiped.helmet){
+         this.entity.remove(this.entity.getObjectByName(helmet));
+         this.armourEquiped.helmet = false;
+      }
+
+   }
+
    equipSimpleArmour(){
-      const armour = createSimpleArmour(this.entity, this.attributes.gender, this.attributes.hairColor);
+      const armourColor = "#808080";
+      const otherColor = "#4f4f4f";
+      const armour = createSimpleArmour(this.attributes.gender, this.attributes.hairColor, armourColor,otherColor);
       this.equipArmour(armour);
    }
    

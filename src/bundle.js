@@ -90,6 +90,7 @@ class Character {
   
          if(forearm.position.z < arm.position.z) this.forearmUp = true;
       }
+      return this.forearmUp;
    }
 
    equipArmour(armour){
@@ -100,7 +101,7 @@ class Character {
       this.entity.remove(this.inferior);
       this.inferior = null;
 
-      const sleeveleft = this.superior.getObjectByName("superiorLeft").getObjectByName("sleeve");
+      const sleeveLeft = this.superior.getObjectByName("superiorLeft").getObjectByName("sleeve");
       this.entity.remove(sleeveLeft);
       
       const sleeveRight = this.superior.getObjectByName("superiorRight").getObjectByName("sleeve");
@@ -121,8 +122,69 @@ class Character {
    
    }
 
+   unequipArmour(){
+      if(this.armourEquiped.inferior){
+         this.entity.remove(this.inferior);
+         const inferiorLeft = createInferior(this.attributes.legColor, this.attributes.shoeColor);
+         inferiorLeft.position.set(1.75, 4, 0);
+         inferiorLeft.name = "inferiorLeft";
+
+         const inferiorRight = createInferior(this.attributes.legColor, this.attributes.shoeColor);
+         inferiorRight.position.set(-1.75, 4, 0);
+         inferiorRight.name = "inferiorRight";
+
+         this.inferior = new THREE.Group();
+         this.inferior.add(inferiorLeft);
+         this.inferior.add(inferiorRight);
+         this.inferior.name = "inferior";
+         this.entity.add(this.inferior);
+         this.armourEquiped.inferior = false;
+      }
+
+      if(this.armourEquipped.superior){
+         this.entity.remove(this.superior);
+         const superiorLeft = createSuperior(this.attributes.skinColor, this.attributes.bodyColor);
+         superiorLeft.position.set(4.25, 12, 0);
+         superiorLeft.name = "superiorLeft";
+
+         const superiorRight = createSuperior(this.attributes.skinColor, this.attributes.bodyColor);
+         superiorRight.position.set(-4.25, 12, 0);
+         superiorRight.name = "superiorRight";
+
+         this.superior = new THREE.Group();
+         this.superior.add(superiorLeft);
+         this.superior.add(superiorRight);
+         this.superior.name = "superior";
+         this.entity.add(this.superior);
+         this.armourEquiped.superior = false;
+
+      }
+      
+      if(this.armourEquipped.middle){
+         this.entity.remove(this.inferior)
+         this.middle = createMiddle(
+            this.attributes.gender, 
+            this.attributes.bodyColor, 
+            this.attributes.legColor, 
+            this.attributes.hairColor
+         );
+         this.middle.position.set(0, 12, 0);
+         this.middle.name = "middle";
+         this.entity.add(this.middle);
+         this.armourEquiped.middle = false;
+      }
+
+      if(this.armourEquiped.helmet){
+         this.entity.remove(this.entity.getObjectByName(helmet));
+         this.armourEquiped.helmet = false;
+      }
+
+   }
+
    equipSimpleArmour(){
-      const armour = createSimpleArmour(this.entity, this.attributes.gender, this.attributes.hairColor);
+      const armourColor = "#808080";
+      const otherColor = "#4f4f4f";
+      const armour = createSimpleArmour(this.attributes.gender, this.attributes.hairColor, armourColor,otherColor);
       this.equipArmour(armour);
    }
    
@@ -402,7 +464,7 @@ function createMiddle(gender, bodyColor, waistColor, hairColor) {
     waist.position.set(0, -3, 0);
     middle.add(waist);
 
-    var body = createBody(gender, bodyColor, hairColor);
+    const body = createBody(gender, bodyColor, hairColor);
     body.position.set(0, 1, 0);
     middle.add(body);
 
@@ -492,9 +554,10 @@ function createSimpleHelmet(otherColor) {
 function createSimpleArmour(gender, hairColor, armourColor, otherColor) {
     var armour = new THREE.Group();
 
-    var middleArmour = createMiddle(gender, armourColor, otherColor, hairColor);
-    middleArmour.position.set(0,12,0);
-    middleArmour.name = "middle";
+   var middleArmour = createMiddle(gender, armourColor, otherColor, hairColor);
+   middleArmour.position.set(0,12,0);
+   middleArmour.name = "middle";
+   armour.add(middleArmour);
 
     var inferiorLeftArmour = createInferior(armourColor, armourColor);
     inferiorLeftArmour.position.set(1.75, 4, 0);
@@ -511,12 +574,12 @@ function createSimpleArmour(gender, hairColor, armourColor, otherColor) {
     armour.add(inferiorArmour);
 
     var sleeveLeft = createBox(2, 2, 3, otherColor);
-    sleeveLeft.position.set(4.25, 15, 0);
+    sleeveLeft.position.set(0, 3, 0);
     sleeveLeft.name = "sleeveLeft";
     armour.add(sleeveLeft);
 
     var sleeveRight = createBox(2, 2, 3, otherColor);
-    sleeveRight.position.set(-4.25, 15, 0);
+    sleeveRight.position.set(0, 3, 0);
     sleeveRight.name = "sleeveRight";
     armour.add(sleeveRight);
 
@@ -536,7 +599,7 @@ let camera,scene,renderer,controls;
 let sceneSubjects = {};
 let count = 0;
 let forearmUp = true;
-
+let character;
 
 
 const setupCamera = () => {
@@ -558,17 +621,16 @@ const setupControls = () => {
 
 const setupCharacter = () => {
    gender = "F";
-   skincolor = "#ffe4c4";
-   haircolor = "#b8860b";
-   eyecolor = "#006400";
-   mouthcolor = "#f08080";
-   bodycolor = "#00ccdd";
-   legcolor = "#0000ff";
-   shoecolor =  "#999999";
-   const character =  new Character({gender, skincolor, haircolor, eyecolor, mouthcolor, bodycolor, legcolor, shoecolor});
-
+   skinColor = "#ffe4c4";
+   hairColor = "#b8860b";
+   eyeColor = "#006400";
+   mouthColor = "#f08080";
+   bodyColor = "#00ccdd";
+   legColor = "#0000ff";
+   shoeColor =  "#999999";
+   character =  new Character({gender, skinColor, hairColor, eyeColor, mouthColor, bodyColor, legColor, shoeColor});
    character.equipSimpleArmour();
-
+   console.log(character);
    return character.entity;
 }
 
@@ -595,7 +657,7 @@ const setupScene = sceneSubjects => {
 }
 
 const setupListeners = () => {
-   window.addEventListener('resize', () => {
+   window.addEventListener('resize', () => { 
       camera.aspect = window.innerWidth/window.innerHeight;
       renderer.setSize(window.innerWidth,window.innerHeight);
       camera.updateProjectionMatrix();
@@ -605,7 +667,7 @@ const setupListeners = () => {
 }
 
 function ChangeWeapon() {
-RandomWeapon(scene)
+   RandomWeapon(scene)
 }
 
 //const button = document.querySelector( '#ChangeWeapon' );
@@ -625,7 +687,7 @@ const animate = () => {
    
    // Equipar a arma presente
    Object.values(sceneSubjects).map( subject => {
-      forearmUp = equip(sceneSubjects.character, subject, forearmUp);
+      //forearmUp = equip(character);
    });
 
    controls.update();

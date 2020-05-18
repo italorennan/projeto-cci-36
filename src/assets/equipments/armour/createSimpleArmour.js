@@ -37,9 +37,10 @@ function createSimpleHelmet(otherColor) {
 function createSimpleArmour(gender, hairColor, armourColor, otherColor) {
     var armour = new THREE.Group();
 
-    var middleArmour = createMiddle(gender, armourColor, otherColor, hairColor);
-    middleArmour.position.set(0,12,0);
-    middleArmour.name = "middle";
+   var middleArmour = createMiddle(gender, armourColor, otherColor, hairColor);
+   middleArmour.position.set(0,12,0);
+   middleArmour.name = "middle";
+   armour.add(middleArmour);
 
     var inferiorLeftArmour = createInferior(armourColor, armourColor);
     inferiorLeftArmour.position.set(1.75, 4, 0);
@@ -56,12 +57,12 @@ function createSimpleArmour(gender, hairColor, armourColor, otherColor) {
     armour.add(inferiorArmour);
 
     var sleeveLeft = createBox(2, 2, 3, otherColor);
-    sleeveLeft.position.set(4.25, 15, 0);
+    sleeveLeft.position.set(0, 3, 0);
     sleeveLeft.name = "sleeveLeft";
     armour.add(sleeveLeft);
 
     var sleeveRight = createBox(2, 2, 3, otherColor);
-    sleeveRight.position.set(-4.25, 15, 0);
+    sleeveRight.position.set(0, 3, 0);
     sleeveRight.name = "sleeveRight";
     armour.add(sleeveRight);
 

@@ -19,7 +19,7 @@ function createWeapon(indice) {
 }
 
 function equip(character, subject, forearmUp) {
-	forearmUp = moveForearm(character, forearmUp);
+	forearmUp = character.moveForearm();
 
 	if(subject.name == "arrow") equipArrow(character, subject);
 	else if(subject.name == "axe") equipAxe(character, subject, forearmUp);
