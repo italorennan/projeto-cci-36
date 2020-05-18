@@ -75,8 +75,8 @@ class Character {
    }
 
    moveForearm(){
-      var forearm = this.superiorRight.getObjectByName("forearm");
-      var arm = this.superiorRight.getObjectByName("arm");
+      var forearm = this.superior.getObjectByName("superiorRight").getObjectByName("forearm");
+      var arm = this.superior.getObjectByName("superiorRight").getObjectByName("arm");
   
       if(this.forearmUp) {
          forearm.translateY(0.01);

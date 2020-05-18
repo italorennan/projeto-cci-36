@@ -18,15 +18,15 @@ function createWeapon(indice) {
 	
 }
 
-function equip(character, subject, forearmUp) {
-	forearmUp = character.moveForearm();
+function equip(character, subject) {
+	const forearmUp = character.moveForearm();
 
-	if(subject.name == "arrow") equipArrow(character, subject);
-	else if(subject.name == "axe") equipAxe(character, subject, forearmUp);
-	else if(subject.name == "axe2") equipAxe2(character, subject, forearmUp);
-	else if(subject.name == "bow") equipBow(character, subject);
-	else if(subject.name == "shield") equipShield(character, subject);
-	else if(subject.name == "sword") equipSword(character, subject, forearmUp);
+	if(subject.name == "arrow") equipArrow(character.entity, subject);
+	else if(subject.name == "axe") equipAxe(character.entity, subject, forearmUp);
+	else if(subject.name == "axe2") equipAxe2(character.entity, subject, forearmUp);
+	else if(subject.name == "bow") equipBow(character.entity, subject);
+	else if(subject.name == "shield") equipShield(character.entity, subject);
+	else if(subject.name == "sword") equipSword(character.entity, subject, forearmUp);
 
 	return forearmUp;
 }

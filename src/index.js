@@ -91,7 +91,7 @@ const animate = () => {
    
    // Equipar a arma presente
    Object.values(sceneSubjects).map( subject => {
-      //forearmUp = equip(character);
+      character.forearmUp = equip(character, subject);
    });
 
    controls.update();
