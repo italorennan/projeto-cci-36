@@ -1,4 +1,4 @@
-function createAxe_2() {
+function createAxe2() {
 
 	var diagonalprincipal= new THREE.Group();
 	//Diagonal Principal
@@ -134,7 +134,7 @@ function createAxe_2() {
 }
 
 // Posicionar o machado e rotacionar junto com o antebraço
-function equipAxe2(character, axe2, forearmUp) {
+function animateAxe2(character, axe2, forearmUp) {
 	var superiorRight = character.getObjectByName("superiorRight");
 	var forearm = superiorRight.getObjectByName("forearm");
 
@@ -150,3 +150,8 @@ function equipAxe2(character, axe2, forearmUp) {
     if(forearmUp) axe2.rotateY(-9*Math.PI/1600);
     else axe2.rotateY(9*Math.PI/1600);
 }	
+
+module.exports = {
+   animateAxe2,
+   createAxe2
+}

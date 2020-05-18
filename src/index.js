@@ -1,7 +1,11 @@
+const Character = require('./assets/character/Character.js');
+const weapon = require('./assets/equipments/weapons/weapons');
 let camera,scene,renderer,controls;
 let sceneSubjects = {};
 let count = 0;
 let forearmUp = true;
+let character;
+
 
 const setupCamera = () => {
    camera = new THREE.PerspectiveCamera(75, window.innerWidth/window.innerHeight, 0.1, 1000);
@@ -22,18 +26,17 @@ const setupControls = () => {
 
 const setupCharacter = () => {
    gender = "F";
-   skincolor = "#ffe4c4";
-   haircolor = "#b8860b";
-   eyecolor = "#006400";
-   mouthcolor = "#f08080";
-   bodycolor = "#00ccdd";
-   legcolor = "#0000ff";
-   shoecolor =  "#999999";
-   var character = createCharacter(gender, skincolor, haircolor, eyecolor, mouthcolor, bodycolor, legcolor, shoecolor);
-
-   equipSimpleArmour(character, gender, haircolor);
-
-   return character;
+   skinColor = "#ffe4c4";
+   hairColor = "#b8860b";
+   eyeColor = "#006400";
+   mouthColor = "#f08080";
+   bodyColor = "#00ccdd";
+   legColor = "#0000ff";
+   shoeColor =  "#999999";
+   character =  new Character({gender, skinColor, hairColor, eyeColor, mouthColor, bodyColor, legColor, shoeColor});
+   character.equipSimpleArmour();
+   console.log(character);
+   return character.entity;
 }
 
 const setupSubjects = () => {
@@ -41,6 +44,7 @@ const setupSubjects = () => {
    sceneSubjects.character = setupCharacter();
 
    sceneSubjects.sword = createSword();
+   character.equipWeaponRight(sceneSubjects.sword)
    //sceneSubjects.axe = createAxe();
    //sceneSubjects.axe2 = createAxe_2();
    //sceneSubjects.arrow = createArrow();
@@ -59,17 +63,13 @@ const setupScene = sceneSubjects => {
 }
 
 const setupListeners = () => {
-   window.addEventListener('resize', () => {
+   window.addEventListener('resize', () => { 
       camera.aspect = window.innerWidth/window.innerHeight;
       renderer.setSize(window.innerWidth,window.innerHeight);
       camera.updateProjectionMatrix();
    })
    //document.querySelector( '#ChangeWeapon').addEventListener('click', ChangeWeapon, false )
 
-}
-
-function ChangeWeapon() {
-RandomWeapon(scene)
 }
 
 //const button = document.querySelector( '#ChangeWeapon' );
@@ -86,11 +86,11 @@ const animate = () => {
    camera.position.z = cameraZ;
 
    controls.autoRotate=false;
-   
-   // Equipar a arma presente
-   Object.values(sceneSubjects).map( subject => {
-      forearmUp = equip(sceneSubjects.character, subject, forearmUp);
-   });
+
+   if(character.isEquipped.weaponRight == true)
+      character.animateWeaponRight();
+   if(character.isEquipped.weaponLeft == true)
+      character.animateWeaponLeft();
 
    controls.update();
 

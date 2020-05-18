@@ -181,3 +181,4 @@ function createHead(gender, skinColor, hairColor, eyeColor, mouthColor) {
 
     return head;
 }
+module.exports = createHead;

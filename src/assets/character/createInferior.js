@@ -28,3 +28,4 @@ function createInferior(legColor, shoeColor) {
 
     return inferior;
 }
+module.exports = createInferior;

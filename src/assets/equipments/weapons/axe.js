@@ -106,7 +106,7 @@ function createAxe() {
 }
 
 // Posicionar o machado e rotacionar junto com o antebraço
-function equipAxe(character, axe, forearmUp) {
+function animateAxe(character, axe, forearmUp) {
 	var superiorRight = character.getObjectByName("superiorRight");
 	var forearm = superiorRight.getObjectByName("forearm");
 
@@ -122,3 +122,8 @@ function equipAxe(character, axe, forearmUp) {
     if(forearmUp) axe.rotateY(-9*Math.PI/1600);
     else axe.rotateY(9*Math.PI/1600);
 }		
+
+module.exports = {
+   animateAxe,
+   createAxe
+}

@@ -54,9 +54,10 @@ function createMiddle(gender, bodyColor, waistColor, hairColor) {
     waist.position.set(0, -3, 0);
     middle.add(waist);
 
-    var body = createBody(gender, bodyColor, hairColor);
+    const body = createBody(gender, bodyColor, hairColor);
     body.position.set(0, 1, 0);
     middle.add(body);
 
     return middle;
 }
+module.exports = createMiddle;
