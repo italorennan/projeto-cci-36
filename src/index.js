@@ -3,7 +3,6 @@ const weapon = require('./assets/equipments/weapons/weapons');
 let camera,scene,renderer,controls;
 let sceneSubjects = {};
 let count = 0;
-let forearmUp = true;
 let character;
 
 
@@ -25,40 +24,37 @@ const setupControls = () => {
 }
 
 const setupCharacter = () => {
-   gender = "F";
-   skinColor = "#ffe4c4";
-   hairColor = "#b8860b";
-   eyeColor = "#006400";
-   mouthColor = "#f08080";
-   bodyColor = "#00ccdd";
-   legColor = "#0000ff";
-   shoeColor =  "#999999";
-   character =  new Character({gender, skinColor, hairColor, eyeColor, mouthColor, bodyColor, legColor, shoeColor});
+   const attributes = {
+      gender: "F",
+      skinColor: "#ffe4c4",
+      hairColor: "#b8860b",
+      eyeColor: "#006400",
+      mouthColor: "#f08080",
+      bodyColor: "#00ccdd",
+      legColor: "#0000ff",
+      shoeColor:  "#999999"
+   }
+   character =  new Character(attributes);
    character.equipSimpleArmour();
-   console.log(character);
    return character.entity;
 }
 
 const setupSubjects = () => {
-   sceneSubjects.axes = new THREE.AxesHelper(10);
+   sceneSubjects.axesHelper = new THREE.AxesHelper(10);
    sceneSubjects.character = setupCharacter();
 
-   sceneSubjects.sword = createSword();
-   character.equipWeaponRight(sceneSubjects.sword)
-   //sceneSubjects.axe = createAxe();
-   //sceneSubjects.axe2 = createAxe_2();
-   //sceneSubjects.arrow = createArrow();
-	//sceneSubjects.bow = createBow();
-   //sceneSubjects.shield = createShield();
-
-   //sceneSubjects.weapon=createWeapon(5)
-//   createWeapon(0,scene)
+   sceneSubjects.weapon = weapon.randomWeapon();
+   if(sceneSubjects.weapon.name == "arrow" || sceneSubjects.weapon.name == "shield")
+      character.equipWeaponLeft(sceneSubjects.weapon);
+   else
+      character.equipWeaponRight(sceneSubjects.weapon);
 }
 
 const setupScene = sceneSubjects => {
    scene = new THREE.Scene();
    Object.values(sceneSubjects).map( subject => {
-      scene.add(subject);
+      if(subject != character.weapon)
+         scene.add(subject);
    });
 }
 
@@ -106,7 +102,7 @@ function init() {
    setupListeners();
    setupSubjects();
    setupScene(sceneSubjects);
-
+   console.log(character)
    animate();
 }
 

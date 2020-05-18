@@ -1,3 +1,4 @@
+const {desvincularmaterial, changecolorgroup, criarcubo, espelhar} = require('../../geometries/functions');
 function createArrow() {
   var asa = new THREE.Group();
   //Diagonal Principal

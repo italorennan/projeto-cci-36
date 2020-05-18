@@ -79,8 +79,8 @@ class Character {
          superior: false,
          middle: false,
          helmet: false,
-         rightWeapon:false,
-         leftWeapon:false
+         weaponRight:false,
+         weaponLeft:false
       }
    }
 
@@ -218,6 +218,7 @@ class Character {
    }
 
    animateWeaponRight(){
+      console.log("Oi")
       this.forearmUp = this.moveForearm();
       if(this.weaponRight.name == "arrow") animateArrow(this.entity, this.weaponRight);
       else if(this.weaponRight.name == "axe") animateAxe(this.entity, this.weaponRight, this.forearmUp);
@@ -236,6 +237,8 @@ class Character {
 }
 module.exports = Character;
 },{"../equipments/armour/createSimpleArmour":6,"../equipments/weapons/arrow":7,"../equipments/weapons/axe":8,"../equipments/weapons/axe2":9,"../equipments/weapons/bow":10,"../equipments/weapons/shield":11,"../equipments/weapons/sword":12,"./createHead":2,"./createInferior":3,"./createMiddle":4,"./createSuperior":5}],2:[function(require,module,exports){
+const createBox = require('../geometries/createBox');
+
 // Criação do cabelo
 function createHair(gender, hairColor) {
     var hair = new THREE.Group();
@@ -420,7 +423,9 @@ function createHead(gender, skinColor, hairColor, eyeColor, mouthColor) {
     return head;
 }
 module.exports = createHead;
-},{}],3:[function(require,module,exports){
+},{"../geometries/createBox":14}],3:[function(require,module,exports){
+const createBox = require('../geometries/createBox');
+
 // Criação de uma perna
 function createLeg(legColor) {
     var leg = createBox(3, 6, 3, legColor);
@@ -452,7 +457,9 @@ function createInferior(legColor, shoeColor) {
     return inferior;
 }
 module.exports = createInferior;
-},{}],4:[function(require,module,exports){
+},{"../geometries/createBox":14}],4:[function(require,module,exports){
+const createBox = require('../geometries/createBox');
+
 // Criação do corpo
 function createBody(gender, bodyColor, hairColor) {
     if (gender == "M") { // personagem homem
@@ -516,7 +523,9 @@ function createMiddle(gender, bodyColor, waistColor, hairColor) {
     return middle;
 }
 module.exports = createMiddle;
-},{}],5:[function(require,module,exports){
+},{"../geometries/createBox":14}],5:[function(require,module,exports){
+const createBox = require('../geometries/createBox');
+
 // Criação de um manga da camisa
 function createSleeve(sleeveColor) {
     var sleeve = createBox(2, 2, 3, sleeveColor);
@@ -559,10 +568,10 @@ function createSuperior(skinColor, sleeveColor) {
 }
 
 module.exports = createSuperior;
-},{}],6:[function(require,module,exports){
+},{"../geometries/createBox":14}],6:[function(require,module,exports){
 const createMiddle = require('../../character/createMiddle');
 const createInferior = require('../../character/createInferior');
-
+const createBox = require('../../geometries/createBox');
 // Criar capacete da armadura
 function createSimpleHelmet(otherColor) {
     var helmet = new THREE.Group();
@@ -638,7 +647,8 @@ function createSimpleArmour(gender, hairColor, armourColor, otherColor) {
 
 module.exports = createSimpleArmour;
 
-},{"../../character/createInferior":3,"../../character/createMiddle":4}],7:[function(require,module,exports){
+},{"../../character/createInferior":3,"../../character/createMiddle":4,"../../geometries/createBox":14}],7:[function(require,module,exports){
+const {desvincularmaterial, changecolorgroup, criarcubo, espelhar} = require('../../geometries/functions');
 function createArrow() {
   var asa = new THREE.Group();
   //Diagonal Principal
@@ -717,7 +727,9 @@ module.exports = {
    animateArrow,
    createArrow
 }
-},{}],8:[function(require,module,exports){
+},{"../../geometries/functions":15}],8:[function(require,module,exports){
+const {desvincularmaterial, changecolorgroup, criarcubo, espelhar} = require('../../geometries/functions');
+
 function createAxe() {
 
 	//Controles de Camera
@@ -847,7 +859,9 @@ module.exports = {
    animateAxe,
    createAxe
 }
-},{}],9:[function(require,module,exports){
+},{"../../geometries/functions":15}],9:[function(require,module,exports){
+const {desvincularmaterial, changecolorgroup, criarcubo, espelhar} = require('../../geometries/functions');
+
 function createAxe2() {
 
 	var diagonalprincipal= new THREE.Group();
@@ -1005,7 +1019,9 @@ module.exports = {
    animateAxe2,
    createAxe2
 }
-},{}],10:[function(require,module,exports){
+},{"../../geometries/functions":15}],10:[function(require,module,exports){
+const {desvincularmaterial, changecolorgroup, criarcubo, espelhar} = require('../../geometries/functions');
+
 function createBow()
 {
 	var diagonalprincipal= new THREE.Group();
@@ -1130,7 +1146,9 @@ module.exports = {
    animateBow,
    createBow
 }
-},{}],11:[function(require,module,exports){
+},{"../../geometries/functions":15}],11:[function(require,module,exports){
+const {desvincularmaterial, changecolorgroup, criarcubo, espelhar} = require('../../geometries/functions');
+
 function createShield()
 {
 	var asa= new THREE.Group();
@@ -1173,7 +1191,9 @@ module.exports = {
    animateShield,
    createShield
 }
-},{}],12:[function(require,module,exports){
+},{"../../geometries/functions":15}],12:[function(require,module,exports){
+const {desvincularmaterial, changecolorgroup, criarcubo, espelhar} = require('../../geometries/functions');
+
 function createSword() {
     var diagonalprincipal= new THREE.Group();
     //Diagonal Principal
@@ -1303,7 +1323,7 @@ module.exports = {
    animateSword,
    createSword
 }
-},{}],13:[function(require,module,exports){
+},{"../../geometries/functions":15}],13:[function(require,module,exports){
 const {createSword} = require("./sword");
 const {createAxe} = require("./axe");
 const {createAxe2} = require("./axe2");
@@ -1317,7 +1337,8 @@ function randomWeapon(scene)
    const maximum = 5;
    const minimum = 0;
 	numeroaleatorio=randomnumber = Math.floor(Math.random() * (maximum - minimum + 1)) + minimum;	
-	weapon=createWeapon(numeroaleatorio)
+   weapon=createWeapon(numeroaleatorio)
+   console.log(weapon.name)
    return weapon;
 
 }
@@ -1325,7 +1346,6 @@ function randomWeapon(scene)
 function createWeapon(indice) {
 	weapons=[createSword(),createAxe(),createAxe2(),createArrow(),createBow(),createShield()];
 	weapon=weapons[indice];
-	weapon.name = "weapon";
 	return weapon
 	
 }
@@ -1335,12 +1355,68 @@ module.exports = {
    randomWeapon
 }
 },{"./arrow":7,"./axe":8,"./axe2":9,"./bow":10,"./shield":11,"./sword":12}],14:[function(require,module,exports){
+// Criação de uma box genérica
+function createBox(x, y, z, boxColor) {
+    var geometry = new THREE.BoxGeometry(x, y, z);
+    var material = new THREE.MeshBasicMaterial({color: boxColor});
+    var box = new THREE.Mesh(geometry, material);
+
+    return box;
+}
+
+module.exports = createBox
+},{}],15:[function(require,module,exports){
+function changecolorgroup(group,cor)
+{
+	for (var children=0;children<group.children.length;children+=1)
+	{
+		group.children[children].material.color.setHex(cor)
+	}			
+}
+			
+function criarcubo(tamanhox,tamanhoy,tamanhoz,eixox,eixoy,eixoz)
+{
+	// criando o cubo
+	var geometry=new THREE.BoxGeometry(tamanhox,tamanhoy,tamanhoz);	// Tamanho
+	var material=new THREE.MeshBasicMaterial({color:0xffff00}); // Cor
+	var cube= new THREE.Mesh(geometry,material);
+
+	cube.position.x=eixox
+	cube.position.y=eixoy
+	cube.position.z=eixoz
+	return cube	
+}
+			
+function desvincularmaterial(group)
+{
+    group.traverse((node) => {
+		if (node.isMesh) 
+		{
+			node.material = node.material.clone();
+		}});
+}
+		
+function espelhar(group,escala)
+{
+	const scale = new THREE.Vector3(1, 1, 1);
+	scale.x*=escala[0];
+	scale.y*=escala[1];
+	scale.z*=escala[2];
+    group.scale.multiply(scale);
+}
+
+module.exports = {
+   espelhar,
+   desvincularmaterial,
+   criarcubo,
+   changecolorgroup
+}
+},{}],16:[function(require,module,exports){
 const Character = require('./assets/character/Character.js');
 const weapon = require('./assets/equipments/weapons/weapons');
 let camera,scene,renderer,controls;
 let sceneSubjects = {};
 let count = 0;
-let forearmUp = true;
 let character;
 
 
@@ -1362,39 +1438,36 @@ const setupControls = () => {
 }
 
 const setupCharacter = () => {
-   gender = "F";
-   skinColor = "#ffe4c4";
-   hairColor = "#b8860b";
-   eyeColor = "#006400";
-   mouthColor = "#f08080";
-   bodyColor = "#00ccdd";
-   legColor = "#0000ff";
-   shoeColor =  "#999999";
-   character =  new Character({gender, skinColor, hairColor, eyeColor, mouthColor, bodyColor, legColor, shoeColor});
+   const attributes = {
+      gender: "F",
+      skinColor: "#ffe4c4",
+      hairColor: "#b8860b",
+      eyeColor: "#006400",
+      mouthColor: "#f08080",
+      bodyColor: "#00ccdd",
+      legColor: "#0000ff",
+      shoeColor:  "#999999"
+   }
+   character =  new Character(attributes);
    character.equipSimpleArmour();
-   console.log(character);
    return character.entity;
 }
 
 const setupSubjects = () => {
-   sceneSubjects.axes = new THREE.AxesHelper(10);
+   sceneSubjects.axesHelper = new THREE.AxesHelper(10);
    sceneSubjects.character = setupCharacter();
 
-   sceneSubjects.sword = createSword();
-   character.equipWeaponRight(sceneSubjects.sword)
-   //sceneSubjects.axe = createAxe();
-   //sceneSubjects.axe2 = createAxe_2();
-   //sceneSubjects.arrow = createArrow();
-	//sceneSubjects.bow = createBow();
-   //sceneSubjects.shield = createShield();
-
-   //sceneSubjects.weapon=createWeapon(5)
-//   createWeapon(0,scene)
+   sceneSubjects.weapon = weapon.randomWeapon();
+   if(sceneSubjects.weapon.name == "arrow" || sceneSubjects.weapon.name == "shield")
+      character.equipWeaponLeft(sceneSubjects.weapon);
+   else
+      character.equipWeaponRight(sceneSubjects.weapon);
 }
 
 const setupScene = sceneSubjects => {
    scene = new THREE.Scene();
    Object.values(sceneSubjects).map( subject => {
+      if(subject != character.weapon)
       scene.add(subject);
    });
 }
@@ -1443,9 +1516,9 @@ function init() {
    setupListeners();
    setupSubjects();
    setupScene(sceneSubjects);
-
+   console.log(character)
    animate();
 }
 
 init();
-},{"./assets/character/Character.js":1,"./assets/equipments/weapons/weapons":13}]},{},[14]);
+},{"./assets/character/Character.js":1,"./assets/equipments/weapons/weapons":13}]},{},[16]);

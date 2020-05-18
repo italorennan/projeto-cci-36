@@ -1,3 +1,5 @@
+const createBox = require('../geometries/createBox');
+
 // Criação do cabelo
 function createHair(gender, hairColor) {
     var hair = new THREE.Group();

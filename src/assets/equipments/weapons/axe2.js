@@ -1,3 +1,5 @@
+const {desvincularmaterial, changecolorgroup, criarcubo, espelhar} = require('../../geometries/functions');
+
 function createAxe2() {
 
 	var diagonalprincipal= new THREE.Group();
