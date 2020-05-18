@@ -1,10 +1,11 @@
 let camera,scene,renderer,controls;
 let sceneSubjects = {};
 let count = 0;
+let forearmUp = true;
 
 const setupCamera = () => {
    camera = new THREE.PerspectiveCamera(75, window.innerWidth/window.innerHeight, 0.1, 1000);
-   camera.position.set(0,0,30);
+   camera.position.set(30,30,30);
    camera.lookAt(new THREE.Vector3(0,0,0));
 }
 
@@ -28,21 +29,25 @@ const setupCharacter = () => {
    bodycolor = "#00ccdd";
    legcolor = "#0000ff";
    shoecolor =  "#999999";
-   return createCharacter(gender, skincolor, haircolor, eyecolor, mouthcolor, bodycolor, legcolor, shoecolor);
+   var character = createCharacter(gender, skincolor, haircolor, eyecolor, mouthcolor, bodycolor, legcolor, shoecolor);
 
+   equipSimpleArmour(character, gender, haircolor);
+
+   return character;
 }
 
 const setupSubjects = () => {
    sceneSubjects.axes = new THREE.AxesHelper(10);
-   //sceneSubjects.sword = createSword();  
+   sceneSubjects.character = setupCharacter();
+
+   sceneSubjects.sword = createSword();
    //sceneSubjects.axe = createAxe();
    //sceneSubjects.axe2 = createAxe_2();
    //sceneSubjects.arrow = createArrow();
 	//sceneSubjects.bow = createBow();
-   //sceneSubjects.shiled = createShield();
-   sceneSubjects.character = setupCharacter();
+   //sceneSubjects.shield = createShield();
 
-   sceneSubjects.weapon=createWeapon(5)
+   //sceneSubjects.weapon=createWeapon(5)
 //   createWeapon(0,scene)
 }
 
@@ -59,15 +64,13 @@ const setupListeners = () => {
       renderer.setSize(window.innerWidth,window.innerHeight);
       camera.updateProjectionMatrix();
    })
-   document.querySelector( '#ChangeWeapon').addEventListener('click', ChangeWeapon, false )
+   //document.querySelector( '#ChangeWeapon').addEventListener('click', ChangeWeapon, false )
 
 }
-
 
 function ChangeWeapon() {
 RandomWeapon(scene)
 }
-
 
 //const button = document.querySelector( '#ChangeWeapon' );
 // Movimentação dos objetos
@@ -75,15 +78,19 @@ const animate = () => {
    requestAnimationFrame(animate);
 
    // Rotação da câmera
-   var cameraX = 30 * Math.cos(0.1 * count);
-   var cameraZ = 30 * Math.sin(0.1 * count);
-   // camera.position.set(cameraX, 25, cameraZ);
+   var cameraX = 30 * Math.cos(0.01 * count);
+   var cameraZ = 30 * Math.sin(0.01 * count);
+   //camera.position.set(cameraX, 25, cameraZ);
    camera.lookAt(0,0,0);
-   //camera.position.x = cameraX;
-  // camera.position.z = cameraZ;
+   camera.position.x = cameraX;
+   camera.position.z = cameraZ;
 
    controls.autoRotate=false;
-	
+   
+   // Equipar a arma presente
+   Object.values(sceneSubjects).map( subject => {
+      forearmUp = equip(sceneSubjects.character, subject, forearmUp);
+   });
 
    controls.update();
 
@@ -91,6 +98,7 @@ const animate = () => {
 
    count += 1;
 }
+
 function init() {
    setupCamera();
    setupRenderer();
