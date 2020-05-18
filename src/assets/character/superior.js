@@ -39,9 +39,23 @@ function createSuperior(skinColor, sleeveColor) {
     return superior;
 }
 
-function forearmUp(superior) {
-    forearm = superior.getObjectByName("forearm");
+const moveForearm = (character, forearmUp) => {
+    var superiorRight = character.getObjectByName("superiorRight");
+    var forearm = superiorRight.getObjectByName("forearm");
+    var arm = superiorRight.getObjectByName("arm");
 
-    forearm.translateZ(3);
-    forearm.translateY(3);
+    if (forearmUp) {
+        forearm.translateY(0.01);
+        forearm.translateZ(0.01);
+
+        if (forearm.position.y > arm.position.y) forearmUp = false;
+    }
+    else {
+        forearm.translateY(-0.01);
+        forearm.translateZ(-0.01);
+
+        if (forearm.position.z < arm.position.z) forearmUp = true;
+    }
+
+    return forearmUp;
 }

@@ -17,3 +17,16 @@ function createWeapon(indice) {
 	return weapon
 	
 }
+
+function equip(character, subject, forearmUp) {
+	forearmUp = moveForearm(character, forearmUp);
+
+	if(subject.name == "arrow") equipArrow(character, subject);
+	else if(subject.name == "axe") equipAxe(character, subject, forearmUp);
+	else if(subject.name == "axe2") equipAxe2(character, subject, forearmUp);
+	else if(subject.name == "bow") equipBow(character, subject);
+	else if(subject.name == "shield") equipShield(character, subject);
+	else if(subject.name == "sword") equipSword(character, subject, forearmUp);
+
+	return forearmUp;
+}

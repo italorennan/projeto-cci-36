@@ -1,6 +1,6 @@
 function createSword() {
     var diagonalprincipal= new THREE.Group();
-    //Diagonal Principalz
+    //Diagonal Principal
 	
 	medida=1
     for (var i=0; i<16; i++)
@@ -79,13 +79,13 @@ function createSword() {
         braco.add(m);
     }
 
-
-
     //Mudando as Cores
-    changecolorgroup(diagonalprincipal,0x000000)
+    changecolorgroup(diagonalprincipal,0x800000)
     changecolorgroup(diagonalacima,0xff0000)
     changecolorgroup(diagonalabaixo,0xff0000)
-    changecolorgroup(braco,0x00ff00)
+    changecolorgroup(contorno,0xff8c00)
+    changecolorgroup(contorno2,0xff8c00)
+    changecolorgroup(braco,0x000000)
     
     var espada= new THREE.Group();
     espada.add(diagonalprincipal)
@@ -99,6 +99,26 @@ function createSword() {
     
     espada.rotation.z=45*Math.PI/180
 	
-	espada.scale.set(0.6,0.6,0.6)
+    espada.scale.set(0.6,0.6,0.6)
+    espada.rotateX(Math.PI/20);
+    espada.name = "sword";
     return espada;
+}
+
+// Posicionar a espada e rotacionar junto com o movimento do antebraço
+function equipSword(character, sword, forearmUp) {
+	var superiorRight = character.getObjectByName("superiorRight");
+	var forearm = superiorRight.getObjectByName("forearm");
+
+	var forearmPosition = new THREE.Vector3(0, 0, 0);
+    forearmPosition.add(forearm.position).add(superiorRight.position).add(character.position);
+
+	var x = forearmPosition.x;
+	var y = forearmPosition.y - forearm.geometry.parameters.height / 2;
+	var z = forearmPosition.z + (forearm.geometry.parameters.depth + sword.children[0].children[0].geometry.parameters.depth) / 2;
+
+    sword.position.set(x, y, z);
+    
+    if(forearmUp) sword.rotateX(Math.PI/600);
+    else sword.rotateX(-Math.PI/600);
 }
