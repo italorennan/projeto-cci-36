@@ -36,3 +36,10 @@ function espelhar(group,escala)
 	scale.z*=escala[2];
     group.scale.multiply(scale);
 }
+
+module.exports = {
+   espelhar,
+   desvincularmaterial,
+   criarcubo,
+   changecolorgroup
+}

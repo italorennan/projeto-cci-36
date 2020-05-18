@@ -1,6 +1,6 @@
 const createMiddle = require('../../character/createMiddle');
 const createInferior = require('../../character/createInferior');
-
+const createBox = require('../../geometries/createBox');
 // Criar capacete da armadura
 function createSimpleHelmet(otherColor) {
     var helmet = new THREE.Group();

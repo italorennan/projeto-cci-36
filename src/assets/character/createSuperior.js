@@ -1,3 +1,5 @@
+const createBox = require('../geometries/createBox');
+
 // Criação de um manga da camisa
 function createSleeve(sleeveColor) {
     var sleeve = createBox(2, 2, 3, sleeveColor);

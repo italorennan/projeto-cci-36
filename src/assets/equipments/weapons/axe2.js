@@ -1,3 +1,5 @@
+const {desvincularmaterial, changecolorgroup, criarcubo, espelhar} = require('../../geometries/functions');
+
 function createAxe2() {
 
 	var diagonalprincipal= new THREE.Group();
@@ -147,8 +149,8 @@ function animateAxe2(character, axe2, forearmUp) {
 
     axe2.position.set(x, y, z);
     
-    if(forearmUp) axe2.rotateY(-9*Math.PI/1600);
-    else axe2.rotateY(9*Math.PI/1600);
+    if(forearmUp) axe2.rotateY(-Math.PI/600);
+    else axe2.rotateY(Math.PI/600);
 }	
 
 module.exports = {

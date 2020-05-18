@@ -1,3 +1,5 @@
+const {desvincularmaterial, changecolorgroup, criarcubo, espelhar} = require('../../geometries/functions');
+
 function createAxe() {
 
 	//Controles de Camera
@@ -119,8 +121,8 @@ function animateAxe(character, axe, forearmUp) {
 
     axe.position.set(x, y, z);
     
-    if(forearmUp) axe.rotateY(-9*Math.PI/1600);
-    else axe.rotateY(9*Math.PI/1600);
+    if(forearmUp) axe.rotateY(-Math.PI/600);
+    else axe.rotateY(Math.PI/600);
 }		
 
 module.exports = {

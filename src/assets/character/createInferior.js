@@ -1,3 +1,5 @@
+const createBox = require('../geometries/createBox');
+
 // Criação de uma perna
 function createLeg(legColor) {
     var leg = createBox(3, 6, 3, legColor);

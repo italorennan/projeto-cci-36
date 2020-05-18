@@ -1,3 +1,5 @@
+const createBox = require('../geometries/createBox');
+
 // Criação do corpo
 function createBody(gender, bodyColor, hairColor) {
     if (gender == "M") { // personagem homem

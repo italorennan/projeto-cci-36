@@ -1,3 +1,5 @@
+const {desvincularmaterial, changecolorgroup, criarcubo, espelhar} = require('../../geometries/functions');
+
 function createShield()
 {
 	var asa= new THREE.Group();
@@ -23,11 +25,11 @@ function createShield()
 
 // Posicionar o escudo no centro do antebraço direito do personagem
 function animateShield(character, shield) {
-	var superiorRight = character.getObjectByName("superiorRight");
-	var forearm = superiorRight.getObjectByName("forearm");
+	var superiorLeft = character.getObjectByName("superiorLeft");
+	var forearm = superiorLeft.getObjectByName("forearm");
 
 	var forearmPosition = new THREE.Vector3(0, 0, 0);
-	forearmPosition.add(forearm.position).add(superiorRight.position).add(character.position);
+	forearmPosition.add(forearm.position).add(superiorLeft.position).add(character.position);
 
 	var x = forearmPosition.x;
 	var y = forearmPosition.y - forearm.geometry.parameters.height / 2;

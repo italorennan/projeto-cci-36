@@ -11,15 +11,20 @@ function randomWeapon(scene)
    const maximum = 5;
    const minimum = 0;
 	numeroaleatorio=randomnumber = Math.floor(Math.random() * (maximum - minimum + 1)) + minimum;	
-	weapon=createWeapon(numeroaleatorio)
+   weapon=createWeapon(numeroaleatorio)
    return weapon;
 
 }
 
 function createWeapon(indice) {
-	weapons=[createSword(),createAxe(),createAxe2(),createArrow(),createBow(),createShield()];
-	weapon=weapons[indice];
-	weapon.name = "weapon";
+	weapons= {
+      sword: createSword(),
+      axe: createAxe(),
+      axe2: createAxe2(),
+      arrow: createArrow(),
+      bow: createBow(),
+      shield: createShield()  
+   }
 	return weapon
 	
 }
