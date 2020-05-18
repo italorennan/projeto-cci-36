@@ -218,7 +218,6 @@ class Character {
    }
 
    animateWeaponRight(){
-      console.log("Oi")
       this.forearmUp = this.moveForearm();
       if(this.weaponRight.name == "arrow") animateArrow(this.entity, this.weaponRight);
       else if(this.weaponRight.name == "axe") animateAxe(this.entity, this.weaponRight, this.forearmUp);
@@ -1336,13 +1335,14 @@ function randomWeapon(scene)
 {
    const maximum = 5;
    const minimum = 0;
-	numeroaleatorio=randomnumber = Math.floor(Math.random() * (maximum - minimum + 1)) + minimum;	
-   weapon=createWeapon(numeroaleatorio)
+   numeroaleatorio=randomnumber = Math.floor(Math.random() * (maximum - minimum + 1)) + minimum;
+   const weapons = ["sword","axe","axe2","arrow","bow","shield"];	
+   weapon=createWeapon(weapons[numeroaleatorio]);
    return weapon;
 
 }
 
-function createWeapon(indice) {
+function createWeapon(key) {
 	weapons= {
       sword: createSword(),
       axe: createAxe(),
@@ -1351,7 +1351,7 @@ function createWeapon(indice) {
       bow: createBow(),
       shield: createShield()  
    }
-	return weapon
+	return weapons[key];
 	
 }
 
@@ -1454,7 +1454,6 @@ const setupCharacter = () => {
       shoeColor:  "#999999"
    }
    character =  new Character(attributes);
-   character.equipSimpleArmour();
    return character.entity;
 }
 
@@ -1462,11 +1461,6 @@ const setupSubjects = () => {
    sceneSubjects.axesHelper = new THREE.AxesHelper(10);
    sceneSubjects.character = setupCharacter();
 
-   sceneSubjects.weapon = weapon.randomWeapon();
-   if(sceneSubjects.weapon.name == "arrow" || sceneSubjects.weapon.name == "shield")
-      character.equipWeaponLeft(sceneSubjects.weapon);
-   else
-      character.equipWeaponRight(sceneSubjects.weapon);
 }
 
 const setupScene = sceneSubjects => {
