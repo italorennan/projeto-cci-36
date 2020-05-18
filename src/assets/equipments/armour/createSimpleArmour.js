@@ -1,3 +1,6 @@
+const createMiddle = require('../../character/createMiddle');
+const createInferior = require('../../character/createInferior');
+
 // Criar capacete da armadura
 function createSimpleHelmet(otherColor) {
     var helmet = new THREE.Group();
@@ -29,33 +32,37 @@ function createSimpleHelmet(otherColor) {
     return helmet;
 }
 
+
 // Criar armadura simples para o personagem
 function createSimpleArmour(gender, hairColor, armourColor, otherColor) {
     var armour = new THREE.Group();
 
     var middleArmour = createMiddle(gender, armourColor, otherColor, hairColor);
     middleArmour.position.set(0,12,0);
-    middleArmour.name = "middleArmour";
-    armour.add(middleArmour);
+    middleArmour.name = "middle";
 
     var inferiorLeftArmour = createInferior(armourColor, armourColor);
     inferiorLeftArmour.position.set(1.75, 4, 0);
-    inferiorLeftArmour.name = "inferiorLeftArmour";
-    armour.add(inferiorLeftArmour);
+    inferiorLeftArmour.name = "inferiorLeft";
 
     var inferiorRightArmour = createInferior(armourColor, armourColor);
     inferiorRightArmour.position.set(-1.75, 4, 0);
-    inferiorRightArmour.name = "inferiorRightArmour";
-    armour.add(inferiorRightArmour);
+    inferiorRightArmour.name = "inferiorRight";
 
-    var sleeveLeft = createSleeve(otherColor);
+    const inferiorArmour = new THREE.Group();
+    inferiorArmour.name = "inferior";
+    inferiorArmour.add(inferiorRightArmour);
+    inferiorArmour.add(inferiorLeftArmour);
+    armour.add(inferiorArmour);
+
+    var sleeveLeft = createBox(2, 2, 3, otherColor);
     sleeveLeft.position.set(4.25, 15, 0);
-    sleeveLeft.name = "sleeveLeftArmour";
+    sleeveLeft.name = "sleeveLeft";
     armour.add(sleeveLeft);
 
-    var sleeveRight = createSleeve(otherColor);
+    var sleeveRight = createBox(2, 2, 3, otherColor);
     sleeveRight.position.set(-4.25, 15, 0);
-    sleeveRight.name = "sleeveRightArmour";
+    sleeveRight.name = "sleeveRight";
     armour.add(sleeveRight);
 
     var helmet = createSimpleHelmet(otherColor);
@@ -66,28 +73,4 @@ function createSimpleArmour(gender, hairColor, armourColor, otherColor) {
     return armour;
 }
 
-// Equipar armadura simples para o personagem
-function equipSimpleArmour(character, gender, hairColor) {
-    var armourColor = "#808080";
-    var otherColor = "#4f4f4f";
-    
-    // Retirar partes atuais
-    var middle = character.getObjectByName("middle");
-    character.remove(middle);
-
-    var inferior = character.getObjectByName("inferior");
-    character.remove(inferior);
-    
-    var superiorLeft = character.getObjectByName("superiorLeft");
-    var sleeveLeft = superiorLeft.getObjectByName("sleeve");
-    superiorLeft.remove(sleeveLeft);
-
-    var superiorRight = character.getObjectByName("superiorRight");
-    var sleeveRight = superiorRight.getObjectByName("sleeve");
-    superiorRight.remove(sleeveRight);
-
-    // Adicionar armadura
-    var armour = createSimpleArmour(gender, hairColor, armourColor, otherColor);
-    armour.name = "simpleArmour";
-    character.add(armour);
-}
+module.exports = createSimpleArmour;

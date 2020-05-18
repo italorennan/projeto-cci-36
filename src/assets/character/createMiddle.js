@@ -60,3 +60,4 @@ function createMiddle(gender, bodyColor, waistColor, hairColor) {
 
     return middle;
 }
+module.exports = createMiddle;

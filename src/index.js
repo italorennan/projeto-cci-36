@@ -1,7 +1,10 @@
+const Character = require('./assets/character/Character.js');
 let camera,scene,renderer,controls;
 let sceneSubjects = {};
 let count = 0;
 let forearmUp = true;
+
+
 
 const setupCamera = () => {
    camera = new THREE.PerspectiveCamera(75, window.innerWidth/window.innerHeight, 0.1, 1000);
@@ -29,11 +32,11 @@ const setupCharacter = () => {
    bodycolor = "#00ccdd";
    legcolor = "#0000ff";
    shoecolor =  "#999999";
-   var character = createCharacter(gender, skincolor, haircolor, eyecolor, mouthcolor, bodycolor, legcolor, shoecolor);
+   const character =  new Character({gender, skincolor, haircolor, eyecolor, mouthcolor, bodycolor, legcolor, shoecolor});
 
-   equipSimpleArmour(character, gender, haircolor);
+   character.equipSimpleArmour();
 
-   return character;
+   return character.entity;
 }
 
 const setupSubjects = () => {
