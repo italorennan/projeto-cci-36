@@ -851,8 +851,8 @@ function animateAxe(character, axe, forearmUp) {
 
     axe.position.set(x, y, z);
     
-    if(forearmUp) axe.rotateY(-9*Math.PI/1600);
-    else axe.rotateY(9*Math.PI/1600);
+    if(forearmUp) axe.rotateY(-Math.PI/600);
+    else axe.rotateY(Math.PI/600);
 }		
 
 module.exports = {
@@ -1011,8 +1011,8 @@ function animateAxe2(character, axe2, forearmUp) {
 
     axe2.position.set(x, y, z);
     
-    if(forearmUp) axe2.rotateY(-9*Math.PI/1600);
-    else axe2.rotateY(9*Math.PI/1600);
+    if(forearmUp) axe2.rotateY(-Math.PI/600);
+    else axe2.rotateY(Math.PI/600);
 }	
 
 module.exports = {
@@ -1174,11 +1174,11 @@ function createShield()
 
 // Posicionar o escudo no centro do antebraço direito do personagem
 function animateShield(character, shield) {
-	var superiorRight = character.getObjectByName("superiorRight");
-	var forearm = superiorRight.getObjectByName("forearm");
+	var superiorLeft = character.getObjectByName("superiorLeft");
+	var forearm = superiorLeft.getObjectByName("forearm");
 
 	var forearmPosition = new THREE.Vector3(0, 0, 0);
-	forearmPosition.add(forearm.position).add(superiorRight.position).add(character.position);
+	forearmPosition.add(forearm.position).add(superiorLeft.position).add(character.position);
 
 	var x = forearmPosition.x;
 	var y = forearmPosition.y - forearm.geometry.parameters.height / 2;
@@ -1338,14 +1338,19 @@ function randomWeapon(scene)
    const minimum = 0;
 	numeroaleatorio=randomnumber = Math.floor(Math.random() * (maximum - minimum + 1)) + minimum;	
    weapon=createWeapon(numeroaleatorio)
-   console.log(weapon.name)
    return weapon;
 
 }
 
 function createWeapon(indice) {
-	weapons=[createSword(),createAxe(),createAxe2(),createArrow(),createBow(),createShield()];
-	weapon=weapons[indice];
+	weapons= {
+      sword: createSword(),
+      axe: createAxe(),
+      axe2: createAxe2(),
+      arrow: createArrow(),
+      bow: createBow(),
+      shield: createShield()  
+   }
 	return weapon
 	
 }
@@ -1468,7 +1473,7 @@ const setupScene = sceneSubjects => {
    scene = new THREE.Scene();
    Object.values(sceneSubjects).map( subject => {
       if(subject != character.weapon)
-      scene.add(subject);
+         scene.add(subject);
    });
 }
 
