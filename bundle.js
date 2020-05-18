@@ -205,7 +205,7 @@ class Character {
    }
 
    equipWeaponRight(weapon){
-      if(this.weapon.name == weapon.name)
+      if(this.isEquipped.weaponRight && this.weaponRight.name == weapon.name)
          return;
       this.forearmUp = true;
       this.superior.getObjectByName("superiorRight").getObjectByName("forearm").position.set(0,-1.5,0);
