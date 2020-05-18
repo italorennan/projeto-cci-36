@@ -1528,7 +1528,7 @@ const setupCharacter = () => {
 }
 
 const setupSubjects = () => {
-   sceneSubjects.axesHelper = new THREE.AxesHelper(10);
+   //sceneSubjects.axesHelper = new THREE.AxesHelper(10);
    sceneSubjects.character = setupCharacter();
 
 }
