@@ -1,12 +1,14 @@
 function createSword() {
     var diagonalprincipal= new THREE.Group();
-    //Diagonal Principal
+    //Diagonal Principalz
+	
+	medida=1
     for (var i=0; i<16; i++)
     {
-    m = criarcubo(0.1,0.1,0.1,0,0,0)
+    m = criarcubo(medida,medida,medida,0,0,0)
     m.material.color.setHex(0x00ff00);
-    m.position.x=0.05+i/10;
-    m.position.y=0.05+i/10;
+    m.position.x=0.5*medida+i*medida;
+    m.position.y=0.5*medida+i*medida;
     m.position.z=0;
     diagonalprincipal.add(m);
     }
@@ -17,7 +19,7 @@ function createSword() {
     //Clonar Trocando o Material
     diagonalabaixo = diagonalprincipal.clone();
     diagonalabaixo.traverse((node) => {if (node.isMesh) {node.material = node.material.clone();}}); 			//Para poder mudar a Cor
-    diagonalabaixo.position.x=diagonalabaixo.position.x+0.1
+    diagonalabaixo.position.x=diagonalabaixo.position.x+medida
     diagonalabaixo.position.y=diagonalabaixo.position.y
     tamanho=diagonalabaixo.children.length
     diagonalabaixo.remove(diagonalabaixo.children[tamanho-1])
@@ -27,7 +29,7 @@ function createSword() {
     diagonalacima.traverse((node) => {if (node.isMesh) {node.material = node.material.clone();}});
 
     diagonalacima.position.x=diagonalacima.position.x
-    diagonalacima.position.y=diagonalacima.position.y+0.1
+    diagonalacima.position.y=diagonalacima.position.y+medida
     tamanho=diagonalacima.children.length
     diagonalacima.remove(diagonalacima.children[tamanho-1])
     //-------------------------------------------//		
@@ -37,42 +39,42 @@ function createSword() {
     var contorno= new THREE.Group();
     for (var i=0; i<10; i++)
     {
-        m = criarcubo(0.1,0.1,0.1,0,0,0);
-        m.position.x=0.45+i/10;
-        m.position.y=0.65+i/10;
+        m = criarcubo(medida,medida,medida,0,0,0);
+        m.position.x=4.5*medida+i*medida;
+        m.position.y=6.5*medida+i*medida;
         m.position.z=0;
         contorno.add(m);
     }
     
     contorno2=new THREE.Group();
     contorno2=contorno.clone()
-    contorno2.position.x=contorno2.position.x+0.2
-    contorno2.position.y=contorno2.position.y-0.2
+    contorno2.position.x=contorno2.position.x+2*medida
+    contorno2.position.y=contorno2.position.y-2*medida
     //------------------------------------------------//
     
     var braco= new THREE.Group();
     
     for (var i=0; i<8; i++)
     {
-        m = criarcubo(0.1,0.1,0.1,0,0,0);
-        m.position.x=0.25+i/10;
-        m.position.y=0.95-i/10;
+        m = criarcubo(medida,medida,medida,0,0,0);
+        m.position.x=2.5*medida+i*medida;
+        m.position.y=9.5*medida-i*medida;
         m.position.z=0;
         braco.add(m);
     }
     
     //2 Cubinhos Faltando
-    //scene.add(criarcubo(0.1,0.1,0.1,0.25,0.05,0))
-    //scene.add(criarcubo(0.1,0.1,0.1,0.05,0.25,0))
+    //scene.add(criarcubo(medida,medida,medida,0.25,0.05,0))
+    //scene.add(criarcubo(medida,medida,medida,0.05,0.25,0))
     
     
 
     //Mudando as Cores
     for (var i=0; i<8; i++)
     {
-        m = criarcubo(0.1,0.1,0.1,0,0,0);
-        m.position.x=0.25+i/10;
-        m.position.y=0.95-i/10;
+        m = criarcubo(medida,medida,medida,0,0,0);
+        m.position.x=2.5*medida+i*medida;
+        m.position.y=9.5*medida-i*medida;
         m.position.z=0;
         braco.add(m);
     }
@@ -93,9 +95,10 @@ function createSword() {
     espada.add(contorno2)
     espada.add(braco)
     
-    espada.position.x=1
+    espada.position.x=10*medida
     
     espada.rotation.z=45*Math.PI/180
-
+	
+	espada.scale.set(0.6,0.6,0.6)
     return espada;
 }

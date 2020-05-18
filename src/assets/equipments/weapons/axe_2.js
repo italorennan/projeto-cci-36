@@ -126,6 +126,8 @@ function createAxe_2() {
 			axe.add(diagonalprincipal)
 			axe.add(diagonalabaixo)
 			
+			axe.position.x=5
+			axe.scale.set(5,5,5)
 			return axe
 	
 }
