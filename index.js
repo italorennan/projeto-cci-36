@@ -40,7 +40,6 @@ const setupCharacter = () => {
 
 const setupSubjects = () => {
    sceneSubjects.character = setupCharacter();
-
 }
 
 const setupScene = sceneSubjects => {
