@@ -97,7 +97,7 @@ const createBackground =  async () => {
    rockTallB.setRotation({x:0, y:Math.PI/2, z:0});
 
    tree.setScale({x:25,y:25,z:25});
-   ground.setScale({x:70,y:1,z:70});
+   ground.setScale({x:100000,y:1,z:10000});
    stone.setScale({x:20,y:20,z:20});
    mushroomRed.setScale({x:20, y:20, z:20});
    pathTile1.setScale({x:5, y:5, z:5});
