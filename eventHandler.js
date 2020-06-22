@@ -35,7 +35,7 @@ const handleClick = (event,character) => {
    }
 }
 
-const handleResize = () => {
+const handleResize = (camera,renderer) => {
    camera.aspect = window.innerWidth/window.innerHeight;
    renderer.setSize(window.innerWidth,window.innerHeight);
    camera.updateProjectionMatrix();

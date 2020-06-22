@@ -1,7 +1,8 @@
 const Character = require('./assets/character/Character.js');
 const eventHandler = require('./eventHandler');
+const createBackground = require('./assets/ambient/createBackground');
 let camera,scene,renderer,controls;
-let sceneSubjects = {};
+let sceneSubjects = [];
 let count = 0;
 let character;
 
@@ -38,38 +39,69 @@ const setupCharacter = () => {
    return character.entity;
 }
 
-const setupSubjects = () => {
-   sceneSubjects.character = setupCharacter();
+const setupSubjects = async () => {
+   sceneSubjects.push(setupCharacter());
+   const background = await createBackground();
+   const backgroundElements = background.getBackgroundElementArray();
+   backgroundElements.forEach( element => {
+      sceneSubjects.push(element.entity);
+   })
+   console.log(sceneSubjects);
 }
 
-const setupScene = sceneSubjects => {
+const setupScene = () => {
    scene = new THREE.Scene();
-   Object.values(sceneSubjects).map( subject => {
-      if(subject != character.weapon)
+   sceneSubjects.forEach( subject => {
+      if(subject != character.weapon){
          scene.add(subject);
+         console.log(subject);
+      }
    });
+
 }
 
 const setupListeners = () => {
-   window.addEventListener('resize', eventHandler.handleResize); 
+   window.addEventListener('resize', e => eventHandler.handleResize(camera,renderer)); 
    document.body.addEventListener('click', event => {
       eventHandler.handleClick(event,character);
    });
 }
 
-//const button = document.querySelector( '#ChangeWeapon' );
+const setupLights = () => {
+   const hlight = new THREE.AmbientLight(0xffffff,1)
+   sceneSubjects.push(hlight);
+
+   const directionalLight = new THREE.DirectionalLight(0xffffff,2);
+   directionalLight.position.set(1,1,1);
+   directionalLight.castShadow = true;
+   sceneSubjects.push(directionalLight);
+
+   // const light1 = new THREE.PointLight(0xc4c4c4,10);
+   // light1.position.set(0,300,500)
+   // sceneSubjects.push(light1);
+
+   // const light2 = new THREE.PointLight(0xc4c4c4,10);
+   // light2.position.set(500,100,0)
+   // sceneSubjects.push(light2);
+
+   // const light3 = new THREE.PointLight(0xc4c4c4,10);
+   // light3.position.set(0,100,-500)
+   // sceneSubjects.push(light3);
+
+   // const light4 = new THREE.PointLight(0xc4c4c4,10);
+   // light4.position.set(-500,300,0)
+   // sceneSubjects.push(light4);
+}
+
 // Movimentação dos objetos
 const animate = () => {
    requestAnimationFrame(animate);
 
    // Rotação da câmera
-   var cameraX = 30 * Math.cos(0.01 * count);
-   var cameraZ = 30 * Math.sin(0.01 * count);
-   //camera.position.set(cameraX, 25, cameraZ);
    camera.lookAt(0,0,0);
-   camera.position.x = cameraX;
-   camera.position.z = cameraZ;
-
+   camera.position.x = 50*Math.cos(0.01*count);
+   camera.position.z = 50*Math.sin(0.01*count);
+   camera.updateProjectionMatrix();
    controls.autoRotate=false;
 
    if(character.isEquipped.weaponRight == true){
@@ -86,14 +118,15 @@ const animate = () => {
    count += 1;
 }
 
-function init() {
+async function init() {
    setupCamera();
    setupRenderer();
    setupControls();
    setupListeners();
-   setupSubjects();
-   setupScene(sceneSubjects);
-   console.log(character)
+   setupLights();
+   await setupSubjects();
+   setupScene();
+   console.log(scene);
    animate();
 }
 
