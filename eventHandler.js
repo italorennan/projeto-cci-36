@@ -41,7 +41,24 @@ const handleResize = (camera, renderer) => {
    camera.updateProjectionMatrix();
 }
 
+const handleChangeOutfit = (event, character) => {
+   switch (event.target.value) {
+      case "standard": character.changeOutfit(0); break;
+      case "multicolored": character.changeOutfit(1); break;
+      case "redgreen": character.changeOutfit(2); break;
+      case "bluepink": character.changeOutfit(3); break;
+      default: break;
+   }
+}
+
+const handleChangeGender = (event, character) => {
+   if (event.target.value === "male") character.changeGender("M");
+   else if (event.target.value === "female") character.changeGender("F");
+}
+
 module.exports = {
    handleClick,
-   handleResize
+   handleResize,
+   handleChangeOutfit,
+   handleChangeGender
 }
