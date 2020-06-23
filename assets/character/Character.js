@@ -27,6 +27,7 @@ class Character {
       this.entity = new THREE.Group();    
       this.weaponRight = null;
       this.weaponLeft = null;
+
       // Criação dos membros inferiores
 
       const inferiorLeft = createInferior(legColor, shoeColor);
@@ -110,17 +111,33 @@ class Character {
       this.entity.remove(this.inferior);
       this.inferior = null;
 
-      const sleeveLeft = this.superior.getObjectByName("superiorLeft").getObjectByName("sleeve");
-      this.entity.remove(sleeveLeft);
-      
-      const sleeveRight = this.superior.getObjectByName("superiorRight").getObjectByName("sleeve");
-      this.entity.remove(sleeveRight);
+      this.entity.remove(this.superior);
+      this.superior = null;
 
       this.inferior = armour.getObjectByName("inferior");
       this.middle = armour.getObjectByName("middle");
 
-      this.superior.getObjectByName("superiorLeft").add(armour.getObjectByName("sleeveLeft"));
-      this.superior.getObjectByName("superiorRight").add(armour.getObjectByName("sleeveRight"));
+      this.superior = new THREE.Group();
+
+      const superiorLeft = createSuperior(this.attributes.skinColor, this.attributes.bodyColor, 0, "left");
+      superiorLeft.position.set(4.25, 12, 0);
+      superiorLeft.name = "superiorLeft";
+      const sleeveLeft = superiorLeft.getObjectByName("sleeve");
+      superiorLeft.remove(sleeveLeft);
+
+      const superiorRight = createSuperior(this.attributes.skinColor, this.attributes.bodyColor, 0, "right");
+      superiorRight.position.set(-4.25, 12, 0);
+      superiorRight.name = "superiorRight";
+      const sleeveRight = superiorRight.getObjectByName("sleeve");
+      superiorRight.remove(sleeveRight);
+
+      superiorLeft.add(armour.getObjectByName("sleeveLeft"));
+      superiorRight.add(armour.getObjectByName("sleeveRight"));
+
+      this.superior.add(superiorLeft);
+      this.superior.add(superiorRight);
+
+      this.entity.add(this.superior);
       this.entity.add(armour.getObjectByName("helmet"));
       this.entity.add(armour.getObjectByName("inferior"));
       this.entity.add(armour.getObjectByName("middle"));
@@ -131,12 +148,10 @@ class Character {
          middle: true,
          helmet: true,
       }
-   
    }
 
    unequipArmour(){
       if(this.isEquipped.inferior){
-         console.log("oi");
          this.entity.remove(this.inferior);
          this.entity.parent.remove(this.inferior);
          const inferiorLeft = createInferior(this.attributes.legColor, this.attributes.shoeColor);
@@ -157,11 +172,11 @@ class Character {
 
       if(this.isEquipped.superior){
          this.entity.remove(this.superior);
-         const superiorLeft = createSuperior(this.attributes.skinColor, this.attributes.bodyColor);
+         const superiorLeft = createSuperior(this.attributes.skinColor, this.attributes.bodyColor, this.attributes.shader, "left");
          superiorLeft.position.set(4.25, 12, 0);
          superiorLeft.name = "superiorLeft";
 
-         const superiorRight = createSuperior(this.attributes.skinColor, this.attributes.bodyColor);
+         const superiorRight = createSuperior(this.attributes.skinColor, this.attributes.bodyColor, this.attributes.shader, "right");
          superiorRight.position.set(-4.25, 12, 0);
          superiorRight.name = "superiorRight";
 
@@ -180,7 +195,8 @@ class Character {
             this.attributes.gender, 
             this.attributes.bodyColor, 
             this.attributes.legColor, 
-            this.attributes.hairColor
+            this.attributes.hairColor,
+            this.attributes.shader
          );
          this.middle.position.set(0, 12, 0);
          this.middle.name = "middle";
@@ -254,6 +270,64 @@ class Character {
       if(this.weaponLeft.name == "arrow") animateArrow(this.entity, this.weaponLeft);
       else if(this.weaponLeft.name == "shield") animateShield(this.entity, this.weaponLeft);
    }
+
+   changeOutfit(shader) {
+      this.attributes.shader = shader;
+
+      //Removendo as partes atuais
+
+      this.entity.remove(this.middle);
+      this.middle = null;
+
+      this.entity.remove(this.superior);
+      this.superior = null;
+
+      // Criação do meio
+
+      this.middle = createMiddle(this.attributes.gender, this.attributes.bodyColor, this.attributes.legColor, this.attributes.hairColor, shader);
+      this.middle.position.set(0, 12, 0);
+      this.middle.name = "middle";
+      this.entity.add(this.middle);
+
+      // Criação dos membros superiores
+
+      const superiorLeft = createSuperior(this.attributes.skinColor, this.attributes.bodyColor, shader, "left");
+      superiorLeft.position.set(4.25, 12, 0);
+      superiorLeft.name = "superiorLeft";
+
+      const superiorRight = createSuperior(this.attributes.skinColor, this.attributes.bodyColor, shader, "right");
+      superiorRight.position.set(-4.25, 12, 0);
+      superiorRight.name = "superiorRight";
+
+      this.superior = new THREE.Group();
+      this.superior.add(superiorLeft);
+      this.superior.add(superiorRight);
+      this.superior.name = "superior";
+      this.entity.add(this.superior);
+   }
    
+   changeGender(gender) {
+      this.attributes.gender = gender;
+
+      this.entity.remove(this.middle);
+      this.middle = null;
+
+      this.entity.remove(this.head);
+      this.head = null;
+
+      // Criação do meio
+
+      this.middle = createMiddle(gender, this.attributes.bodyColor, this.attributes.legColor, this.attributes.hairColor, this.attributes.shader);
+      this.middle.position.set(0, 12, 0);
+      this.middle.name = "middle";
+      this.entity.add(this.middle);
+
+      // Criação da cabeça
+
+      this.head = createHead(gender, this.attributes.skinColor, this.attributes.hairColor, this.attributes.eyeColor, this.attributes.mouthColor);
+      this.head.position.set(0, 18, 0);
+      this.head.name = "head";
+      this.entity.add(this.head);
+   }
 }
 module.exports = Character;

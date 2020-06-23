@@ -1,5 +1,5 @@
-// Shader 2: redgreen
-const redgreenShader = {
+// Shader 3: bluepink
+const bluepinkShader = {
     vertexShader: [
         "varying vec2 color;",
         "uniform vec2 min;",
@@ -18,16 +18,16 @@ const redgreenShader = {
         "varying vec2 color;",
 
         "void main() {",
-            "gl_FragColor = vec4(color.x, color.y, 0.0, 1.0);",
+            "gl_FragColor = vec4(color.x, 0.0, color.y, 1.0);",
         "}"
     ].join( "\n" )
 };
 
-function createRedgreenBox(x, y, z, param) {
+function createBluepinkBox(x, y, z, param) {
     var material = new THREE.ShaderMaterial( {
         uniforms: param,
-        vertexShader: redgreenShader.vertexShader,
-        fragmentShader: redgreenShader.fragmentShader
+        vertexShader: bluepinkShader.vertexShader,
+        fragmentShader: bluepinkShader.fragmentShader
     } );
 
     var geometry = new THREE.BoxGeometry(x, y, z);
@@ -37,4 +37,4 @@ function createRedgreenBox(x, y, z, param) {
     return box;
 }
 
-module.exports = createRedgreenBox;
+module.exports = createBluepinkBox;

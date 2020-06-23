@@ -1,26 +1,30 @@
 const createBox = require('../geometries/createBox');
 const {createMulticolorBox} = require('../shaders/multicolorShader');
 const createRedgreenBox = require('../shaders/redgreenShader');
+const createBluepinkBox = require('../shaders/bluepinkShader');
 
 // Criação de um manga da camisa
 function createSleeve(sleeveColor, shader, side) {
     switch (shader) {
-        case 2: drawBox = createRedgreenBox;
-                switch (side) {
-                    case "right": param = {min: {value: new THREE.Vector2(0.0, 4.0)},
-                                           scale: {value: new THREE.Vector2(2.0, 2.0)},
-                                           size: {value: new THREE.Vector2(10.5, 6.0)}};
-                                  break;
-                    case "left": param = {min: {value: new THREE.Vector2(8.5, 4.0)},
-                                          scale: {value: new THREE.Vector2(2.0, 2.0)},
-                                          size: {value: new THREE.Vector2(10.5, 6.0)}};
-                                 break;
-                    default: break;
-                }
-                break;
-        case 1: drawBox = createMulticolorBox; param = sleeveColor; break;
-        case 0: default: drawBox = createBox; param = sleeveColor; break;
+        case 3: drawBox = createBluepinkBox; break;
+        case 2: drawBox = createRedgreenBox; break;
+        case 1: drawBox = createMulticolorBox; break;
+        case 0: default: drawBox = createBox; break;
     }
+
+    if (shader === 2 || shader === 3) {
+        if (side === "right")
+            param = {min: {value: new THREE.Vector2(0.0, 4.0)},
+                     scale: {value: new THREE.Vector2(2.0, 2.0)},
+                     size: {value: new THREE.Vector2(10.5, 6.0)}
+            };
+        else if (side === "left")
+            param = {min: {value: new THREE.Vector2(8.5, 4.0)},
+                     scale: {value: new THREE.Vector2(2.0, 2.0)},
+                     size: {value: new THREE.Vector2(10.5, 6.0)
+            }};
+    }
+    else param = sleeveColor;
 
     var sleeve = drawBox(2, 2, 3, param);
 

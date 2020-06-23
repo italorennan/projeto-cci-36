@@ -65,6 +65,12 @@ const setupListeners = () => {
    document.body.addEventListener('click', event => {
       eventHandler.handleClick(event,character);
    });
+   document.querySelector('.change-outfit').addEventListener('change', event => {
+      eventHandler.handleChangeOutfit(event, character);
+   });
+   document.querySelector('.change-gender').addEventListener('change', event => {
+      eventHandler.handleChangeGender(event, character);
+   });
 }
 
 const setupLights = () => {
@@ -92,41 +98,6 @@ const setupLights = () => {
    // light4.position.set(-500,300,0)
    // sceneSubjects.push(light4);
 }
-
-
-/*function createShaderMaterial() {
-   const Shader = {
-      vertexShader: [
-          "void main() {",
-               "gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);",
-          "}"
-      ].join( "\n" ),
-
-      fragmentShader: [
-          "uniform float u_time;",
-         
-          "void main() {",
-               "gl_FragColor = vec4(vec3(sin(u_time)), 1.0);",
-          "}"
-      ].join( "\n" )
-  };
-
-  var material = new THREE.ShaderMaterial( {
-      uniforms: uniformVariables,
-      vertexShader: Shader.vertexShader,
-      fragmentShader: Shader.fragmentShader
-  } );
-
-  return material;
-
-  //var geometry = new THREE.BoxGeometry(6.5, 6, 3);
-
-    //var middle = new THREE.Mesh(geometry, material);
-    //var middle = createBox(6.5, 6, 3, armourColor);
-    //middle.position.set(0, 13, 0);
-
-    //scene.add(middle);
-}*/
 
 // Movimentação dos objetos
 const animate = () => {
