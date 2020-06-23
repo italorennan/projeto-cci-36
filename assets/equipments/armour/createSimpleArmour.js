@@ -1,6 +1,8 @@
 const createMiddle = require('../../character/createMiddle');
 const createInferior = require('../../character/createInferior');
 const createBox = require('../../geometries/createBox');
+const {createArmourShaderBox} = require('../../shaders/multicolorShader');
+
 // Criar capacete da armadura
 function createSimpleHelmet(otherColor) {
     var helmet = new THREE.Group();
@@ -32,15 +34,14 @@ function createSimpleHelmet(otherColor) {
     return helmet;
 }
 
-
 // Criar armadura simples para o personagem
 function createSimpleArmour(gender, hairColor, armourColor, otherColor) {
     var armour = new THREE.Group();
 
-   var middleArmour = createMiddle(gender, armourColor, otherColor, hairColor);
-   middleArmour.position.set(0,12,0);
-   middleArmour.name = "middle";
-   armour.add(middleArmour);
+    var middleArmour = createMiddle(gender, armourColor, otherColor, hairColor, 0);
+    middleArmour.position.set(0,12,0);
+    middleArmour.name = "middle";
+    armour.add(middleArmour);
 
     var inferiorLeftArmour = createInferior(armourColor, armourColor);
     inferiorLeftArmour.position.set(1.75, 4, 0);

@@ -7,4 +7,4 @@ function createBox(x, y, z, boxColor) {
     return box;
 }
 
-module.exports = createBox
+module.exports = createBox;

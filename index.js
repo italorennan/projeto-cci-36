@@ -1,11 +1,11 @@
 const Character = require('./assets/character/Character.js');
 const eventHandler = require('./eventHandler');
 const createBackground = require('./assets/ambient/createBackground');
-let camera,scene,renderer,controls;
+const { setupUniforms, updateTime } = require('./assets/shaders/multicolorShader');
+let camera, scene, renderer, controls;
 let sceneSubjects = [];
 let count = 0;
 let character;
-
 
 const setupCamera = () => {
    camera = new THREE.PerspectiveCamera(75, window.innerWidth/window.innerHeight, 0.1, 1000);
@@ -26,14 +26,15 @@ const setupControls = () => {
 
 const setupCharacter = () => {
    const attributes = {
-      gender: "F",
+      gender: "M",
       skinColor: "#ffe4c4",
       hairColor: "#b8860b",
       eyeColor: "#006400",
       mouthColor: "#f08080",
       bodyColor: "#00ccdd",
       legColor: "#0000ff",
-      shoeColor:  "#999999"
+      shoeColor:  "#999999",
+      shader: 0
    }
    character =  new Character(attributes);
    return character.entity;
@@ -57,11 +58,10 @@ const setupScene = () => {
          console.log(subject);
       }
    });
-
 }
 
 const setupListeners = () => {
-   window.addEventListener('resize', e => eventHandler.handleResize(camera,renderer)); 
+   window.addEventListener('resize', e => eventHandler.handleResize(camera, renderer)); 
    document.body.addEventListener('click', event => {
       eventHandler.handleClick(event,character);
    });
@@ -93,6 +93,41 @@ const setupLights = () => {
    // sceneSubjects.push(light4);
 }
 
+
+/*function createShaderMaterial() {
+   const Shader = {
+      vertexShader: [
+          "void main() {",
+               "gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);",
+          "}"
+      ].join( "\n" ),
+
+      fragmentShader: [
+          "uniform float u_time;",
+         
+          "void main() {",
+               "gl_FragColor = vec4(vec3(sin(u_time)), 1.0);",
+          "}"
+      ].join( "\n" )
+  };
+
+  var material = new THREE.ShaderMaterial( {
+      uniforms: uniformVariables,
+      vertexShader: Shader.vertexShader,
+      fragmentShader: Shader.fragmentShader
+  } );
+
+  return material;
+
+  //var geometry = new THREE.BoxGeometry(6.5, 6, 3);
+
+    //var middle = new THREE.Mesh(geometry, material);
+    //var middle = createBox(6.5, 6, 3, armourColor);
+    //middle.position.set(0, 13, 0);
+
+    //scene.add(middle);
+}*/
+
 // Movimentação dos objetos
 const animate = () => {
    requestAnimationFrame(animate);
@@ -115,6 +150,8 @@ const animate = () => {
 
    renderer.render(scene, camera);
 
+   updateTime();
+
    count += 1;
 }
 
@@ -124,6 +161,7 @@ async function init() {
    setupControls();
    setupListeners();
    setupLights();
+   setupUniforms();
    await setupSubjects();
    setupScene();
    console.log(scene);
