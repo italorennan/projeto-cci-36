@@ -12,7 +12,7 @@ const {animateShield} = require("../equipments/weapons/shield");
 
 class Character {
    
-   constructor({gender, skinColor, hairColor, eyeColor, mouthColor, bodyColor, legColor, shoeColor}) {
+   constructor({gender, skinColor, hairColor, eyeColor, mouthColor, bodyColor, legColor, shoeColor, shader}) {
       this.attributes = {
          gender,
          skinColor,
@@ -21,7 +21,8 @@ class Character {
          mouthColor,
          bodyColor,
          legColor,
-         shoeColor
+         shoeColor,
+         shader
       }
       this.entity = new THREE.Group();    
       this.weaponRight = null;
@@ -44,18 +45,18 @@ class Character {
 
       // Criação do meio
 
-      this.middle = createMiddle(gender, bodyColor, legColor, hairColor);
+      this.middle = createMiddle(gender, bodyColor, legColor, hairColor, shader);
       this.middle.position.set(0, 12, 0);
       this.middle.name = "middle";
       this.entity.add(this.middle);
 
       // Criação dos membros superiores
 
-      const superiorLeft = createSuperior(skinColor, bodyColor);
+      const superiorLeft = createSuperior(skinColor, bodyColor, shader, "left");
       superiorLeft.position.set(4.25, 12, 0);
       superiorLeft.name = "superiorLeft";
 
-      const superiorRight = createSuperior(skinColor, bodyColor);
+      const superiorRight = createSuperior(skinColor, bodyColor, shader, "right");
       superiorRight.position.set(-4.25, 12, 0);
       superiorRight.name = "superiorRight";
 
@@ -199,7 +200,7 @@ class Character {
    equipSimpleArmour(){
       const armourColor = "#808080";
       const otherColor = "#4f4f4f";
-      const armour = createSimpleArmor(this.attributes.gender, this.attributes.hairColor, armourColor,otherColor);
+      const armour = createSimpleArmor(this.attributes.gender, this.attributes.hairColor, armourColor, otherColor);
       this.equipArmor(armour);
    }
 

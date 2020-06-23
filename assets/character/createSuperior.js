@@ -1,8 +1,28 @@
 const createBox = require('../geometries/createBox');
+const {createMulticolorBox} = require('../shaders/multicolorShader');
+const createRedgreenBox = require('../shaders/redgreenShader');
 
 // Criação de um manga da camisa
-function createSleeve(sleeveColor) {
-    var sleeve = createBox(2, 2, 3, sleeveColor);
+function createSleeve(sleeveColor, shader, side) {
+    switch (shader) {
+        case 2: drawBox = createRedgreenBox;
+                switch (side) {
+                    case "right": param = {min: {value: new THREE.Vector2(0.0, 4.0)},
+                                           scale: {value: new THREE.Vector2(2.0, 2.0)},
+                                           size: {value: new THREE.Vector2(10.5, 6.0)}};
+                                  break;
+                    case "left": param = {min: {value: new THREE.Vector2(8.5, 4.0)},
+                                          scale: {value: new THREE.Vector2(2.0, 2.0)},
+                                          size: {value: new THREE.Vector2(10.5, 6.0)}};
+                                 break;
+                    default: break;
+                }
+                break;
+        case 1: drawBox = createMulticolorBox; param = sleeveColor; break;
+        case 0: default: drawBox = createBox; param = sleeveColor; break;
+    }
+
+    var sleeve = drawBox(2, 2, 3, param);
 
     return sleeve;
 }
@@ -25,10 +45,10 @@ function createArm(skinColor) {
 }
 
 // Criação de um membro superior = manga + braço
-function createSuperior(skinColor, sleeveColor) {
+function createSuperior(skinColor, sleeveColor, shader, side) {
     var superior = new THREE.Group();
 
-    var sleeve = createSleeve(sleeveColor);
+    var sleeve = createSleeve(sleeveColor, shader, side);
     sleeve.position.set(0, 3, 0);
     sleeve.name = "sleeve";
     superior.add(sleeve);

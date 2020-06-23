@@ -133,7 +133,7 @@ module.exports.loadModule = (url) => {
       loader.load(url, data => resolve(data), null, reject);
    })
 }
-},{"../../modules/three":22}],5:[function(require,module,exports){
+},{"../../modules/three":24}],5:[function(require,module,exports){
 const createHead = require('./createHead');
 const createInferior = require('./createInferior');
 const createMiddle = require('./createMiddle');
@@ -148,7 +148,7 @@ const {animateShield} = require("../equipments/weapons/shield");
 
 class Character {
    
-   constructor({gender, skinColor, hairColor, eyeColor, mouthColor, bodyColor, legColor, shoeColor}) {
+   constructor({gender, skinColor, hairColor, eyeColor, mouthColor, bodyColor, legColor, shoeColor, shader}) {
       this.attributes = {
          gender,
          skinColor,
@@ -157,7 +157,8 @@ class Character {
          mouthColor,
          bodyColor,
          legColor,
-         shoeColor
+         shoeColor,
+         shader
       }
       this.entity = new THREE.Group();    
       this.weaponRight = null;
@@ -180,18 +181,18 @@ class Character {
 
       // Criação do meio
 
-      this.middle = createMiddle(gender, bodyColor, legColor, hairColor);
+      this.middle = createMiddle(gender, bodyColor, legColor, hairColor, shader);
       this.middle.position.set(0, 12, 0);
       this.middle.name = "middle";
       this.entity.add(this.middle);
 
       // Criação dos membros superiores
 
-      const superiorLeft = createSuperior(skinColor, bodyColor);
+      const superiorLeft = createSuperior(skinColor, bodyColor, shader, "left");
       superiorLeft.position.set(4.25, 12, 0);
       superiorLeft.name = "superiorLeft";
 
-      const superiorRight = createSuperior(skinColor, bodyColor);
+      const superiorRight = createSuperior(skinColor, bodyColor, shader, "right");
       superiorRight.position.set(-4.25, 12, 0);
       superiorRight.name = "superiorRight";
 
@@ -335,7 +336,7 @@ class Character {
    equipSimpleArmour(){
       const armourColor = "#808080";
       const otherColor = "#4f4f4f";
-      const armour = createSimpleArmor(this.attributes.gender, this.attributes.hairColor, armourColor,otherColor);
+      const armour = createSimpleArmor(this.attributes.gender, this.attributes.hairColor, armourColor, otherColor);
       this.equipArmor(armour);
    }
 
@@ -615,29 +616,44 @@ function createInferior(legColor, shoeColor) {
 module.exports = createInferior;
 },{"../geometries/createBox":18}],8:[function(require,module,exports){
 const createBox = require('../geometries/createBox');
+const {createMulticolorBox} = require('../shaders/multicolorShader');
+const createRedgreenBox = require('../shaders/redgreenShader');
 
 // Criação do corpo
-function createBody(gender, bodyColor, hairColor) {
+function createBody(gender, bodyColor, hairColor, shader) {
+    switch (shader) {
+        case 1: drawBox = createMulticolorBox; break;
+        case 2: drawBox = createRedgreenBox; break;
+        case 0: default: drawBox = createBox; break;
+    }
+
     if (gender == "M") { // personagem homem
-        var body = createBox(6.5, 6, 3, bodyColor);
+        switch (shader) {
+            case 2: param = {min: {value: new THREE.Vector2(2.0, 0.0)},
+                             scale: {value: new THREE.Vector2(6.5, 6.0)},
+                             size: {value: new THREE.Vector2(10.5, 6.0)}};
+                    break;
+            case 1: case 0: default: param = bodyColor;
+        }
+        var body = drawBox(6.5, 6, 3, param);
     }
 
     else if (gender == "F") { // personagem mulher
         var body = new THREE.Group();
 
-        var body1 = createBox(6.5, 3, 3, bodyColor);
+        var body1 = drawBox(6.5, 3, 3, bodyColor);
         body1.position.set(0, -1.5, 0);
         body.add(body1);
 
-        var body2 = createBox(5, 2, 3, bodyColor);
+        var body2 = drawBox(5, 2, 3, bodyColor);
         body2.position.set(-0.75, 1, 0);
         body.add(body2);
         
-        var body3 = createBox(4, 1, 3, bodyColor);
+        var body3 = drawBox(4, 1, 3, bodyColor);
         body3.position.set(-1.25, 2.5, 0);
         body.add(body3);
 
-        var body4 = createBox(0.5, 1, 3, bodyColor);
+        var body4 = drawBox(0.5, 1, 3, bodyColor);
         body4.position.set(3, 0.5, 0);
         body.add(body4);
 
@@ -665,26 +681,47 @@ function createWaist(waistColor) {
 }
 
 // Criação do meio = tronco, cintura
-function createMiddle(gender, bodyColor, waistColor, hairColor) {
+function createMiddle(gender, bodyColor, waistColor, hairColor, shader) {
     var middle = new THREE.Group();
 
     var waist = createWaist(waistColor);
     waist.position.set(0, -3, 0);
     middle.add(waist);
 
-    const body = createBody(gender, bodyColor, hairColor);
+    const body = createBody(gender, bodyColor, hairColor, shader);
     body.position.set(0, 1, 0);
     middle.add(body);
 
     return middle;
 }
+
 module.exports = createMiddle;
-},{"../geometries/createBox":18}],9:[function(require,module,exports){
+},{"../geometries/createBox":18,"../shaders/multicolorShader":20,"../shaders/redgreenShader":21}],9:[function(require,module,exports){
 const createBox = require('../geometries/createBox');
+const {createMulticolorBox} = require('../shaders/multicolorShader');
+const createRedgreenBox = require('../shaders/redgreenShader');
 
 // Criação de um manga da camisa
-function createSleeve(sleeveColor) {
-    var sleeve = createBox(2, 2, 3, sleeveColor);
+function createSleeve(sleeveColor, shader, side) {
+    switch (shader) {
+        case 2: drawBox = createRedgreenBox;
+                switch (side) {
+                    case "right": param = {min: {value: new THREE.Vector2(0.0, 4.0)},
+                                           scale: {value: new THREE.Vector2(2.0, 2.0)},
+                                           size: {value: new THREE.Vector2(10.5, 6.0)}};
+                                  break;
+                    case "left": param = {min: {value: new THREE.Vector2(8.5, 4.0)},
+                                          scale: {value: new THREE.Vector2(2.0, 2.0)},
+                                          size: {value: new THREE.Vector2(10.5, 6.0)}};
+                                 break;
+                    default: break;
+                }
+                break;
+        case 1: drawBox = createMulticolorBox; param = sleeveColor; break;
+        case 0: default: drawBox = createBox; param = sleeveColor; break;
+    }
+
+    var sleeve = drawBox(2, 2, 3, param);
 
     return sleeve;
 }
@@ -707,10 +744,10 @@ function createArm(skinColor) {
 }
 
 // Criação de um membro superior = manga + braço
-function createSuperior(skinColor, sleeveColor) {
+function createSuperior(skinColor, sleeveColor, shader, side) {
     var superior = new THREE.Group();
 
-    var sleeve = createSleeve(sleeveColor);
+    var sleeve = createSleeve(sleeveColor, shader, side);
     sleeve.position.set(0, 3, 0);
     sleeve.name = "sleeve";
     superior.add(sleeve);
@@ -724,10 +761,12 @@ function createSuperior(skinColor, sleeveColor) {
 }
 
 module.exports = createSuperior;
-},{"../geometries/createBox":18}],10:[function(require,module,exports){
+},{"../geometries/createBox":18,"../shaders/multicolorShader":20,"../shaders/redgreenShader":21}],10:[function(require,module,exports){
 const createMiddle = require('../../character/createMiddle');
 const createInferior = require('../../character/createInferior');
 const createBox = require('../../geometries/createBox');
+const {createArmourShaderBox} = require('../../shaders/multicolorShader');
+
 // Criar capacete da armadura
 function createSimpleHelmet(otherColor) {
     var helmet = new THREE.Group();
@@ -759,15 +798,14 @@ function createSimpleHelmet(otherColor) {
     return helmet;
 }
 
-
 // Criar armadura simples para o personagem
 function createSimpleArmour(gender, hairColor, armourColor, otherColor) {
     var armour = new THREE.Group();
 
-   var middleArmour = createMiddle(gender, armourColor, otherColor, hairColor);
-   middleArmour.position.set(0,12,0);
-   middleArmour.name = "middle";
-   armour.add(middleArmour);
+    var middleArmour = createMiddle(gender, armourColor, otherColor, hairColor, 0);
+    middleArmour.position.set(0,12,0);
+    middleArmour.name = "middle";
+    armour.add(middleArmour);
 
     var inferiorLeftArmour = createInferior(armourColor, armourColor);
     inferiorLeftArmour.position.set(1.75, 4, 0);
@@ -803,7 +841,7 @@ function createSimpleArmour(gender, hairColor, armourColor, otherColor) {
 
 module.exports = createSimpleArmour;
 
-},{"../../character/createInferior":7,"../../character/createMiddle":8,"../../geometries/createBox":18}],11:[function(require,module,exports){
+},{"../../character/createInferior":7,"../../character/createMiddle":8,"../../geometries/createBox":18,"../../shaders/multicolorShader":20}],11:[function(require,module,exports){
 const {desvincularmaterial, changecolorgroup, criarcubo, espelhar} = require('../../geometries/functions');
 function createArrow() {
   var asa = new THREE.Group();
@@ -1526,7 +1564,7 @@ function createBox(x, y, z, boxColor) {
     return box;
 }
 
-module.exports = createBox
+module.exports = createBox;
 },{}],19:[function(require,module,exports){
 function changecolorgroup(group,cor)
 {
@@ -1574,6 +1612,96 @@ module.exports = {
    changecolorgroup
 }
 },{}],20:[function(require,module,exports){
+var uniforms;
+
+const setupUniforms = () => {
+  uniforms = {
+    u_time: { type: "f", value: 1.0 }
+  };
+}
+
+const updateTime = () => {
+  uniforms.u_time.value += 0.05;
+}
+
+// Shader 1: multicolor
+const multicolorShader = {
+  vertexShader: [
+      "void main() {",
+           "gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);",
+      "}"
+  ].join( "\n" ),
+
+  fragmentShader: [
+      "uniform float u_time;",
+     
+      "void main() {",
+           "gl_FragColor = vec4(sin(0.1*u_time), cos(0.1*u_time), 0.5*sin(0.1*u_time) + 0.5*cos(0.1*u_time), 1.0);",
+      "}"
+  ].join( "\n" )
+};
+
+function createMulticolorBox(x, y, z) {
+  var material = new THREE.ShaderMaterial( {
+      uniforms: uniforms,
+      vertexShader: multicolorShader.vertexShader,
+      fragmentShader: multicolorShader.fragmentShader
+  } );
+
+  var geometry = new THREE.BoxGeometry(x, y, z);
+
+  var box = new THREE.Mesh(geometry, material);
+
+  return box;
+}
+
+module.exports = {
+  setupUniforms,
+  updateTime,
+
+  createMulticolorBox
+}
+},{}],21:[function(require,module,exports){
+// Shader 2: redgreen
+const redgreenShader = {
+    vertexShader: [
+        "varying vec2 color;",
+        "uniform vec2 min;",
+        "uniform vec2 scale;",
+        "uniform vec2 size;",
+
+        "void main() {",
+            "gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);",
+            "color.x = (scale.x * uv.x + min.x)/size.x;",
+            "color.y = (scale.y * uv.y + min.y)/size.y;",
+        "}"
+    ].join( "\n" ),
+
+    fragmentShader: [
+        "varying vec2 color;",
+
+        "void main() {",
+            "gl_FragColor = vec4(color.x, color.y, 0.0, 1.0);",
+        "}"
+    ].join( "\n" )
+};
+
+function createRedgreenBox(x, y, z, param) {
+    var material = new THREE.ShaderMaterial( {
+        uniforms: param,
+        vertexShader: redgreenShader.vertexShader,
+        fragmentShader: redgreenShader.fragmentShader
+    } );
+
+    var geometry = new THREE.BoxGeometry(x, y, z);
+
+    var box = new THREE.Mesh(geometry, material);
+
+    return box;
+}
+
+module.exports = createRedgreenBox;
+},{}],22:[function(require,module,exports){
 const {createWeapon} = require('./assets/equipments/weapons/weapons');
 
 const handleClick = (event,character) => {
@@ -1611,7 +1739,7 @@ const handleClick = (event,character) => {
    }
 }
 
-const handleResize = (camera,renderer) => {
+const handleResize = (camera, renderer) => {
    camera.aspect = window.innerWidth/window.innerHeight;
    renderer.setSize(window.innerWidth,window.innerHeight);
    camera.updateProjectionMatrix();
@@ -1621,15 +1749,15 @@ module.exports = {
    handleClick,
    handleResize
 }
-},{"./assets/equipments/weapons/weapons":17}],21:[function(require,module,exports){
+},{"./assets/equipments/weapons/weapons":17}],23:[function(require,module,exports){
 const Character = require('./assets/character/Character.js');
 const eventHandler = require('./eventHandler');
 const createBackground = require('./assets/ambient/createBackground');
-let camera,scene,renderer,controls;
+const { setupUniforms, updateTime } = require('./assets/shaders/multicolorShader');
+let camera, scene, renderer, controls;
 let sceneSubjects = [];
 let count = 0;
 let character;
-
 
 const setupCamera = () => {
    camera = new THREE.PerspectiveCamera(75, window.innerWidth/window.innerHeight, 0.1, 1000);
@@ -1650,14 +1778,15 @@ const setupControls = () => {
 
 const setupCharacter = () => {
    const attributes = {
-      gender: "F",
+      gender: "M",
       skinColor: "#ffe4c4",
       hairColor: "#b8860b",
       eyeColor: "#006400",
       mouthColor: "#f08080",
       bodyColor: "#00ccdd",
       legColor: "#0000ff",
-      shoeColor:  "#999999"
+      shoeColor:  "#999999",
+      shader: 0
    }
    character =  new Character(attributes);
    return character.entity;
@@ -1681,11 +1810,10 @@ const setupScene = () => {
          console.log(subject);
       }
    });
-
 }
 
 const setupListeners = () => {
-   window.addEventListener('resize', e => eventHandler.handleResize(camera,renderer)); 
+   window.addEventListener('resize', e => eventHandler.handleResize(camera, renderer)); 
    document.body.addEventListener('click', event => {
       eventHandler.handleClick(event,character);
    });
@@ -1717,6 +1845,41 @@ const setupLights = () => {
    // sceneSubjects.push(light4);
 }
 
+
+/*function createShaderMaterial() {
+   const Shader = {
+      vertexShader: [
+          "void main() {",
+               "gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);",
+          "}"
+      ].join( "\n" ),
+
+      fragmentShader: [
+          "uniform float u_time;",
+         
+          "void main() {",
+               "gl_FragColor = vec4(vec3(sin(u_time)), 1.0);",
+          "}"
+      ].join( "\n" )
+  };
+
+  var material = new THREE.ShaderMaterial( {
+      uniforms: uniformVariables,
+      vertexShader: Shader.vertexShader,
+      fragmentShader: Shader.fragmentShader
+  } );
+
+  return material;
+
+  //var geometry = new THREE.BoxGeometry(6.5, 6, 3);
+
+    //var middle = new THREE.Mesh(geometry, material);
+    //var middle = createBox(6.5, 6, 3, armourColor);
+    //middle.position.set(0, 13, 0);
+
+    //scene.add(middle);
+}*/
+
 // Movimentação dos objetos
 const animate = () => {
    requestAnimationFrame(animate);
@@ -1739,6 +1902,8 @@ const animate = () => {
 
    renderer.render(scene, camera);
 
+   updateTime();
+
    count += 1;
 }
 
@@ -1748,6 +1913,7 @@ async function init() {
    setupControls();
    setupListeners();
    setupLights();
+   setupUniforms();
    await setupSubjects();
    setupScene();
    console.log(scene);
@@ -1755,7 +1921,7 @@ async function init() {
 }
 
 init();
-},{"./assets/ambient/createBackground":3,"./assets/character/Character.js":5,"./eventHandler":20}],22:[function(require,module,exports){
+},{"./assets/ambient/createBackground":3,"./assets/character/Character.js":5,"./assets/shaders/multicolorShader":20,"./eventHandler":22}],24:[function(require,module,exports){
 (function (global, factory) {
 	typeof exports === 'object' && typeof module !== 'undefined' ? factory(exports) :
 	typeof define === 'function' && define.amd ? define(['exports'], factory) :
@@ -52798,4 +52964,4 @@ init();
 
 })));
 
-},{}]},{},[21]);
+},{}]},{},[23]);
