@@ -349,10 +349,10 @@ class Character {
 
    }
 
-   equipSimpleArmour(){
+   equipSimpleArmour(texture){
       const armourColor = "#808080";
       const otherColor = "#4f4f4f";
-      const armour = createSimpleArmor(this.attributes.gender, this.attributes.hairColor, armourColor, otherColor);
+      const armour = createSimpleArmor(this.attributes.gender, this.attributes.hairColor, armourColor, otherColor,texture);
       this.equipArmor(armour);
    }
 
@@ -872,6 +872,8 @@ const createMiddle = require('../../character/createMiddle');
 const createInferior = require('../../character/createInferior');
 const createBox = require('../../geometries/createBox');
 const {createArmourShaderBox} = require('../../shaders/multicolorShader');
+const {changetexture} = require('../../geometries/functions');
+
 
 // Criar capacete da armadura
 function createSimpleHelmet(otherColor) {
@@ -905,7 +907,7 @@ function createSimpleHelmet(otherColor) {
 }
 
 // Criar armadura simples para o personagem
-function createSimpleArmour(gender, hairColor, armourColor, otherColor) {
+function createSimpleArmour(gender, hairColor, armourColor, otherColor,texture) {
     var armour = new THREE.Group();
 
     var middleArmour = createMiddle(gender, armourColor, otherColor, hairColor, 0);
@@ -941,15 +943,23 @@ function createSimpleArmour(gender, hairColor, armourColor, otherColor) {
     helmet.position.set(0, 18.5, -0.5);
     helmet.name = "helmet";
     armour.add(helmet);
-
+	
+	if(texture!='normal')
+	{
+		console.log(texture);
+		changetexture(armour,texture);
+	}
     return armour;
 }
 
 module.exports = createSimpleArmour;
 
-},{"../../character/createInferior":7,"../../character/createMiddle":8,"../../geometries/createBox":18,"../../shaders/multicolorShader":21}],11:[function(require,module,exports){
-const {desvincularmaterial, changecolorgroup, criarcubo, espelhar} = require('../../geometries/functions');
-function createArrow() {
+},{"../../character/createInferior":7,"../../character/createMiddle":8,"../../geometries/createBox":18,"../../geometries/functions":19,"../../shaders/multicolorShader":21}],11:[function(require,module,exports){
+const {desvincularmaterial, changecolorgroup, changetexture,criarcubo, espelhar} = require('../../geometries/functions');
+
+
+
+function createArrow(texture) {
   var asa = new THREE.Group();
   //Diagonal Principal
 
@@ -998,6 +1008,10 @@ function createArrow() {
   flecha.position.set(-1.25, 0, 0);
   flecha.rotateZ(-Math.PI / 2);
   flecha.name = "arrow";
+  if(texture!='normal')
+	{
+	changetexture(flecha,texture);
+	}
   return flecha;
 }
 
@@ -1028,9 +1042,9 @@ module.exports = {
    createArrow
 }
 },{"../../geometries/functions":19}],12:[function(require,module,exports){
-const {desvincularmaterial, changecolorgroup, criarcubo, espelhar} = require('../../geometries/functions');
+const {desvincularmaterial, changecolorgroup, changetexture, criarcubo, espelhar} = require('../../geometries/functions');
 
-function createAxe() {
+function createAxe(texture) {
 
 	//Controles de Camera
 
@@ -1134,6 +1148,11 @@ function createAxe() {
 	axe.position.set(-0.5,0,0);
 	axe.rotateY(-Math.PI/20);
 	axe.name = "axe";
+	if(texture!='normal')
+	{
+		console.log(texture);
+		changetexture(axe,texture);
+	}
 	return axe;
 }
 
@@ -1160,9 +1179,9 @@ module.exports = {
    createAxe
 }
 },{"../../geometries/functions":19}],13:[function(require,module,exports){
-const {desvincularmaterial, changecolorgroup, criarcubo, espelhar} = require('../../geometries/functions');
+const {desvincularmaterial, changecolorgroup, changetexture, criarcubo, espelhar} = require('../../geometries/functions');
 
-function createAxe2() {
+function createAxe2(texture) {
 
 	var diagonalprincipal= new THREE.Group();
 	//Diagonal Principal
@@ -1294,6 +1313,11 @@ function createAxe2() {
 	axe.rotateY(-Math.PI/20);
 	axe.scale.set(5,5,5)
 	axe.name = "axe2";
+	if(texture!='normal')
+	{
+		console.log(texture);
+		changetexture(axe,texture);
+	}
 	return axe	
 }
 
@@ -1320,9 +1344,9 @@ module.exports = {
    createAxe2
 }
 },{"../../geometries/functions":19}],14:[function(require,module,exports){
-const {desvincularmaterial, changecolorgroup, criarcubo, espelhar} = require('../../geometries/functions');
+const {desvincularmaterial, changecolorgroup, changetexture,criarcubo, espelhar} = require('../../geometries/functions');
 
-function createBow()
+function createBow(texture)
 {
 	var diagonalprincipal= new THREE.Group();
 	//Diagonal Principal
@@ -1337,7 +1361,7 @@ function createBow()
 	}
 	
 	//--------------
-	
+		console.log("oi");
 	//Contorno Externo Esquerdo
 	//Contorno Externo Esquerdo Inferior
 	var contornoexternoesquerdoinferior= new THREE.Group();
@@ -1395,7 +1419,7 @@ function createBow()
 	miolosuperior.rotation.z=90*Math.PI/180;
 	miolosuperior.position.x=1.5		
 	miolosuperior.position.y=1.4		
-	
+
 	var miolo= new THREE.Group();			
 	miolo.add(mioloinferior)
 	miolo.add(miolosuperior)
@@ -1424,6 +1448,13 @@ function createBow()
 	arco.position.set(0,0,0);
 	arco.name = "bow";
 	arco.rotateZ(Math.PI/4);
+	
+	if(texture!='normal')
+	{
+		console.log(texture);
+		changetexture(arco,texture)
+	}
+	
 	return arco;
 }
 
@@ -1447,10 +1478,11 @@ module.exports = {
    createBow
 }
 },{"../../geometries/functions":19}],15:[function(require,module,exports){
-const {desvincularmaterial, changecolorgroup, criarcubo, espelhar} = require('../../geometries/functions');
+const {desvincularmaterial, changecolorgroup, criarcubo,changetexture,espelhar} = require('../../geometries/functions');
 
-function createShield()
+function createShield(texture)
 {
+	console.log('teste');
 	var asa= new THREE.Group();
 	//Diagonal Principal
 	var escudo = new THREE.Group();
@@ -1469,6 +1501,13 @@ function createShield()
 
 	escudo.scale.set(5,5,5);
 	escudo.name = "shield";
+	
+	if(texture!='normal')
+	{
+		console.log(texture);
+		changetexture(escudo,texture);
+	}
+
 	return escudo;
 }
 
@@ -1492,9 +1531,9 @@ module.exports = {
    createShield
 }
 },{"../../geometries/functions":19}],16:[function(require,module,exports){
-const {desvincularmaterial, changecolorgroup, criarcubo, espelhar} = require('../../geometries/functions');
+const {desvincularmaterial, changecolorgroup, changetexture, criarcubo, espelhar} = require('../../geometries/functions');
 
-function createSword() {
+function createSword(texture) {
     var diagonalprincipal= new THREE.Group();
     //Diagonal Principal
 	
@@ -1598,6 +1637,11 @@ function createSword() {
     espada.scale.set(0.6,0.6,0.6)
     espada.rotateX(Math.PI/20);
     espada.name = "sword";
+	if(texture!='normal')
+	{
+		console.log(texture);
+		changetexture(espada,texture);
+	}
     return espada;
 }
 
@@ -1643,17 +1687,22 @@ function randomWeapon(scene)
 
 }
 
-function createWeapon(key) {
-	weapons= {
-      sword: createSword(),
-      axe: createAxe(),
-      axe2: createAxe2(),
-      arrow: createArrow(),
-      bow: createBow(),
-      shield: createShield()  
-   }
-	return weapons[key];
-	
+function createWeapon(key,texture) {
+	console.log(key)
+	 switch(key){
+      case 'sword':
+         return createSword(texture);
+      case 'axe':
+         return createAxe(texture);
+      case 'axe2':
+         return createAxe2(texture);
+      case 'arrow':
+         return createArrow(texture);
+      case 'bow':
+         return createBow(texture);
+      case 'shield':
+         return createShield(texture);
+	 }
 }
 
 module.exports = {
@@ -1661,37 +1710,74 @@ module.exports = {
    randomWeapon
 }
 },{"./arrow":11,"./axe":12,"./axe2":13,"./bow":14,"./shield":15,"./sword":16}],18:[function(require,module,exports){
-// Criação de uma box genérica
+(function (__dirname){
+var materials={	
+wood: new THREE.MeshStandardMaterial({map:  new THREE.TextureLoader().load(__dirname+'/../img/wood.png'), roughness: 0, metalness:0.4, fog:true, skinning:true}),
+stone: new THREE.MeshStandardMaterial({map:  new THREE.TextureLoader().load(__dirname+'/../img/stone.png'), roughness: 0, metalness:0.4, fog:true, skinning:true}),
+rainbow: new THREE.MeshStandardMaterial({map:  new THREE.TextureLoader().load(__dirname+'/../img/rainbow.png'), roughness: 0, metalness:0.4, fog:true, skinning:true}),
+gold: new THREE.MeshStandardMaterial({map:  new THREE.TextureLoader().load(__dirname+'/../img/gold.png'), roughness: 0, metalness:0.4, fog:true, skinning:true}),
+silver: new THREE.MeshStandardMaterial({map: new  THREE.TextureLoader().load(__dirname+'/../img/silver.png'), roughness: 0, metalness:0.4, fog:true, skinning:true}),
+diamond: new THREE.MeshStandardMaterial({map:new   THREE.TextureLoader().load(__dirname+'/../img/diamond.png'), roughness: 0, metalness:0.4, fog:true, skinning:true})	
+};
+
+
+
 function createBox(x, y, z, boxColor) {
     var geometry = new THREE.BoxGeometry(x, y, z);
     var material = new THREE.MeshBasicMaterial({color: boxColor});
     var box = new THREE.Mesh(geometry, material);
-
     return box;
 }
 
 module.exports = createBox;
+}).call(this,"/assets/geometries")
 },{}],19:[function(require,module,exports){
+(function (__dirname){
+var materials={	
+wood: new THREE.MeshStandardMaterial({map:  new THREE.TextureLoader().load(__dirname+'/../img/wood.png'), roughness: 0, metalness:0.4, fog:true, skinning:true}),
+stone: new THREE.MeshStandardMaterial({map:  new THREE.TextureLoader().load(__dirname+'/../img/stone.png'), roughness: 0, metalness:0.4, fog:true, skinning:true}),
+rainbow: new THREE.MeshStandardMaterial({map:  new THREE.TextureLoader().load(__dirname+'/../img/rainbow.png'), roughness: 0, metalness:0.4, fog:true, skinning:true}),
+gold: new THREE.MeshStandardMaterial({map:  new THREE.TextureLoader().load(__dirname+'/../img/gold.png'), roughness: 0, metalness:0.4, fog:true, skinning:true}),
+silver: new THREE.MeshStandardMaterial({map: new  THREE.TextureLoader().load(__dirname+'/../img/silver.png'), roughness: 0, metalness:0.4, fog:true, skinning:true}),
+diamond: new THREE.MeshStandardMaterial({map:new   THREE.TextureLoader().load(__dirname+'/../img/diamond.png'), roughness: 0, metalness:0.4, fog:true, skinning:true})	
+};
+
+
+
 function changecolorgroup(group,cor)
 {
+
 	for (var children=0;children<group.children.length;children+=1)
 	{
 		group.children[children].material.color.setHex(cor)
 	}			
 }
-			
+
+	
+function changetexture(group,texture)
+{
+	  group.traverse(child => {
+    if (child instanceof THREE.Mesh) {
+      child.material = materials[texture];
+    }
+  });
+
+  
+}
+	
 function criarcubo(tamanhox,tamanhoy,tamanhoz,eixox,eixoy,eixoz)
 {
 	// criando o cubo
 	var geometry=new THREE.BoxGeometry(tamanhox,tamanhoy,tamanhoz);	// Tamanho
 	var material=new THREE.MeshBasicMaterial({color:0xffff00}); // Cor
 	var cube= new THREE.Mesh(geometry,material);
-
 	cube.position.x=eixox
 	cube.position.y=eixoy
 	cube.position.z=eixoz
 	return cube	
 }
+
+
 			
 function desvincularmaterial(group)
 {
@@ -1715,8 +1801,10 @@ module.exports = {
    espelhar,
    desvincularmaterial,
    criarcubo,
+   changetexture,
    changecolorgroup
 }
+}).call(this,"/assets/geometries")
 },{}],20:[function(require,module,exports){
 // Shader 3: bluepink
 const bluepinkShader = {
@@ -1851,31 +1939,33 @@ function createRedgreenBox(x, y, z, param) {
 module.exports = createRedgreenBox;
 },{}],23:[function(require,module,exports){
 const {createWeapon} = require('./assets/equipments/weapons/weapons');
+let texture='normal';
 
 const handleClick = (event,character) => {
    console.log(character);
    event.preventDefault();
    switch(event.target.className){
       case "axe-button":
-         character.equipWeaponRight(createWeapon("axe"));
+		 console.log(texture)
+         character.equipWeaponRight(createWeapon("axe",texture));
          break;
       case "sword-button":
-         character.equipWeaponRight(createWeapon("sword"));
+         character.equipWeaponRight(createWeapon("sword",texture));
          break;
       case "axe2-button":
-         character.equipWeaponRight(createWeapon("axe2"));
+         character.equipWeaponRight(createWeapon("axe2",texture));
          break;
       case "bow-button":
-         character.equipWeaponRight(createWeapon("bow"));
+         character.equipWeaponRight(createWeapon("bow",texture));
          break;
       case "arrow-button":
-         character.equipWeaponLeft(createWeapon("arrow"));
+         character.equipWeaponLeft(createWeapon("arrow",texture));
          break;
       case "shield-button":
-         character.equipWeaponLeft(createWeapon("shield"));
+         character.equipWeaponLeft(createWeapon("shield",texture));
          break;
       case "armor-equip-button":
-         character.equipSimpleArmour();
+		 character.equipSimpleArmour(texture);
          break;
       case "armor-unequip-button":
          character.unequipArmour();
@@ -1883,6 +1973,48 @@ const handleClick = (event,character) => {
       case "weapon-unequip-button":
          character.unequipWeaponRight();
          character.unequipWeaponLeft();
+         break;
+	case "normal":
+         texture='normal';
+		 character.unequipWeaponRight();
+         character.unequipWeaponLeft();
+         character.unequipArmour();
+         break;
+	case "stone":
+         texture='stone';
+		 character.unequipWeaponRight();
+         character.unequipWeaponLeft();
+         character.unequipArmour();
+         break;
+	case "wood":
+         texture='wood';
+		 character.unequipWeaponRight();
+         character.unequipWeaponLeft();
+         character.unequipArmour();
+         break;
+	case 'rainbow':
+         texture='rainbow';
+		 character.unequipWeaponRight();
+         character.unequipWeaponLeft();
+         character.unequipArmour();
+         break;
+	case 'silver':
+         texture='silver';
+		 character.unequipWeaponRight();
+         character.unequipWeaponLeft();
+         character.unequipArmour();
+         break;
+	case 'gold':
+         texture='gold';
+		 character.unequipWeaponRight();
+         character.unequipWeaponLeft();
+         character.unequipArmour();
+         break;
+	case 'diamond':
+         texture='diamond';
+		 character.unequipWeaponRight();
+         character.unequipWeaponLeft();
+         character.unequipArmour();
          break;
    }
 }

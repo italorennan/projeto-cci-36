@@ -1,6 +1,6 @@
-const {desvincularmaterial, changecolorgroup, criarcubo, espelhar} = require('../../geometries/functions');
+const {desvincularmaterial, changecolorgroup, changetexture, criarcubo, espelhar} = require('../../geometries/functions');
 
-function createSword() {
+function createSword(texture) {
     var diagonalprincipal= new THREE.Group();
     //Diagonal Principal
 	
@@ -104,6 +104,11 @@ function createSword() {
     espada.scale.set(0.6,0.6,0.6)
     espada.rotateX(Math.PI/20);
     espada.name = "sword";
+	if(texture!='normal')
+	{
+		console.log(texture);
+		changetexture(espada,texture);
+	}
     return espada;
 }
 

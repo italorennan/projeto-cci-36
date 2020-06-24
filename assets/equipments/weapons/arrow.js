@@ -1,5 +1,8 @@
-const {desvincularmaterial, changecolorgroup, criarcubo, espelhar} = require('../../geometries/functions');
-function createArrow() {
+const {desvincularmaterial, changecolorgroup, changetexture,criarcubo, espelhar} = require('../../geometries/functions');
+
+
+
+function createArrow(texture) {
   var asa = new THREE.Group();
   //Diagonal Principal
 
@@ -48,6 +51,10 @@ function createArrow() {
   flecha.position.set(-1.25, 0, 0);
   flecha.rotateZ(-Math.PI / 2);
   flecha.name = "arrow";
+  if(texture!='normal')
+	{
+	changetexture(flecha,texture);
+	}
   return flecha;
 }
 

@@ -1,7 +1,8 @@
-const {desvincularmaterial, changecolorgroup, criarcubo, espelhar} = require('../../geometries/functions');
+const {desvincularmaterial, changecolorgroup, criarcubo,changetexture,espelhar} = require('../../geometries/functions');
 
-function createShield()
+function createShield(texture)
 {
+	console.log('teste');
 	var asa= new THREE.Group();
 	//Diagonal Principal
 	var escudo = new THREE.Group();
@@ -20,6 +21,13 @@ function createShield()
 
 	escudo.scale.set(5,5,5);
 	escudo.name = "shield";
+	
+	if(texture!='normal')
+	{
+		console.log(texture);
+		changetexture(escudo,texture);
+	}
+
 	return escudo;
 }
 

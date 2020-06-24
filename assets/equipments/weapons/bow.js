@@ -1,6 +1,6 @@
-const {desvincularmaterial, changecolorgroup, criarcubo, espelhar} = require('../../geometries/functions');
+const {desvincularmaterial, changecolorgroup, changetexture,criarcubo, espelhar} = require('../../geometries/functions');
 
-function createBow()
+function createBow(texture)
 {
 	var diagonalprincipal= new THREE.Group();
 	//Diagonal Principal
@@ -15,7 +15,7 @@ function createBow()
 	}
 	
 	//--------------
-	
+		console.log("oi");
 	//Contorno Externo Esquerdo
 	//Contorno Externo Esquerdo Inferior
 	var contornoexternoesquerdoinferior= new THREE.Group();
@@ -73,7 +73,7 @@ function createBow()
 	miolosuperior.rotation.z=90*Math.PI/180;
 	miolosuperior.position.x=1.5		
 	miolosuperior.position.y=1.4		
-	
+
 	var miolo= new THREE.Group();			
 	miolo.add(mioloinferior)
 	miolo.add(miolosuperior)
@@ -102,6 +102,13 @@ function createBow()
 	arco.position.set(0,0,0);
 	arco.name = "bow";
 	arco.rotateZ(Math.PI/4);
+	
+	if(texture!='normal')
+	{
+		console.log(texture);
+		changetexture(arco,texture)
+	}
+	
 	return arco;
 }
 

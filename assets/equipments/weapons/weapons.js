@@ -17,17 +17,22 @@ function randomWeapon(scene)
 
 }
 
-function createWeapon(key) {
-	weapons= {
-      sword: createSword(),
-      axe: createAxe(),
-      axe2: createAxe2(),
-      arrow: createArrow(),
-      bow: createBow(),
-      shield: createShield()  
-   }
-	return weapons[key];
-	
+function createWeapon(key,texture) {
+	console.log(key)
+	 switch(key){
+      case 'sword':
+         return createSword(texture);
+      case 'axe':
+         return createAxe(texture);
+      case 'axe2':
+         return createAxe2(texture);
+      case 'arrow':
+         return createArrow(texture);
+      case 'bow':
+         return createBow(texture);
+      case 'shield':
+         return createShield(texture);
+	 }
 }
 
 module.exports = {
