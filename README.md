@@ -13,6 +13,7 @@ Estrutura de arquivos:
    |- character //Modelos do personagem
    |- equipments //Modelos de armas e armaduras
    |- geometries //Modelos base
+   |- images //Imagens usadas para as texturas
    |- shaders //Implementacao dos shaders utilizados
 - index.html //Html base do projeto
 - index.js //Js que carrega a aplciação principal
