@@ -2,6 +2,8 @@ const createMiddle = require('../../character/createMiddle');
 const createInferior = require('../../character/createInferior');
 const createBox = require('../../geometries/createBox');
 const {createArmourShaderBox} = require('../../shaders/multicolorShader');
+const {changetexture} = require('../../geometries/functions');
+
 
 // Criar capacete da armadura
 function createSimpleHelmet(otherColor) {
@@ -71,7 +73,12 @@ function createSimpleArmour(gender, hairColor, armourColor, otherColor) {
     helmet.position.set(0, 18.5, -0.5);
     helmet.name = "helmet";
     armour.add(helmet);
-
+	
+	if(texture!='normal')
+	{
+		console.log(texture);
+		changetexture(armour,texture);
+	}
     return armour;
 }
 

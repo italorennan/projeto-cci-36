@@ -1,4 +1,4 @@
-const {desvincularmaterial, changecolorgroup, criarcubo, espelhar} = require('../../geometries/functions');
+const {desvincularmaterial, changecolorgroup, changetexture, criarcubo, espelhar} = require('../../geometries/functions');
 
 function createAxe2() {
 
@@ -132,6 +132,11 @@ function createAxe2() {
 	axe.rotateY(-Math.PI/20);
 	axe.scale.set(5,5,5)
 	axe.name = "axe2";
+	if(texture!='normal')
+	{
+		console.log(texture);
+		changetexture(axe,texture);
+	}
 	return axe	
 }
 
