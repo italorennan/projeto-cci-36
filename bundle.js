@@ -1710,18 +1710,6 @@ module.exports = {
    randomWeapon
 }
 },{"./arrow":11,"./axe":12,"./axe2":13,"./bow":14,"./shield":15,"./sword":16}],18:[function(require,module,exports){
-(function (__dirname){
-var materials={	
-wood: new THREE.MeshStandardMaterial({map:  new THREE.TextureLoader().load(__dirname+'/../img/wood.png'), roughness: 0, metalness:0.4, fog:true, skinning:true}),
-stone: new THREE.MeshStandardMaterial({map:  new THREE.TextureLoader().load(__dirname+'/../img/stone.png'), roughness: 0, metalness:0.4, fog:true, skinning:true}),
-rainbow: new THREE.MeshStandardMaterial({map:  new THREE.TextureLoader().load(__dirname+'/../img/rainbow.png'), roughness: 0, metalness:0.4, fog:true, skinning:true}),
-gold: new THREE.MeshStandardMaterial({map:  new THREE.TextureLoader().load(__dirname+'/../img/gold.png'), roughness: 0, metalness:0.4, fog:true, skinning:true}),
-silver: new THREE.MeshStandardMaterial({map: new  THREE.TextureLoader().load(__dirname+'/../img/silver.png'), roughness: 0, metalness:0.4, fog:true, skinning:true}),
-diamond: new THREE.MeshStandardMaterial({map:new   THREE.TextureLoader().load(__dirname+'/../img/diamond.png'), roughness: 0, metalness:0.4, fog:true, skinning:true})	
-};
-
-
-
 function createBox(x, y, z, boxColor) {
     var geometry = new THREE.BoxGeometry(x, y, z);
     var material = new THREE.MeshBasicMaterial({color: boxColor});
@@ -1730,16 +1718,14 @@ function createBox(x, y, z, boxColor) {
 }
 
 module.exports = createBox;
-}).call(this,"/assets/geometries")
 },{}],19:[function(require,module,exports){
-(function (__dirname){
 var materials={	
-wood: new THREE.MeshStandardMaterial({map:  new THREE.TextureLoader().load(__dirname+'/../image/wood.png'), roughness: 0, metalness:0.4, fog:true, skinning:true}),
-stone: new THREE.MeshStandardMaterial({map:  new THREE.TextureLoader().load(__dirname+'/../image/stone.png'), roughness: 0, metalness:0.4, fog:true, skinning:true}),
-rainbow: new THREE.MeshStandardMaterial({map:  new THREE.TextureLoader().load(__dirname+'/../image/rainbow.png'), roughness: 0, metalness:0.4, fog:true, skinning:true}),
-gold: new THREE.MeshStandardMaterial({map:  new THREE.TextureLoader().load(__dirname+'/../image/gold.png'), roughness: 0, metalness:0.4, fog:true, skinning:true}),
-silver: new THREE.MeshStandardMaterial({map: new  THREE.TextureLoader().load(__dirname+'/../image/silver.png'), roughness: 0, metalness:0.4, fog:true, skinning:true}),
-diamond: new THREE.MeshStandardMaterial({map:new   THREE.TextureLoader().load(__dirname+'/../image/diamond.png'), roughness: 0, metalness:0.4, fog:true, skinning:true})	
+wood: new THREE.MeshStandardMaterial({map:  new THREE.TextureLoader().load('./assets/images/wood.png'), roughness: 0, metalness:0.4, fog:true, skinning:true}),
+stone: new THREE.MeshStandardMaterial({map:  new THREE.TextureLoader().load('./assets/images/stone.png'), roughness: 0, metalness:0.4, fog:true, skinning:true}),
+rainbow: new THREE.MeshStandardMaterial({map:  new THREE.TextureLoader().load('./assets/images/rainbow.png'), roughness: 0, metalness:0.4, fog:true, skinning:true}),
+gold: new THREE.MeshStandardMaterial({map:  new THREE.TextureLoader().load('./assets/images/gold.png'), roughness: 0, metalness:0.4, fog:true, skinning:true}),
+silver: new THREE.MeshStandardMaterial({map: new  THREE.TextureLoader().load('./assets/images/silver.png'), roughness: 0, metalness:0.4, fog:true, skinning:true}),
+diamond: new THREE.MeshStandardMaterial({map:new   THREE.TextureLoader().load('./assets/images/diamond.png'), roughness: 0, metalness:0.4, fog:true, skinning:true})	
 };
 
 
@@ -1804,7 +1790,6 @@ module.exports = {
    changetexture,
    changecolorgroup
 }
-}).call(this,"/assets/geometries")
 },{}],20:[function(require,module,exports){
 // Shader 3: bluepink
 const bluepinkShader = {
