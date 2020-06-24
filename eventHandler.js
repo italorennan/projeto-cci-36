@@ -1,29 +1,31 @@
 const {createWeapon} = require('./assets/equipments/weapons/weapons');
+let texture='normal';
 
 const handleClick = (event,character) => {
    console.log(character);
    event.preventDefault();
    switch(event.target.className){
       case "axe-button":
-         character.equipWeaponRight(createWeapon("axe"));
+		 console.log(texture)
+         character.equipWeaponRight(createWeapon("axe",texture));
          break;
       case "sword-button":
-         character.equipWeaponRight(createWeapon("sword"));
+         character.equipWeaponRight(createWeapon("sword",texture));
          break;
       case "axe2-button":
-         character.equipWeaponRight(createWeapon("axe2"));
+         character.equipWeaponRight(createWeapon("axe2",texture));
          break;
       case "bow-button":
-         character.equipWeaponRight(createWeapon("bow"));
+         character.equipWeaponRight(createWeapon("bow",texture));
          break;
       case "arrow-button":
-         character.equipWeaponLeft(createWeapon("arrow"));
+         character.equipWeaponLeft(createWeapon("arrow",texture));
          break;
       case "shield-button":
-         character.equipWeaponLeft(createWeapon("shield"));
+         character.equipWeaponLeft(createWeapon("shield",texture));
          break;
       case "armor-equip-button":
-		 character.equipSimpleArmour();
+		 character.equipSimpleArmour(texture);
          break;
       case "armor-unequip-button":
          character.unequipArmour();

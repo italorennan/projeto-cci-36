@@ -17,21 +17,21 @@ function randomWeapon(scene)
 
 }
 
-function createWeapon(key) {
+function createWeapon(key,texture) {
 	console.log(key)
 	 switch(key){
       case 'sword':
-         return createSword();
+         return createSword(texture);
       case 'axe':
-         return createAxe();
+         return createAxe(texture);
       case 'axe2':
-         return createAxe2();
+         return createAxe2(texture);
       case 'arrow':
-         return createArrow();
+         return createArrow(texture);
       case 'bow':
-         return createBow();
+         return createBow(texture);
       case 'shield':
-         return createShield();
+         return createShield(texture);
 	 }
 }
 

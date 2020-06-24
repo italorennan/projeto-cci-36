@@ -2,7 +2,7 @@ const {desvincularmaterial, changecolorgroup, changetexture,criarcubo, espelhar}
 
 
 
-function createArrow() {
+function createArrow(texture) {
   var asa = new THREE.Group();
   //Diagonal Principal
 

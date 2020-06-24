@@ -213,10 +213,10 @@ class Character {
 
    }
 
-   equipSimpleArmour(){
+   equipSimpleArmour(texture){
       const armourColor = "#808080";
       const otherColor = "#4f4f4f";
-      const armour = createSimpleArmor(this.attributes.gender, this.attributes.hairColor, armourColor, otherColor);
+      const armour = createSimpleArmor(this.attributes.gender, this.attributes.hairColor, armourColor, otherColor,texture);
       this.equipArmor(armour);
    }
 

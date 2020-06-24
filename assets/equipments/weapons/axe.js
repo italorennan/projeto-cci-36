@@ -1,6 +1,6 @@
 const {desvincularmaterial, changecolorgroup, changetexture, criarcubo, espelhar} = require('../../geometries/functions');
 
-function createAxe() {
+function createAxe(texture) {
 
 	//Controles de Camera
 

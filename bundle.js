@@ -349,10 +349,10 @@ class Character {
 
    }
 
-   equipSimpleArmour(){
+   equipSimpleArmour(texture){
       const armourColor = "#808080";
       const otherColor = "#4f4f4f";
-      const armour = createSimpleArmor(this.attributes.gender, this.attributes.hairColor, armourColor, otherColor);
+      const armour = createSimpleArmor(this.attributes.gender, this.attributes.hairColor, armourColor, otherColor,texture);
       this.equipArmor(armour);
    }
 
@@ -907,7 +907,7 @@ function createSimpleHelmet(otherColor) {
 }
 
 // Criar armadura simples para o personagem
-function createSimpleArmour(gender, hairColor, armourColor, otherColor) {
+function createSimpleArmour(gender, hairColor, armourColor, otherColor,texture) {
     var armour = new THREE.Group();
 
     var middleArmour = createMiddle(gender, armourColor, otherColor, hairColor, 0);
@@ -959,7 +959,7 @@ const {desvincularmaterial, changecolorgroup, changetexture,criarcubo, espelhar}
 
 
 
-function createArrow() {
+function createArrow(texture) {
   var asa = new THREE.Group();
   //Diagonal Principal
 
@@ -1044,7 +1044,7 @@ module.exports = {
 },{"../../geometries/functions":19}],12:[function(require,module,exports){
 const {desvincularmaterial, changecolorgroup, changetexture, criarcubo, espelhar} = require('../../geometries/functions');
 
-function createAxe() {
+function createAxe(texture) {
 
 	//Controles de Camera
 
@@ -1181,7 +1181,7 @@ module.exports = {
 },{"../../geometries/functions":19}],13:[function(require,module,exports){
 const {desvincularmaterial, changecolorgroup, changetexture, criarcubo, espelhar} = require('../../geometries/functions');
 
-function createAxe2() {
+function createAxe2(texture) {
 
 	var diagonalprincipal= new THREE.Group();
 	//Diagonal Principal
@@ -1346,7 +1346,7 @@ module.exports = {
 },{"../../geometries/functions":19}],14:[function(require,module,exports){
 const {desvincularmaterial, changecolorgroup, changetexture,criarcubo, espelhar} = require('../../geometries/functions');
 
-function createBow()
+function createBow(texture)
 {
 	var diagonalprincipal= new THREE.Group();
 	//Diagonal Principal
@@ -1480,7 +1480,7 @@ module.exports = {
 },{"../../geometries/functions":19}],15:[function(require,module,exports){
 const {desvincularmaterial, changecolorgroup, criarcubo,changetexture,espelhar} = require('../../geometries/functions');
 
-function createShield()
+function createShield(texture)
 {
 	console.log('teste');
 	var asa= new THREE.Group();
@@ -1533,7 +1533,7 @@ module.exports = {
 },{"../../geometries/functions":19}],16:[function(require,module,exports){
 const {desvincularmaterial, changecolorgroup, changetexture, criarcubo, espelhar} = require('../../geometries/functions');
 
-function createSword() {
+function createSword(texture) {
     var diagonalprincipal= new THREE.Group();
     //Diagonal Principal
 	
@@ -1687,21 +1687,21 @@ function randomWeapon(scene)
 
 }
 
-function createWeapon(key) {
+function createWeapon(key,texture) {
 	console.log(key)
 	 switch(key){
       case 'sword':
-         return createSword();
+         return createSword(texture);
       case 'axe':
-         return createAxe();
+         return createAxe(texture);
       case 'axe2':
-         return createAxe2();
+         return createAxe2(texture);
       case 'arrow':
-         return createArrow();
+         return createArrow(texture);
       case 'bow':
-         return createBow();
+         return createBow(texture);
       case 'shield':
-         return createShield();
+         return createShield(texture);
 	 }
 }
 
@@ -1711,29 +1711,21 @@ module.exports = {
 }
 },{"./arrow":11,"./axe":12,"./axe2":13,"./bow":14,"./shield":15,"./sword":16}],18:[function(require,module,exports){
 (function (__dirname){
-// Criação de uma box genérica
-var materials={};
+var materials={	
+wood: new THREE.MeshStandardMaterial({map:  new THREE.TextureLoader().load(__dirname+'/../img/wood.png'), roughness: 0, metalness:0.4, fog:true, skinning:true}),
+stone: new THREE.MeshStandardMaterial({map:  new THREE.TextureLoader().load(__dirname+'/../img/stone.png'), roughness: 0, metalness:0.4, fog:true, skinning:true}),
+rainbow: new THREE.MeshStandardMaterial({map:  new THREE.TextureLoader().load(__dirname+'/../img/rainbow.png'), roughness: 0, metalness:0.4, fog:true, skinning:true}),
+gold: new THREE.MeshStandardMaterial({map:  new THREE.TextureLoader().load(__dirname+'/../img/gold.png'), roughness: 0, metalness:0.4, fog:true, skinning:true}),
+silver: new THREE.MeshStandardMaterial({map: new  THREE.TextureLoader().load(__dirname+'/../img/silver.png'), roughness: 0, metalness:0.4, fog:true, skinning:true}),
+diamond: new THREE.MeshStandardMaterial({map:new   THREE.TextureLoader().load(__dirname+'/../img/diamond.png'), roughness: 0, metalness:0.4, fog:true, skinning:true})	
+};
+
+
+
 function createBox(x, y, z, boxColor) {
     var geometry = new THREE.BoxGeometry(x, y, z);
-
-	texture_wood = new THREE.TextureLoader().load(__dirname+'/../img/wood.png');
-	texture_stone= new THREE.TextureLoader().load(__dirname+'/../img/stone.png');
-	texture_rainbow = new THREE.TextureLoader().load(__dirname+'/../img/rainbow.png');		
-	texture_gold= new THREE.TextureLoader().load(__dirname+'/../img/gold.png');	
-	texture_silver = new THREE.TextureLoader().load(__dirname+'/../img/silver.png');
-	texture_diamond = new THREE.TextureLoader().load(__dirname+'/../img/diamond.png');
-	
-
-	materials['normal']=new THREE.MeshBasicMaterial({color: boxColor});
-	materials['wood']=new THREE.MeshStandardMaterial({map: texture_wood, roughness: 0, metalness:0.4, fog:true, skinning:true});
-	materials['stone']=new THREE.MeshStandardMaterial({map: texture_stone, roughness: 0, metalness:0.4, fog:true, skinning:true});
-	materials['rainbow']=new THREE.MeshStandardMaterial({map: texture_rainbow, roughness: 0, metalness:0.4, fog:true, skinning:true});
-	materials['gold']=new THREE.MeshStandardMaterial({map: texture_gold, roughness: 0, metalness:0.4, fog:true, skinning:true});
-	materials['silver']=new THREE.MeshStandardMaterial({map: texture_silver, roughness: 0, metalness:0.4, fog:true, skinning:true});
-	materials['diamond']=new THREE.MeshStandardMaterial({map: texture_diamond, roughness: 0, metalness:0.4, fog:true, skinning:true});
-	
-	var box = new THREE.Mesh(geometry, materials['normal']);
-
+    var material = new THREE.MeshBasicMaterial({color: boxColor});
+    var box = new THREE.Mesh(geometry, material);
     return box;
 }
 
@@ -1741,8 +1733,16 @@ module.exports = createBox;
 }).call(this,"/assets/geometries")
 },{}],19:[function(require,module,exports){
 (function (__dirname){
+var materials={	
+wood: new THREE.MeshStandardMaterial({map:  new THREE.TextureLoader().load(__dirname+'/../img/wood.png'), roughness: 0, metalness:0.4, fog:true, skinning:true}),
+stone: new THREE.MeshStandardMaterial({map:  new THREE.TextureLoader().load(__dirname+'/../img/stone.png'), roughness: 0, metalness:0.4, fog:true, skinning:true}),
+rainbow: new THREE.MeshStandardMaterial({map:  new THREE.TextureLoader().load(__dirname+'/../img/rainbow.png'), roughness: 0, metalness:0.4, fog:true, skinning:true}),
+gold: new THREE.MeshStandardMaterial({map:  new THREE.TextureLoader().load(__dirname+'/../img/gold.png'), roughness: 0, metalness:0.4, fog:true, skinning:true}),
+silver: new THREE.MeshStandardMaterial({map: new  THREE.TextureLoader().load(__dirname+'/../img/silver.png'), roughness: 0, metalness:0.4, fog:true, skinning:true}),
+diamond: new THREE.MeshStandardMaterial({map:new   THREE.TextureLoader().load(__dirname+'/../img/diamond.png'), roughness: 0, metalness:0.4, fog:true, skinning:true})	
+};
 
-var materials={};
+
 
 function changecolorgroup(group,cor)
 {
@@ -1753,17 +1753,6 @@ function changecolorgroup(group,cor)
 	}			
 }
 
-
-
-
-//function changetexture(group,texture)
-//{
-	//console.log(group.children.length);
-	//for (var children=0;children<group.children.length;children+=1)
-//	{
-	//	group.children[children].material=materials[texture]
-	//}			
-//}
 	
 function changetexture(group,texture)
 {
@@ -1780,27 +1769,8 @@ function criarcubo(tamanhox,tamanhoy,tamanhoz,eixox,eixoy,eixoz)
 {
 	// criando o cubo
 	var geometry=new THREE.BoxGeometry(tamanhox,tamanhoy,tamanhoz);	// Tamanho
-	
-	
-	
-	materials['normal']=new THREE.MeshBasicMaterial({color:0xffff00}); // Cor
-	
-	texture_wood = new THREE.TextureLoader().load(__dirname+'/../img/wood.png');
-	texture_stone= new THREE.TextureLoader().load(__dirname+'/../img/stone.png');
-	texture_rainbow = new THREE.TextureLoader().load(__dirname+'/../img/rainbow.png');
-	texture_gold= new THREE.TextureLoader().load(__dirname+'/../img/gold.png');
-	texture_silver = new THREE.TextureLoader().load(__dirname+'/../img/silver.png');
-	texture_diamond = new THREE.TextureLoader().load(__dirname+'/../img/diamond.png');
-	
-	materials['wood']=new THREE.MeshStandardMaterial({map: texture_wood, roughness: 0, metalness:0.4, fog:true, skinning:true});
-	materials['stone']=new THREE.MeshStandardMaterial({map: texture_stone, roughness: 0, metalness:0.4, fog:true, skinning:true});
-	materials['rainbow']=new THREE.MeshStandardMaterial({map: texture_rainbow, roughness: 0, metalness:0.4, fog:true, skinning:true});
-	materials['gold']=new THREE.MeshStandardMaterial({map: texture_gold, roughness: 0, metalness:0.4, fog:true, skinning:true});
-	materials['silver']=new THREE.MeshStandardMaterial({map: texture_silver, roughness: 0, metalness:0.4, fog:true, skinning:true});
-	materials['diamond']=new THREE.MeshStandardMaterial({map: texture_diamond, roughness: 0, metalness:0.4, fog:true, skinning:true});
-
-	var cube= new THREE.Mesh(geometry,materials['normal']);
-
+	var material=new THREE.MeshBasicMaterial({color:0xffff00}); // Cor
+	var cube= new THREE.Mesh(geometry,material);
 	cube.position.x=eixox
 	cube.position.y=eixoy
 	cube.position.z=eixoz
@@ -1969,31 +1939,33 @@ function createRedgreenBox(x, y, z, param) {
 module.exports = createRedgreenBox;
 },{}],23:[function(require,module,exports){
 const {createWeapon} = require('./assets/equipments/weapons/weapons');
+let texture='normal';
 
 const handleClick = (event,character) => {
    console.log(character);
    event.preventDefault();
    switch(event.target.className){
       case "axe-button":
-         character.equipWeaponRight(createWeapon("axe"));
+		 console.log(texture)
+         character.equipWeaponRight(createWeapon("axe",texture));
          break;
       case "sword-button":
-         character.equipWeaponRight(createWeapon("sword"));
+         character.equipWeaponRight(createWeapon("sword",texture));
          break;
       case "axe2-button":
-         character.equipWeaponRight(createWeapon("axe2"));
+         character.equipWeaponRight(createWeapon("axe2",texture));
          break;
       case "bow-button":
-         character.equipWeaponRight(createWeapon("bow"));
+         character.equipWeaponRight(createWeapon("bow",texture));
          break;
       case "arrow-button":
-         character.equipWeaponLeft(createWeapon("arrow"));
+         character.equipWeaponLeft(createWeapon("arrow",texture));
          break;
       case "shield-button":
-         character.equipWeaponLeft(createWeapon("shield"));
+         character.equipWeaponLeft(createWeapon("shield",texture));
          break;
       case "armor-equip-button":
-		 character.equipSimpleArmour();
+		 character.equipSimpleArmour(texture);
          break;
       case "armor-unequip-button":
          character.unequipArmour();
@@ -2083,7 +2055,6 @@ let camera, scene, renderer, controls;
 let sceneSubjects = [];
 let count = 0;
 let character;
-let texture='normal';
 
 const setupCamera = () => {
    camera = new THREE.PerspectiveCamera(75, window.innerWidth/window.innerHeight, 0.1, 1000);

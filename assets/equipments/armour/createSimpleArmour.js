@@ -37,7 +37,7 @@ function createSimpleHelmet(otherColor) {
 }
 
 // Criar armadura simples para o personagem
-function createSimpleArmour(gender, hairColor, armourColor, otherColor) {
+function createSimpleArmour(gender, hairColor, armourColor, otherColor,texture) {
     var armour = new THREE.Group();
 
     var middleArmour = createMiddle(gender, armourColor, otherColor, hairColor, 0);

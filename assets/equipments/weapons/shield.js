@@ -1,6 +1,6 @@
 const {desvincularmaterial, changecolorgroup, criarcubo,changetexture,espelhar} = require('../../geometries/functions');
 
-function createShield()
+function createShield(texture)
 {
 	console.log('teste');
 	var asa= new THREE.Group();
