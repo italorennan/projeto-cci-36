@@ -1734,12 +1734,12 @@ module.exports = createBox;
 },{}],19:[function(require,module,exports){
 (function (__dirname){
 var materials={	
-wood: new THREE.MeshStandardMaterial({map:  new THREE.TextureLoader().load(__dirname+'/../img/wood.png'), roughness: 0, metalness:0.4, fog:true, skinning:true}),
-stone: new THREE.MeshStandardMaterial({map:  new THREE.TextureLoader().load(__dirname+'/../img/stone.png'), roughness: 0, metalness:0.4, fog:true, skinning:true}),
-rainbow: new THREE.MeshStandardMaterial({map:  new THREE.TextureLoader().load(__dirname+'/../img/rainbow.png'), roughness: 0, metalness:0.4, fog:true, skinning:true}),
-gold: new THREE.MeshStandardMaterial({map:  new THREE.TextureLoader().load(__dirname+'/../img/gold.png'), roughness: 0, metalness:0.4, fog:true, skinning:true}),
-silver: new THREE.MeshStandardMaterial({map: new  THREE.TextureLoader().load(__dirname+'/../img/silver.png'), roughness: 0, metalness:0.4, fog:true, skinning:true}),
-diamond: new THREE.MeshStandardMaterial({map:new   THREE.TextureLoader().load(__dirname+'/../img/diamond.png'), roughness: 0, metalness:0.4, fog:true, skinning:true})	
+wood: new THREE.MeshStandardMaterial({map:  new THREE.TextureLoader().load(__dirname+'/../image/wood.png'), roughness: 0, metalness:0.4, fog:true, skinning:true}),
+stone: new THREE.MeshStandardMaterial({map:  new THREE.TextureLoader().load(__dirname+'/../image/stone.png'), roughness: 0, metalness:0.4, fog:true, skinning:true}),
+rainbow: new THREE.MeshStandardMaterial({map:  new THREE.TextureLoader().load(__dirname+'/../image/rainbow.png'), roughness: 0, metalness:0.4, fog:true, skinning:true}),
+gold: new THREE.MeshStandardMaterial({map:  new THREE.TextureLoader().load(__dirname+'/../image/gold.png'), roughness: 0, metalness:0.4, fog:true, skinning:true}),
+silver: new THREE.MeshStandardMaterial({map: new  THREE.TextureLoader().load(__dirname+'/../image/silver.png'), roughness: 0, metalness:0.4, fog:true, skinning:true}),
+diamond: new THREE.MeshStandardMaterial({map:new   THREE.TextureLoader().load(__dirname+'/../image/diamond.png'), roughness: 0, metalness:0.4, fog:true, skinning:true})	
 };
 
 
