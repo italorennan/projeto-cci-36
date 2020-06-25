@@ -13,8 +13,6 @@ class BackgroundElement{
       this.entity = this.loadedElement.scene;
       this.mesh = this.loadedElement.scene.children[0];
    }
-
-   setScalce
    
    setPosition = ({x, y, z}) => {
       this.position = {x:x, y:y, z:z};
