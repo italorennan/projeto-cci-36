@@ -11,6 +11,10 @@ class Background{
          this.backgroundElementArray.push(backgroundElement);
    }  
 
+   checkIfSelected = object => {
+      
+   }
+   
    getBackgroundElementArray = () => {
       return this.backgroundElementArray;
    }
