@@ -35,8 +35,6 @@ class BackgroundElement{
       this.entity = this.loadedElement.scene;
       this.mesh = this.loadedElement.scene.children[0];
    }
-
-   setScalce
    
    setPosition = ({x, y, z}) => {
       this.position = {x:x, y:y, z:z};
@@ -53,6 +51,7 @@ class BackgroundElement{
 }
 
 module.exports = BackgroundElement;
+
 },{"./loader":4}],3:[function(require,module,exports){
 const Background = require('./Background');
 const BackgroundElement = require('./BackgroundElement');

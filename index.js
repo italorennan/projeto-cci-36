@@ -1,11 +1,13 @@
 const Character = require('./assets/character/Character.js');
 const eventHandler = require('./eventHandler');
 const createBackground = require('./assets/ambient/createBackground');
-const { setupUniforms, updateTime } = require('./assets/shaders/multicolorShader');
-let camera, scene, renderer, controls;
+let camera,scene,renderer,controls
+const raycaster = new THREE.Raycaster();
+let mouse = new THREE.Vector2();
 let sceneSubjects = [];
 let count = 0;
 let character;
+
 
 const setupCamera = () => {
    camera = new THREE.PerspectiveCamera(75, window.innerWidth/window.innerHeight, 0.1, 1000);
@@ -22,19 +24,19 @@ const setupRenderer = () => {
 
 const setupControls = () => {
    controls = new THREE.OrbitControls( camera, renderer.domElement );
+   controls.autoRotate=false;
 }
 
 const setupCharacter = () => {
    const attributes = {
-      gender: "M",
+      gender: "F",
       skinColor: "#ffe4c4",
       hairColor: "#b8860b",
       eyeColor: "#006400",
       mouthColor: "#f08080",
       bodyColor: "#00ccdd",
       legColor: "#0000ff",
-      shoeColor:  "#999999",
-      shader: 0
+      shoeColor:  "#999999"
    }
    character =  new Character(attributes);
    return character.entity;
@@ -58,19 +60,23 @@ const setupScene = () => {
          console.log(subject);
       }
    });
+
 }
 
 const setupListeners = () => {
-   window.addEventListener('resize', e => eventHandler.handleResize(camera, renderer)); 
-   document.body.addEventListener('click', event => {
-      eventHandler.handleClick(event,character);
+   window.addEventListener('resize', e => eventHandler.handleResize(camera,renderer)); 
+   document.body.addEventListener('click', event => { eventHandler.handleClick({
+      event,
+      character,
+      mouse,
+      raycaster,
+      scene
+   })});
+   window.addEventListener('mousemove', event => {
+      mouse.x = (event.clientX/window.innerWidth)*2 - 1;
+      mouse.y = (event.clientY/window.innerHeight)*2 - 1;
    });
-   document.querySelector('.change-outfit').addEventListener('change', event => {
-      eventHandler.handleChangeOutfit(event, character);
-   });
-   document.querySelector('.change-gender').addEventListener('change', event => {
-      eventHandler.handleChangeGender(event, character);
-   });
+
 }
 
 const setupLights = () => {
@@ -81,34 +87,18 @@ const setupLights = () => {
    directionalLight.position.set(1,1,1);
    directionalLight.castShadow = true;
    sceneSubjects.push(directionalLight);
-
-   // const light1 = new THREE.PointLight(0xc4c4c4,10);
-   // light1.position.set(0,300,500)
-   // sceneSubjects.push(light1);
-
-   // const light2 = new THREE.PointLight(0xc4c4c4,10);
-   // light2.position.set(500,100,0)
-   // sceneSubjects.push(light2);
-
-   // const light3 = new THREE.PointLight(0xc4c4c4,10);
-   // light3.position.set(0,100,-500)
-   // sceneSubjects.push(light3);
-
-   // const light4 = new THREE.PointLight(0xc4c4c4,10);
-   // light4.position.set(-500,300,0)
-   // sceneSubjects.push(light4);
 }
 
 // Movimentação dos objetos
 const animate = () => {
    requestAnimationFrame(animate);
-
    // Rotação da câmera
    camera.lookAt(0,0,0);
-   camera.position.x = 50*Math.cos(0.01*count);
-   camera.position.z = 50*Math.sin(0.01*count);
+   //camera.position.x = 50*Math.cos(0.01*count);
+   //camera.position.z = 50*Math.sin(0.01*count);
    camera.updateProjectionMatrix();
-   controls.autoRotate=false;
+
+   checkIntersections();
 
    if(character.isEquipped.weaponRight == true){
       character.animateWeaponRight();
@@ -121,8 +111,6 @@ const animate = () => {
 
    renderer.render(scene, camera);
 
-   updateTime();
-
    count += 1;
 }
 
@@ -132,7 +120,6 @@ async function init() {
    setupControls();
    setupListeners();
    setupLights();
-   setupUniforms();
    await setupSubjects();
    setupScene();
    console.log(scene);

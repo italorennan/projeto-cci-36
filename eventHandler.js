@@ -1,12 +1,13 @@
-const {createWeapon} = require('./assets/equipments/weapons/weapons');
+const {createWeapon} = require('./assets/equipments/weapons/weapons'); 
 let texture='normal';
+let intersections = [];
 
-const handleClick = (event,character) => {
-   console.log(character);
+const handleClick = ({event, character, background, mouse, raycaster, scene}) => {
    event.preventDefault();
+
    switch(event.target.className){
       case "axe-button":
-		 console.log(texture)
+         console.log(texture)
          character.equipWeaponRight(createWeapon("axe",texture));
          break;
       case "sword-button":
@@ -25,7 +26,7 @@ const handleClick = (event,character) => {
          character.equipWeaponLeft(createWeapon("shield",texture));
          break;
       case "armor-equip-button":
-		 character.equipSimpleArmour(texture);
+         character.equipSimpleArmour(texture);
          break;
       case "armor-unequip-button":
          character.unequipArmour();
@@ -34,49 +35,69 @@ const handleClick = (event,character) => {
          character.unequipWeaponRight();
          character.unequipWeaponLeft();
          break;
-	case "normal":
+      case "normal":
          texture='normal';
-		 character.unequipWeaponRight();
+         character.unequipWeaponRight();
          character.unequipWeaponLeft();
          character.unequipArmour();
-         break;
-	case "stone":
+            break;
+      case "stone":
          texture='stone';
-		 character.unequipWeaponRight();
+         character.unequipWeaponRight();
          character.unequipWeaponLeft();
          character.unequipArmour();
-         break;
-	case "wood":
+            break;
+      case "wood":
          texture='wood';
-		 character.unequipWeaponRight();
+         character.unequipWeaponRight();
          character.unequipWeaponLeft();
          character.unequipArmour();
          break;
-	case 'rainbow':
+      case 'rainbow':
          texture='rainbow';
-		 character.unequipWeaponRight();
+         character.unequipWeaponRight();
          character.unequipWeaponLeft();
          character.unequipArmour();
          break;
-	case 'silver':
+      case 'silver':
          texture='silver';
-		 character.unequipWeaponRight();
+         character.unequipWeaponRight();
          character.unequipWeaponLeft();
          character.unequipArmour();
          break;
-	case 'gold':
+      case 'gold':
          texture='gold';
-		 character.unequipWeaponRight();
+         character.unequipWeaponRight();
          character.unequipWeaponLeft();
          character.unequipArmour();
-         break;
-	case 'diamond':
+            break;
+      case 'diamond':
          texture='diamond';
-		 character.unequipWeaponRight();
+         character.unequipWeaponRight();
          character.unequipWeaponLeft();
          character.unequipArmour();
-         break;
+         break;   
+      default:
+         checkIntersections({mouse,raycaster,character,background, scene});
    }
+}
+
+const checkIntersections = (mouse, raycaster, character, background, scene) => {
+   raycaster.setFromCamera(mouse, camera);
+   intersections = raycaster.intersectObjects(scene.children);
+   
+   intersections.forEach( object => {
+      console.log(object);
+   })
+
+   background.checkIntersections(intersections);
+
+
+}
+
+const handleMouseMove = (event,mouse) => {
+   mouse.x = (event.clientX / window.innerWidth)*2 - 1;
+   mouse.y = (event.clienY / window.Height)*2 - 1;
 }
 
 const handleResize = (camera, renderer) => {
@@ -104,5 +125,6 @@ module.exports = {
    handleClick,
    handleResize,
    handleChangeOutfit,
-   handleChangeGender
+   handleChangeGender,
+   handleMouseMove
 }
