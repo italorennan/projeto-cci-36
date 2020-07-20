@@ -2,10 +2,13 @@ const Character = require('./assets/character/Character.js');
 const eventHandler = require('./eventHandler');
 const createBackground = require('./assets/ambient/createBackground');
 const { setupUniforms, updateTime } = require('./assets/shaders/multicolorShader');
+const dat = require('./modules/dat.gui');
+
 let camera, scene, renderer, controls;
 let sceneSubjects = [];
 let count = 0;
 let character;
+let cor_uniforme=0xffffff;
 
 const setupCamera = () => {
    camera = new THREE.PerspectiveCamera(75, window.innerWidth/window.innerHeight, 0.1, 1000);
@@ -21,7 +24,18 @@ const setupRenderer = () => {
 }
 
 const setupControls = () => {
+
    controls = new THREE.OrbitControls( camera, renderer.domElement );
+
+
+   var params = {
+    color: 0xff00ff};
+  var gui = new dat.GUI({ autoPlace: true });
+   var folder = gui.addFolder( 'cor' );
+   folder.addColor( params, 'color' )
+         .onChange( function() { cor_uniforme= params.color; } );
+   folder.open();
+
 }
 
 const setupCharacter = () => {
@@ -61,7 +75,7 @@ const setupScene = () => {
 }
 
 const setupListeners = () => {
-   window.addEventListener('resize', e => eventHandler.handleResize(camera, renderer)); 
+   window.addEventListener('resize', e => eventHandler.handleResize(camera, renderer));
    document.body.addEventListener('click', event => {
       eventHandler.handleClick(event,character);
    });
@@ -71,6 +85,10 @@ const setupListeners = () => {
    document.querySelector('.change-gender').addEventListener('change', event => {
       eventHandler.handleChangeGender(event, character);
    });
+
+   window.addEventListener('mousedown', event => eventHandler.onDocMouseDown(event,scene,camera,character,cor_uniforme));
+// window.addEventListener('mousemove', event => eventHandler.onDocMouseMove(event,scene,camera));
+
 }
 
 const setupLights = () => {
@@ -105,8 +123,17 @@ const animate = () => {
 
    // Rotação da câmera
    camera.lookAt(0,0,0);
-   camera.position.x = 50*Math.cos(0.01*count);
-   camera.position.z = 50*Math.sin(0.01*count);
+   camera.position.x = 20
+
+   camera.position.z = 20
+   camera.position.y = 20
+
+//   camera.position.x = 50*Math.cos(0.01*count);
+//   camera.position.z = 50*Math.sin(0.01*count);
+
+
+
+
    camera.updateProjectionMatrix();
    controls.autoRotate=false;
 
@@ -135,7 +162,15 @@ async function init() {
    setupUniforms();
    await setupSubjects();
    setupScene();
-   console.log(scene);
+   
+  // var cubos = new THREE.Group();
+//   var cube1= new THREE.Mesh(new THREE.BoxGeometry(20,20,20),new THREE.MeshBasicMaterial({color:0xffff00}));
+//   var cube2= new THREE.Mesh(new THREE.BoxGeometry(20,30,30),new THREE.MeshBasicMaterial({color:0xffffff}));
+//   cubos.add( cube1 );
+//   cubos.add( cube2 );
+  // scene.add(cubos);
+
+
    animate();
 }
 
