@@ -11,8 +11,8 @@ class Background{
          this.backgroundElementArray.push(backgroundElement);
    }  
 
-   checkIfSelected = object => {
-      
+   checkIntersects = intersects => {
+      console.log(intersects);
    }
    
    getBackgroundElementArray = () => {

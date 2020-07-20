@@ -1,10 +1,8 @@
 const {createWeapon} = require('./assets/equipments/weapons/weapons'); 
 let texture='normal';
-let intersections = [];
 
-const handleClick = ({event, character, background, mouse, raycaster, scene}) => {
+const handleClick = ({event, character, background, intersects }) => {
    event.preventDefault();
-
    switch(event.target.className){
       case "axe-button":
          console.log(texture)
@@ -78,26 +76,20 @@ const handleClick = ({event, character, background, mouse, raycaster, scene}) =>
          character.unequipArmour();
          break;   
       default:
-         checkIntersections({mouse,raycaster,character,background, scene});
+         checkIntersections({character, background, intersects});
+         break;
    }
 }
 
-const checkIntersections = (mouse, raycaster, character, background, scene) => {
-   raycaster.setFromCamera(mouse, camera);
-   intersections = raycaster.intersectObjects(scene.children);
-   
-   intersections.forEach( object => {
-      console.log(object);
-   })
-
-   background.checkIntersections(intersections);
-
-
+const checkIntersections = ({character, background, intersects}) => {
+   console.log(intersects);
+   background.checkIntersects(intersects);
 }
 
 const handleMouseMove = (event,mouse) => {
+   event.preventDefault();
    mouse.x = (event.clientX / window.innerWidth)*2 - 1;
-   mouse.y = (event.clienY / window.Height)*2 - 1;
+   mouse.y = -(event.clientY / window.innerHeight)*2 + 1;
 }
 
 const handleResize = (camera, renderer) => {

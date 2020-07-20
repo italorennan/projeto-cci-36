@@ -12,6 +12,10 @@ class Background{
          this.backgroundElementArray.push(backgroundElement);
    }  
 
+   checkIntersects = intersects => {
+      console.log(intersects);
+   }
+   
    getBackgroundElementArray = () => {
       return this.backgroundElementArray;
    }
@@ -1922,15 +1926,14 @@ function createRedgreenBox(x, y, z, param) {
 
 module.exports = createRedgreenBox;
 },{}],23:[function(require,module,exports){
-const {createWeapon} = require('./assets/equipments/weapons/weapons');
+const {createWeapon} = require('./assets/equipments/weapons/weapons'); 
 let texture='normal';
 
-const handleClick = (event,character) => {
-   console.log(character);
+const handleClick = ({event, character, background, intersects }) => {
    event.preventDefault();
    switch(event.target.className){
       case "axe-button":
-		 console.log(texture)
+         console.log(texture)
          character.equipWeaponRight(createWeapon("axe",texture));
          break;
       case "sword-button":
@@ -1949,7 +1952,7 @@ const handleClick = (event,character) => {
          character.equipWeaponLeft(createWeapon("shield",texture));
          break;
       case "armor-equip-button":
-		 character.equipSimpleArmour(texture);
+         character.equipSimpleArmour(texture);
          break;
       case "armor-unequip-button":
          character.unequipArmour();
@@ -1958,49 +1961,63 @@ const handleClick = (event,character) => {
          character.unequipWeaponRight();
          character.unequipWeaponLeft();
          break;
-	case "normal":
+      case "normal":
          texture='normal';
-		 character.unequipWeaponRight();
+         character.unequipWeaponRight();
          character.unequipWeaponLeft();
          character.unequipArmour();
-         break;
-	case "stone":
+            break;
+      case "stone":
          texture='stone';
-		 character.unequipWeaponRight();
+         character.unequipWeaponRight();
          character.unequipWeaponLeft();
          character.unequipArmour();
-         break;
-	case "wood":
+            break;
+      case "wood":
          texture='wood';
-		 character.unequipWeaponRight();
+         character.unequipWeaponRight();
          character.unequipWeaponLeft();
          character.unequipArmour();
          break;
-	case 'rainbow':
+      case 'rainbow':
          texture='rainbow';
-		 character.unequipWeaponRight();
+         character.unequipWeaponRight();
          character.unequipWeaponLeft();
          character.unequipArmour();
          break;
-	case 'silver':
+      case 'silver':
          texture='silver';
-		 character.unequipWeaponRight();
+         character.unequipWeaponRight();
          character.unequipWeaponLeft();
          character.unequipArmour();
          break;
-	case 'gold':
+      case 'gold':
          texture='gold';
-		 character.unequipWeaponRight();
+         character.unequipWeaponRight();
          character.unequipWeaponLeft();
          character.unequipArmour();
-         break;
-	case 'diamond':
+            break;
+      case 'diamond':
          texture='diamond';
-		 character.unequipWeaponRight();
+         character.unequipWeaponRight();
          character.unequipWeaponLeft();
          character.unequipArmour();
+         break;   
+      default:
+         checkIntersections({character, background, intersects});
          break;
    }
+}
+
+const checkIntersections = ({character, background, intersects}) => {
+   console.log(intersects);
+   background.checkIntersects(intersects);
+}
+
+const handleMouseMove = (event,mouse) => {
+   event.preventDefault();
+   mouse.x = (event.clientX / window.innerWidth)*2 - 1;
+   mouse.y = -(event.clientY / window.innerHeight)*2 + 1;
 }
 
 const handleResize = (camera, renderer) => {
@@ -2028,17 +2045,22 @@ module.exports = {
    handleClick,
    handleResize,
    handleChangeOutfit,
-   handleChangeGender
+   handleChangeGender,
+   handleMouseMove
 }
 },{"./assets/equipments/weapons/weapons":17}],24:[function(require,module,exports){
 const Character = require('./assets/character/Character.js');
 const eventHandler = require('./eventHandler');
 const createBackground = require('./assets/ambient/createBackground');
-const { setupUniforms, updateTime } = require('./assets/shaders/multicolorShader');
-let camera, scene, renderer, controls;
+let camera,scene,renderer,controls;
+const raycaster = new THREE.Raycaster();
+let mouse = new THREE.Vector2();
+let intersects = []
 let sceneSubjects = [];
 let count = 0;
 let character;
+let background, backgroundElements;
+
 
 const setupCamera = () => {
    camera = new THREE.PerspectiveCamera(75, window.innerWidth/window.innerHeight, 0.1, 1000);
@@ -2055,19 +2077,19 @@ const setupRenderer = () => {
 
 const setupControls = () => {
    controls = new THREE.OrbitControls( camera, renderer.domElement );
+   controls.autoRotate=false;
 }
 
 const setupCharacter = () => {
    const attributes = {
-      gender: "M",
+      gender: "F",
       skinColor: "#ffe4c4",
       hairColor: "#b8860b",
       eyeColor: "#006400",
       mouthColor: "#f08080",
       bodyColor: "#00ccdd",
       legColor: "#0000ff",
-      shoeColor:  "#999999",
-      shader: 0
+      shoeColor:  "#999999"
    }
    character =  new Character(attributes);
    return character.entity;
@@ -2075,8 +2097,8 @@ const setupCharacter = () => {
 
 const setupSubjects = async () => {
    sceneSubjects.push(setupCharacter());
-   const background = await createBackground();
-   const backgroundElements = background.getBackgroundElementArray();
+   background = await createBackground();
+   backgroundElements = background.getBackgroundElementArray();
    backgroundElements.forEach( element => {
       sceneSubjects.push(element.entity);
    })
@@ -2088,22 +2110,21 @@ const setupScene = () => {
    sceneSubjects.forEach( subject => {
       if(subject != character.weapon){
          scene.add(subject);
-         console.log(subject);
       }
    });
 }
 
 const setupListeners = () => {
-   window.addEventListener('resize', e => eventHandler.handleResize(camera, renderer)); 
-   document.body.addEventListener('click', event => {
-      eventHandler.handleClick(event,character);
-   });
-   document.querySelector('.change-outfit').addEventListener('change', event => {
-      eventHandler.handleChangeOutfit(event, character);
-   });
-   document.querySelector('.change-gender').addEventListener('change', event => {
-      eventHandler.handleChangeGender(event, character);
-   });
+   window.addEventListener('resize', e => eventHandler.handleResize(camera,renderer));
+   console.log(raycaster); 
+   document.body.addEventListener('click', event => { eventHandler.handleClick({
+      event,
+      character,
+      background,
+      intersects
+   })});
+   window.addEventListener('mousemove', event => eventHandler.handleMouseMove(event,mouse));
+
 }
 
 const setupLights = () => {
@@ -2114,34 +2135,19 @@ const setupLights = () => {
    directionalLight.position.set(1,1,1);
    directionalLight.castShadow = true;
    sceneSubjects.push(directionalLight);
-
-   // const light1 = new THREE.PointLight(0xc4c4c4,10);
-   // light1.position.set(0,300,500)
-   // sceneSubjects.push(light1);
-
-   // const light2 = new THREE.PointLight(0xc4c4c4,10);
-   // light2.position.set(500,100,0)
-   // sceneSubjects.push(light2);
-
-   // const light3 = new THREE.PointLight(0xc4c4c4,10);
-   // light3.position.set(0,100,-500)
-   // sceneSubjects.push(light3);
-
-   // const light4 = new THREE.PointLight(0xc4c4c4,10);
-   // light4.position.set(-500,300,0)
-   // sceneSubjects.push(light4);
 }
 
 // Movimentação dos objetos
 const animate = () => {
    requestAnimationFrame(animate);
-
    // Rotação da câmera
    camera.lookAt(0,0,0);
-   camera.position.x = 50*Math.cos(0.01*count);
-   camera.position.z = 50*Math.sin(0.01*count);
-   camera.updateProjectionMatrix();
-   controls.autoRotate=false;
+   //camera.position.x = 50*Math.cos(0.01*count);
+   //camera.position.z = 50*Math.sin(0.01*count);
+   camera.updateMatrixWorld();
+   raycaster.setFromCamera(mouse, camera);
+   intersects = raycaster.intersectObjects(scene.children);
+   console.log(intersects);
 
    if(character.isEquipped.weaponRight == true){
       character.animateWeaponRight();
@@ -2150,11 +2156,9 @@ const animate = () => {
       character.animateWeaponLeft();
    }
 
-   controls.update();
+   //controls.update();
 
    renderer.render(scene, camera);
-
-   updateTime();
 
    count += 1;
 }
@@ -2165,7 +2169,6 @@ async function init() {
    setupControls();
    setupListeners();
    setupLights();
-   setupUniforms();
    await setupSubjects();
    setupScene();
    console.log(scene);
@@ -2173,7 +2176,7 @@ async function init() {
 }
 
 init();
-},{"./assets/ambient/createBackground":3,"./assets/character/Character.js":5,"./assets/shaders/multicolorShader":21,"./eventHandler":23}],25:[function(require,module,exports){
+},{"./assets/ambient/createBackground":3,"./assets/character/Character.js":5,"./eventHandler":23}],25:[function(require,module,exports){
 (function (global, factory) {
 	typeof exports === 'object' && typeof module !== 'undefined' ? factory(exports) :
 	typeof define === 'function' && define.amd ? define(['exports'], factory) :

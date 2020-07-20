@@ -1,12 +1,14 @@
 const Character = require('./assets/character/Character.js');
 const eventHandler = require('./eventHandler');
 const createBackground = require('./assets/ambient/createBackground');
-let camera,scene,renderer,controls
+let camera,scene,renderer,controls;
 const raycaster = new THREE.Raycaster();
 let mouse = new THREE.Vector2();
+let intersects = []
 let sceneSubjects = [];
 let count = 0;
 let character;
+let background, backgroundElements;
 
 
 const setupCamera = () => {
@@ -44,8 +46,8 @@ const setupCharacter = () => {
 
 const setupSubjects = async () => {
    sceneSubjects.push(setupCharacter());
-   const background = await createBackground();
-   const backgroundElements = background.getBackgroundElementArray();
+   background = await createBackground();
+   backgroundElements = background.getBackgroundElementArray();
    backgroundElements.forEach( element => {
       sceneSubjects.push(element.entity);
    })
@@ -57,25 +59,20 @@ const setupScene = () => {
    sceneSubjects.forEach( subject => {
       if(subject != character.weapon){
          scene.add(subject);
-         console.log(subject);
       }
    });
-
 }
 
 const setupListeners = () => {
-   window.addEventListener('resize', e => eventHandler.handleResize(camera,renderer)); 
+   window.addEventListener('resize', e => eventHandler.handleResize(camera,renderer));
+   console.log(raycaster); 
    document.body.addEventListener('click', event => { eventHandler.handleClick({
       event,
       character,
-      mouse,
-      raycaster,
-      scene
+      background,
+      intersects
    })});
-   window.addEventListener('mousemove', event => {
-      mouse.x = (event.clientX/window.innerWidth)*2 - 1;
-      mouse.y = (event.clientY/window.innerHeight)*2 - 1;
-   });
+   window.addEventListener('mousemove', event => eventHandler.handleMouseMove(event,mouse));
 
 }
 
@@ -96,9 +93,10 @@ const animate = () => {
    camera.lookAt(0,0,0);
    //camera.position.x = 50*Math.cos(0.01*count);
    //camera.position.z = 50*Math.sin(0.01*count);
-   camera.updateProjectionMatrix();
-
-   checkIntersections();
+   camera.updateMatrixWorld();
+   raycaster.setFromCamera(mouse, camera);
+   intersects = raycaster.intersectObjects(scene.children);
+   console.log(intersects);
 
    if(character.isEquipped.weaponRight == true){
       character.animateWeaponRight();
@@ -107,7 +105,7 @@ const animate = () => {
       character.animateWeaponLeft();
    }
 
-   controls.update();
+   //controls.update();
 
    renderer.render(scene, camera);
 
