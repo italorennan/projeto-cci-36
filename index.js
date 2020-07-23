@@ -24,18 +24,15 @@ const setupRenderer = () => {
 }
 
 const setupControls = () => {
-
    controls = new THREE.OrbitControls( camera, renderer.domElement );
-
 
    var params = {
     color: 0xff00ff};
-  var gui = new dat.GUI({ autoPlace: true });
+   var gui = new dat.GUI({ autoPlace: true });
    var folder = gui.addFolder( 'cor' );
    folder.addColor( params, 'color' )
          .onChange( function() { cor_uniforme= params.color; } );
    folder.open();
-
 }
 
 const setupCharacter = () => {
@@ -76,19 +73,25 @@ const setupScene = () => {
 
 const setupListeners = () => {
    window.addEventListener('resize', e => eventHandler.handleResize(camera, renderer));
+   
    document.body.addEventListener('click', event => {
       eventHandler.handleClick(event,character);
    });
+   
    document.querySelector('.change-outfit').addEventListener('change', event => {
       eventHandler.handleChangeOutfit(event, character);
    });
+   
    document.querySelector('.change-gender').addEventListener('change', event => {
       eventHandler.handleChangeGender(event, character);
    });
 
+   document.body.addEventListener('keypress', event => {
+      eventHandler.handleArrow(event, character);
+   });
+
    window.addEventListener('mousedown', event => eventHandler.onDocMouseDown(event,scene,camera,character,cor_uniforme));
 // window.addEventListener('mousemove', event => eventHandler.onDocMouseMove(event,scene,camera));
-
 }
 
 const setupLights = () => {
@@ -123,24 +126,20 @@ const animate = () => {
 
    // Rotação da câmera
    camera.lookAt(0,0,0);
-   camera.position.x = 20
+   camera.position.x = 40;
+   camera.position.z = 40;
+   camera.position.y = 40;
 
-   camera.position.z = 20
-   camera.position.y = 20
-
-//   camera.position.x = 50*Math.cos(0.01*count);
-//   camera.position.z = 50*Math.sin(0.01*count);
-
-
-
+   //camera.position.x = 50*Math.cos(0.01*count);
+   //camera.position.z = 50*Math.sin(0.01*count);
 
    camera.updateProjectionMatrix();
-   controls.autoRotate=false;
+   controls.autoRotate = false;
 
-   if(character.isEquipped.weaponRight == true){
+   if(character.isEquipped.weaponRight === true) {
       character.animateWeaponRight();
    }
-   if(character.isEquipped.weaponLeft == true){
+   if(character.isEquipped.weaponLeft === true) {
       character.animateWeaponLeft();
    }
 
@@ -162,14 +161,6 @@ async function init() {
    setupUniforms();
    await setupSubjects();
    setupScene();
-   
-  // var cubos = new THREE.Group();
-//   var cube1= new THREE.Mesh(new THREE.BoxGeometry(20,20,20),new THREE.MeshBasicMaterial({color:0xffff00}));
-//   var cube2= new THREE.Mesh(new THREE.BoxGeometry(20,30,30),new THREE.MeshBasicMaterial({color:0xffffff}));
-//   cubos.add( cube1 );
-//   cubos.add( cube2 );
-  // scene.add(cubos);
-
 
    animate();
 }

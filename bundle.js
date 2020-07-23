@@ -218,6 +218,13 @@ class Character {
          weaponRight:false,
          weaponLeft:false
       }
+
+      // Variáveis de controle de movimento
+      this.actualDirection = 0;
+      this.movementState = 0;
+      this.movementCounter = 1;
+      this.moving = false;
+      this.angle = 0;
    }
 
    moveForearm(){
@@ -239,49 +246,51 @@ class Character {
    }
 
    equipArmor(armour){
-      //Removendo as partes atuais
-      this.entity.remove(this.middle);
-      this.middle = null;
+      if (!this.isEquipped.inferior && !this.isEquipped.superior && !this.isEquipped.middle && !this.isEquipped.helmet) {
+         //Removendo as partes atuais
+         this.entity.remove(this.middle);
+         this.middle = null;
 
-      this.entity.remove(this.inferior);
-      this.inferior = null;
+         this.entity.remove(this.inferior);
+         this.inferior = null;
 
-      this.entity.remove(this.superior);
-      this.superior = null;
+         this.entity.remove(this.superior);
+         this.superior = null;
 
-      this.inferior = armour.getObjectByName("inferior");
-      this.middle = armour.getObjectByName("middle");
+         this.inferior = armour.getObjectByName("inferior");
+         this.middle = armour.getObjectByName("middle");
 
-      this.superior = new THREE.Group();
+         this.superior = new THREE.Group();
 
-      const superiorLeft = createSuperior(this.attributes.skinColor, this.attributes.bodyColor, 0, "left");
-      superiorLeft.position.set(4.25, 12, 0);
-      superiorLeft.name = "superiorLeft";
-      const sleeveLeft = superiorLeft.getObjectByName("sleeve");
-      superiorLeft.remove(sleeveLeft);
+         const superiorLeft = createSuperior(this.attributes.skinColor, this.attributes.bodyColor, 0, "left");
+         superiorLeft.position.set(4.25, 12, 0);
+         superiorLeft.name = "superiorLeft";
+         const sleeveLeft = superiorLeft.getObjectByName("sleeve");
+         superiorLeft.remove(sleeveLeft);
 
-      const superiorRight = createSuperior(this.attributes.skinColor, this.attributes.bodyColor, 0, "right");
-      superiorRight.position.set(-4.25, 12, 0);
-      superiorRight.name = "superiorRight";
-      const sleeveRight = superiorRight.getObjectByName("sleeve");
-      superiorRight.remove(sleeveRight);
+         const superiorRight = createSuperior(this.attributes.skinColor, this.attributes.bodyColor, 0, "right");
+         superiorRight.position.set(-4.25, 12, 0);
+         superiorRight.name = "superiorRight";
+         const sleeveRight = superiorRight.getObjectByName("sleeve");
+         superiorRight.remove(sleeveRight);
 
-      superiorLeft.add(armour.getObjectByName("sleeveLeft"));
-      superiorRight.add(armour.getObjectByName("sleeveRight"));
+         superiorLeft.add(armour.getObjectByName("sleeveLeft"));
+         superiorRight.add(armour.getObjectByName("sleeveRight"));
 
-      this.superior.add(superiorLeft);
-      this.superior.add(superiorRight);
+         this.superior.add(superiorLeft);
+         this.superior.add(superiorRight);
 
-      this.entity.add(this.superior);
-      this.entity.add(armour.getObjectByName("helmet"));
-      this.entity.add(armour.getObjectByName("inferior"));
-      this.entity.add(armour.getObjectByName("middle"));
-      this.isEquipped = {
-         ...this.isEquipped,
-         inferior: true,
-         superior: true,
-         middle: true,
-         helmet: true,
+         this.entity.add(this.superior);
+         this.entity.add(armour.getObjectByName("helmet"));
+         this.entity.add(armour.getObjectByName("inferior"));
+         this.entity.add(armour.getObjectByName("middle"));
+         this.isEquipped = {
+            ...this.isEquipped,
+            inferior: true,
+            superior: true,
+            middle: true,
+            helmet: true,
+         }
       }
    }
 
@@ -356,6 +365,11 @@ class Character {
    }
 
    equipWeaponRight(weapon){
+      // Reposicionar personagem
+      this.setDirection(0);
+      this.entity.position.x = 0;
+      this.entity.position.z = 0;
+
       if(this.isEquipped.weaponRight && this.weaponRight.name == weapon.name)
          return;
       this.forearmUp = true;
@@ -377,6 +391,11 @@ class Character {
    }
 
    equipWeaponLeft(weapon){
+      // Reposicionar personagem
+      this.setDirection(0);
+      this.entity.position.x = 0;
+      this.entity.position.z = 0;
+
       if(this.isEquipped.weaponLeft)
          this.unequipWeaponLeft();
       this.weaponLeft = weapon;
@@ -463,6 +482,103 @@ class Character {
       this.head.position.set(0, 18, 0);
       this.head.name = "head";
       this.entity.add(this.head);
+   }
+
+   setDirection (direction) {
+      if (!this.isEquipped.weaponLeft && !this.isEquipped.weaponRight) {
+         // Rotação e redirecionamento
+         this.entity.rotateY((direction - this.actualDirection) * Math.PI/2);
+         this.actualDirection = direction;
+         this.moving = true;
+      }
+   }
+
+   moveCharacter() {
+      if (this.moving) {
+         this.entity.translateZ(0.05);
+
+         const delta = Math.PI/40;
+
+         if (this.movementState === 0) {
+            this.angle += delta;
+            this.setPosition();
+
+            if (this.angle === Math.PI/4)
+               this.movementState++;
+         }
+
+         else if (this.movementState === 1) {
+            this.angle -= delta;
+            this.setPosition();
+
+            if (this.angle === -Math.PI/4)
+               this.movementState++;
+         }
+
+         else if (this.movementState === 2) {
+            this.angle += delta;
+            this.setPosition();
+
+            if (this.angle === 0) {
+               this.movementState = 0;
+               this.moving = false;
+            }
+         }
+      }
+   }
+
+   setPosition() {
+      const L = 8;
+      const d = 3;
+      const cos = Math.cos(this.angle);
+      const sin = Math.sin(this.angle);
+
+      // Variáveis dos membros
+      const leftLeg = this.inferior.getObjectByName("inferiorLeft");
+      const rightLeg = this.inferior.getObjectByName("inferiorRight");
+      const leftArm = this.superior.getObjectByName("superiorLeft");
+      const rightArm = this.superior.getObjectByName("superiorRight");
+   
+      // Definir rotações
+      rightLeg.rotation.set(this.angle, 0, 0);
+      leftLeg.rotation.set(-this.angle, 0, 0);
+      rightArm.rotation.set(-this.angle, 0, 0);
+      leftArm.rotation.set(this.angle, 0, 0);
+
+      // Posicionar corpo
+      this.entity.position.y = -L*(1-cos);
+      
+      if (this.angle >= 0) {
+         // Posicionar perna direita
+         rightLeg.position.y = (L/2)*cos + (d/2)*sin - this.entity.position.y;
+         rightLeg.position.z = -(L/2)*sin + (d/2)*(1-cos);
+
+         // Posicionar perna esquerda
+         leftLeg.position.y = (L/2)*cos + (d/2)*sin - this.entity.position.y;
+         leftLeg.position.z = (L/2)*sin - (d/2)*(1-cos);
+
+         // Posicionar braço direito
+         rightArm.position.z = (L/2)*sin - (d/2)*(1-cos);
+
+         // Posicionar braço esquerdo
+         leftArm.position.z = -(L/2)*sin + (d/2)*(1-cos);
+      }
+
+      else if (this.angle < 0) {
+         // Posicionar perna direita
+         rightLeg.position.y = (L/2)*cos - (d/2)*sin - this.entity.position.y;
+         rightLeg.position.z = -(L/2)*sin - (d/2)*(1-cos);
+
+         // Posicionar perna esquerda
+         leftLeg.position.y = (L/2)*cos - (d/2)*sin - this.entity.position.y;
+         leftLeg.position.z = (L/2)*sin + (d/2)*(1-cos);
+
+         // Posicionar braço direito
+         rightArm.position.z = (L/2)*sin + (d/2)*(1-cos);
+
+         // Posicionar braço esquerdo
+         leftArm.position.z = -(L/2)*sin - (d/2)*(1-cos);
+      }
    }
 }
 module.exports = Character;
@@ -2021,89 +2137,78 @@ const handleResize = (camera, renderer) => {
 }
 
 const onDocMouseDown = (event,scene,camera,character,cor_uniforme) => {
-            var xDoMouse = event.clientX;
-  					var yDoMouse = event.clientY;
+   var xDoMouse = event.clientX;
+   var yDoMouse = event.clientY;
 
-  					xDoMouse = (xDoMouse / window.innerWidth) * 2 - 1;
-  					yDoMouse = -(yDoMouse / window.innerHeight) * 2 + 1;
+   xDoMouse = (xDoMouse / window.innerWidth) * 2 - 1;
+   yDoMouse = -(yDoMouse / window.innerHeight) * 2 + 1;
 
-  					var vectorClick = new THREE.Vector3(xDoMouse, yDoMouse, 1);
+   var vectorClick = new THREE.Vector3(xDoMouse, yDoMouse, 1);
 
-  					//converte de coordenadas de tela normalizada (-1 a +1) para coordenadas de mundo
-  					vectorClick = vectorClick.unproject(camera);
+   // Converte de coordenadas de tela normalizada (-1 a +1) para coordenadas de mundo
+   vectorClick = vectorClick.unproject(camera);
 
-  					//raycasting: traça um raio de um ponto a outro, verificando se colide
-  					//com algum objeto
-  					var raycaster = new THREE.Raycaster(camera.position, vectorClick.sub(camera.position).normalize());
-  					//chamar a função que "testa" se o raio colidiu com algum
-  					//objeto
-            personagem=scene.children
-            personagem=personagem[2]
-  //          console.log(personagem.children)
+   // Raycasting: traça um raio de um ponto a outro, verificando se colide com algum objeto
+   var raycaster = new THREE.Raycaster(camera.position, vectorClick.sub(camera.position).normalize());
+   
+   // Chamar a função que "testa" se o raio colidiu com algum objeto
+   personagem=scene.children;
+   personagem=personagem[2];
 
-            inferior=personagem.getObjectByName("inferior")
-            middle=personagem.getObjectByName("middle")
+   inferior=personagem.getObjectByName("inferior");
+   middle=personagem.getObjectByName("middle");
 
+   // Checando se bate nos sapatos
+   console.log("Personagem");
+   console.log(personagem.children);
+   var intersects = raycaster.intersectObjects([inferior.children[0].children[0],inferior.children[1].children[0]],false);
+   
+   // Se o vetor não for vazio, houve interseção do raio com algum objeto
+   if(intersects.length > 0) {
+      //PEGAR SÓ O SAPATO
+      console.log("SAPATO");
+      inferior.children[0].children[0].material.color.setHex(cor_uniforme);
+      inferior.children[1].children[0].material.color.setHex(cor_uniforme);
+   }
 
-//            console.log(personagem)
-            //Checando se bate nos sapatos
-            console.log("Personagem");
-            console.log(personagem.children);
-            var intersects = raycaster.intersectObjects([inferior.children[0].children[0],inferior.children[1].children[0]],false);
-  					//se o vetor não for vazio, houve interseção do raio com algum objeto
-  					if(intersects.length > 0)
-  					{
-              //PEGAR SÓ O SAPATO
-              console.log("SAPATO")
-              inferior.children[0].children[0].material.color.setHex(cor_uniforme)
-              inferior.children[1].children[0].material.color.setHex(cor_uniforme)
+   // Checando se bate nas pernas
+   var intersects = raycaster.intersectObjects([inferior.children[0].children[1],inferior.children[1].children[1],middle.children[0]],false);
+   
+   // Se o vetor não for vazio, houve interseção do raio com algum objeto
+   if(intersects.length > 0) {
+      //PEGAR SÓ AS PERNAS
+      console.log("PERNAS")
+      inferior.children[0].children[1].material.color.setHex(cor_uniforme);
+      inferior.children[1].children[1].material.color.setHex(cor_uniforme);
+      middle.children[0].material.color.setHex(cor_uniforme);
+   }
 
-  					}
+   //Checando se bate no middle
+   superior = personagem.getObjectByName("superior");
+   if (superior != undefined) {
+      var intersects = raycaster.intersectObjects([middle.children[1],superior.children[0].children[0],superior.children[1].children[0]],true);
+      
+      //se o vetor não for vazio, houve interseção do raio com algum objeto
+      if (intersects.length > 0) {
+         //PEGAR SÓ A CAMISA
+         console.log("MIDDLE");
+         middle.children[1].material.color.setHex(cor_uniforme);
+         superior.children[0].children[0].material.color.setHex(cor_uniforme);
+         superior.children[1].children[0].material.color.setHex(cor_uniforme);
+      }
+   }
 
-
-
-
-            //Checando se bate nas pernas
-            var intersects = raycaster.intersectObjects([inferior.children[0].children[1],inferior.children[1].children[1],middle.children[0]],false);
-  					//se o vetor não for vazio, houve interseção do raio com algum objeto
-  					if(intersects.length > 0)
-  					{
-              //PEGAR SÓ AS PERNAS
-              console.log("PERNAS")
-              inferior.children[0].children[1].material.color.setHex(cor_uniforme)
-              inferior.children[1].children[1].material.color.setHex(cor_uniforme)
-              middle.children[0].material.color.setHex(cor_uniforme)
-  					}
-
-            //Checando se bate no middle
-            superior=personagem.getObjectByName("superior")
-            if(superior!=undefined)
-            {
-            var intersects = raycaster.intersectObjects([middle.children[1],superior.children[0].children[0],superior.children[1].children[0]],true);
-  					//se o vetor não for vazio, houve interseção do raio com algum objeto
-  					if(intersects.length > 0)
-  					{
-              //PEGAR SÓ A CAMISA
-              console.log("MIDDLE")
-              middle.children[1].material.color.setHex(cor_uniforme)
-              superior.children[0].children[0].material.color.setHex(cor_uniforme)
-              superior.children[1].children[0].material.color.setHex(cor_uniforme)
-  					}
-
-            }
-
-            capacete=personagem.getObjectByName("helmet");
-            if(capacete!=undefined)
-            {
-            var intersects = raycaster.intersectObjects(capacete.children,true);
-            //se o vetor não for vazio, houve interseção do raio com algum objeto
-            if(intersects.length > 0)
-            {
-              //PEGAR SÓ AS CAPACETE
-              console.log("CAPACETE")
-              changecolorgroup(capacete,cor_uniforme)
-            }
-            }
+   capacete = personagem.getObjectByName("helmet");
+   if (capacete != undefined) {
+      var intersects = raycaster.intersectObjects(capacete.children,true);
+      
+      // Se o vetor não for vazio, houve interseção do raio com algum objeto
+      if (intersects.length > 0) {
+         //PEGAR SÓ AS CAPACETE
+         console.log("CAPACETE");
+         changecolorgroup(capacete,cor_uniforme);
+      }
+   }
 
 }
 
@@ -2117,22 +2222,22 @@ const handleChangeOutfit = (event, character) => {
    }
 }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
 const handleChangeGender = (event, character) => {
    if (event.target.value === "male") character.changeGender("M");
    else if (event.target.value === "female") character.changeGender("F");
+}
+
+const handleArrow = (event, character) => {
+   event.preventDefault();
+   const keyName = event.key;
+
+   switch (keyName) {
+      case 's': character.setDirection(0); break;
+      case 'd': character.setDirection(1); break;
+      case 'w': character.setDirection(2); break;
+      case 'a': character.setDirection(3); break;
+      default: break;
+   }
 }
 
 module.exports = {
@@ -2140,9 +2245,8 @@ module.exports = {
    handleResize,
    handleChangeOutfit,
    onDocMouseDown,
-   handleChangeGender
-
-
+   handleChangeGender,
+   handleArrow
 }
 
 },{"./assets/equipments/weapons/weapons":17,"./assets/geometries/functions":19}],24:[function(require,module,exports){
@@ -2172,18 +2276,15 @@ const setupRenderer = () => {
 }
 
 const setupControls = () => {
-
    controls = new THREE.OrbitControls( camera, renderer.domElement );
-
 
    var params = {
     color: 0xff00ff};
-  var gui = new dat.GUI({ autoPlace: true });
+   var gui = new dat.GUI({ autoPlace: true });
    var folder = gui.addFolder( 'cor' );
    folder.addColor( params, 'color' )
          .onChange( function() { cor_uniforme= params.color; } );
    folder.open();
-
 }
 
 const setupCharacter = () => {
@@ -2224,19 +2325,25 @@ const setupScene = () => {
 
 const setupListeners = () => {
    window.addEventListener('resize', e => eventHandler.handleResize(camera, renderer));
+   
    document.body.addEventListener('click', event => {
       eventHandler.handleClick(event,character);
    });
+   
    document.querySelector('.change-outfit').addEventListener('change', event => {
       eventHandler.handleChangeOutfit(event, character);
    });
+   
    document.querySelector('.change-gender').addEventListener('change', event => {
       eventHandler.handleChangeGender(event, character);
    });
 
+   document.body.addEventListener('keypress', event => {
+      eventHandler.handleArrow(event, character);
+   });
+
    window.addEventListener('mousedown', event => eventHandler.onDocMouseDown(event,scene,camera,character,cor_uniforme));
 // window.addEventListener('mousemove', event => eventHandler.onDocMouseMove(event,scene,camera));
-
 }
 
 const setupLights = () => {
@@ -2271,24 +2378,20 @@ const animate = () => {
 
    // Rotação da câmera
    camera.lookAt(0,0,0);
-   camera.position.x = 20
+   camera.position.x = 40;
+   camera.position.z = 40;
+   camera.position.y = 40;
 
-   camera.position.z = 20
-   camera.position.y = 20
-
-//   camera.position.x = 50*Math.cos(0.01*count);
-//   camera.position.z = 50*Math.sin(0.01*count);
-
-
-
+   //camera.position.x = 50*Math.cos(0.01*count);
+   //camera.position.z = 50*Math.sin(0.01*count);
 
    camera.updateProjectionMatrix();
-   controls.autoRotate=false;
+   controls.autoRotate = false;
 
-   if(character.isEquipped.weaponRight == true){
+   if(character.isEquipped.weaponRight === true) {
       character.animateWeaponRight();
    }
-   if(character.isEquipped.weaponLeft == true){
+   if(character.isEquipped.weaponLeft === true) {
       character.animateWeaponLeft();
    }
 
@@ -2310,14 +2413,6 @@ async function init() {
    setupUniforms();
    await setupSubjects();
    setupScene();
-   
-  // var cubos = new THREE.Group();
-//   var cube1= new THREE.Mesh(new THREE.BoxGeometry(20,20,20),new THREE.MeshBasicMaterial({color:0xffff00}));
-//   var cube2= new THREE.Mesh(new THREE.BoxGeometry(20,30,30),new THREE.MeshBasicMaterial({color:0xffffff}));
-//   cubos.add( cube1 );
-//   cubos.add( cube2 );
-  // scene.add(cubos);
-
 
    animate();
 }
