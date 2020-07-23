@@ -145,6 +145,8 @@ const animate = () => {
 
    controls.update();
 
+   character.moveCharacter();
+
    renderer.render(scene, camera);
 
    updateTime();
