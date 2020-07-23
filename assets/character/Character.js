@@ -83,6 +83,13 @@ class Character {
          weaponRight:false,
          weaponLeft:false
       }
+
+      // Variáveis de controle de movimento
+      this.actualDirection = 0;
+      this.movementState = 0;
+      this.movementCounter = 1;
+      this.moving = false;
+      this.angle = 0;
    }
 
    moveForearm(){
@@ -104,49 +111,51 @@ class Character {
    }
 
    equipArmor(armour){
-      //Removendo as partes atuais
-      this.entity.remove(this.middle);
-      this.middle = null;
+      if (!this.isEquipped.inferior && !this.isEquipped.superior && !this.isEquipped.middle && !this.isEquipped.helmet) {
+         //Removendo as partes atuais
+         this.entity.remove(this.middle);
+         this.middle = null;
 
-      this.entity.remove(this.inferior);
-      this.inferior = null;
+         this.entity.remove(this.inferior);
+         this.inferior = null;
 
-      this.entity.remove(this.superior);
-      this.superior = null;
+         this.entity.remove(this.superior);
+         this.superior = null;
 
-      this.inferior = armour.getObjectByName("inferior");
-      this.middle = armour.getObjectByName("middle");
+         this.inferior = armour.getObjectByName("inferior");
+         this.middle = armour.getObjectByName("middle");
 
-      this.superior = new THREE.Group();
+         this.superior = new THREE.Group();
 
-      const superiorLeft = createSuperior(this.attributes.skinColor, this.attributes.bodyColor, 0, "left");
-      superiorLeft.position.set(4.25, 12, 0);
-      superiorLeft.name = "superiorLeft";
-      const sleeveLeft = superiorLeft.getObjectByName("sleeve");
-      superiorLeft.remove(sleeveLeft);
+         const superiorLeft = createSuperior(this.attributes.skinColor, this.attributes.bodyColor, 0, "left");
+         superiorLeft.position.set(4.25, 12, 0);
+         superiorLeft.name = "superiorLeft";
+         const sleeveLeft = superiorLeft.getObjectByName("sleeve");
+         superiorLeft.remove(sleeveLeft);
 
-      const superiorRight = createSuperior(this.attributes.skinColor, this.attributes.bodyColor, 0, "right");
-      superiorRight.position.set(-4.25, 12, 0);
-      superiorRight.name = "superiorRight";
-      const sleeveRight = superiorRight.getObjectByName("sleeve");
-      superiorRight.remove(sleeveRight);
+         const superiorRight = createSuperior(this.attributes.skinColor, this.attributes.bodyColor, 0, "right");
+         superiorRight.position.set(-4.25, 12, 0);
+         superiorRight.name = "superiorRight";
+         const sleeveRight = superiorRight.getObjectByName("sleeve");
+         superiorRight.remove(sleeveRight);
 
-      superiorLeft.add(armour.getObjectByName("sleeveLeft"));
-      superiorRight.add(armour.getObjectByName("sleeveRight"));
+         superiorLeft.add(armour.getObjectByName("sleeveLeft"));
+         superiorRight.add(armour.getObjectByName("sleeveRight"));
 
-      this.superior.add(superiorLeft);
-      this.superior.add(superiorRight);
+         this.superior.add(superiorLeft);
+         this.superior.add(superiorRight);
 
-      this.entity.add(this.superior);
-      this.entity.add(armour.getObjectByName("helmet"));
-      this.entity.add(armour.getObjectByName("inferior"));
-      this.entity.add(armour.getObjectByName("middle"));
-      this.isEquipped = {
-         ...this.isEquipped,
-         inferior: true,
-         superior: true,
-         middle: true,
-         helmet: true,
+         this.entity.add(this.superior);
+         this.entity.add(armour.getObjectByName("helmet"));
+         this.entity.add(armour.getObjectByName("inferior"));
+         this.entity.add(armour.getObjectByName("middle"));
+         this.isEquipped = {
+            ...this.isEquipped,
+            inferior: true,
+            superior: true,
+            middle: true,
+            helmet: true,
+         }
       }
    }
 
@@ -221,6 +230,11 @@ class Character {
    }
 
    equipWeaponRight(weapon){
+      // Reposicionar personagem
+      this.setDirection(0);
+      this.entity.position.x = 0;
+      this.entity.position.z = 0;
+
       if(this.isEquipped.weaponRight && this.weaponRight.name == weapon.name)
          return;
       this.forearmUp = true;
@@ -242,6 +256,11 @@ class Character {
    }
 
    equipWeaponLeft(weapon){
+      // Reposicionar personagem
+      this.setDirection(0);
+      this.entity.position.x = 0;
+      this.entity.position.z = 0;
+
       if(this.isEquipped.weaponLeft)
          this.unequipWeaponLeft();
       this.weaponLeft = weapon;
@@ -328,6 +347,103 @@ class Character {
       this.head.position.set(0, 18, 0);
       this.head.name = "head";
       this.entity.add(this.head);
+   }
+
+   setDirection (direction) {
+      if (!this.isEquipped.weaponLeft && !this.isEquipped.weaponRight) {
+         // Rotação e redirecionamento
+         this.entity.rotateY((direction - this.actualDirection) * Math.PI/2);
+         this.actualDirection = direction;
+         this.moving = true;
+      }
+   }
+
+   moveCharacter() {
+      if (this.moving) {
+         this.entity.translateZ(0.05);
+
+         const delta = Math.PI/40;
+
+         if (this.movementState === 0) {
+            this.angle += delta;
+            this.setPosition();
+
+            if (this.angle === Math.PI/4)
+               this.movementState++;
+         }
+
+         else if (this.movementState === 1) {
+            this.angle -= delta;
+            this.setPosition();
+
+            if (this.angle === -Math.PI/4)
+               this.movementState++;
+         }
+
+         else if (this.movementState === 2) {
+            this.angle += delta;
+            this.setPosition();
+
+            if (this.angle === 0) {
+               this.movementState = 0;
+               this.moving = false;
+            }
+         }
+      }
+   }
+
+   setPosition() {
+      const L = 8;
+      const d = 3;
+      const cos = Math.cos(this.angle);
+      const sin = Math.sin(this.angle);
+
+      // Variáveis dos membros
+      const leftLeg = this.inferior.getObjectByName("inferiorLeft");
+      const rightLeg = this.inferior.getObjectByName("inferiorRight");
+      const leftArm = this.superior.getObjectByName("superiorLeft");
+      const rightArm = this.superior.getObjectByName("superiorRight");
+   
+      // Definir rotações
+      rightLeg.rotation.set(this.angle, 0, 0);
+      leftLeg.rotation.set(-this.angle, 0, 0);
+      rightArm.rotation.set(-this.angle, 0, 0);
+      leftArm.rotation.set(this.angle, 0, 0);
+
+      // Posicionar corpo
+      this.entity.position.y = -L*(1-cos);
+      
+      if (this.angle >= 0) {
+         // Posicionar perna direita
+         rightLeg.position.y = (L/2)*cos + (d/2)*sin - this.entity.position.y;
+         rightLeg.position.z = -(L/2)*sin + (d/2)*(1-cos);
+
+         // Posicionar perna esquerda
+         leftLeg.position.y = (L/2)*cos + (d/2)*sin - this.entity.position.y;
+         leftLeg.position.z = (L/2)*sin - (d/2)*(1-cos);
+
+         // Posicionar braço direito
+         rightArm.position.z = (L/2)*sin - (d/2)*(1-cos);
+
+         // Posicionar braço esquerdo
+         leftArm.position.z = -(L/2)*sin + (d/2)*(1-cos);
+      }
+
+      else if (this.angle < 0) {
+         // Posicionar perna direita
+         rightLeg.position.y = (L/2)*cos - (d/2)*sin - this.entity.position.y;
+         rightLeg.position.z = -(L/2)*sin - (d/2)*(1-cos);
+
+         // Posicionar perna esquerda
+         leftLeg.position.y = (L/2)*cos - (d/2)*sin - this.entity.position.y;
+         leftLeg.position.z = (L/2)*sin + (d/2)*(1-cos);
+
+         // Posicionar braço direito
+         rightArm.position.z = (L/2)*sin + (d/2)*(1-cos);
+
+         // Posicionar braço esquerdo
+         leftArm.position.z = -(L/2)*sin - (d/2)*(1-cos);
+      }
    }
 }
 module.exports = Character;
