@@ -87,7 +87,6 @@ class Character {
       // Variáveis de controle de movimento
       this.actualDirection = 0;
       this.movementState = 0;
-      this.movementCounter = 1;
       this.moving = false;
       this.angle = 0;
    }
@@ -359,6 +358,7 @@ class Character {
    }
 
    moveCharacter() {
+      console.log("OI");
       if (this.moving) {
          this.entity.translateZ(0.05);
 
