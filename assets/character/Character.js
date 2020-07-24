@@ -89,6 +89,7 @@ class Character {
       this.movementState = 0;
       this.moving = false;
       this.angle = 0;
+      this.speed = 0.5;
    }
 
    moveForearm(){
@@ -348,6 +349,10 @@ class Character {
       this.entity.add(this.head);
    }
 
+   setSpeed (v) {
+      this.speed = v;
+   }
+
    setDirection (direction) {
       if (!this.isEquipped.weaponLeft && !this.isEquipped.weaponRight) {
          // Rotação e redirecionamento
@@ -358,9 +363,8 @@ class Character {
    }
 
    moveCharacter() {
-      console.log("OI");
       if (this.moving) {
-         this.entity.translateZ(0.05);
+         this.entity.translateZ(this.speed / 10);
 
          const delta = Math.PI/40;
 

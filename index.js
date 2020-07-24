@@ -26,13 +26,21 @@ const setupRenderer = () => {
 const setupControls = () => {
    controls = new THREE.OrbitControls( camera, renderer.domElement );
 
-   var params = {
-    color: 0xff00ff};
+   const params = {
+      color: 0xff00ff,
+      speed: 0.5
+   };
    var gui = new dat.GUI({ autoPlace: true });
-   var folder = gui.addFolder( 'cor' );
-   folder.addColor( params, 'color' )
-         .onChange( function() { cor_uniforme= params.color; } );
-   folder.open();
+   
+   var folder1 = gui.addFolder('Cores');
+   folder1.addColor( params, 'color' )
+          .onChange( function() { cor_uniforme= params.color; } );
+   folder1.open();
+
+   var folder2 = gui.addFolder('Velocidade');
+   folder2.add(params, 'speed', 0, 1)
+          .onChange(function() {character.setSpeed(params.speed)});
+   folder2.open();
 }
 
 const setupCharacter = () => {
