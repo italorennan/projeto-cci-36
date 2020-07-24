@@ -222,9 +222,9 @@ class Character {
       // Variáveis de controle de movimento
       this.actualDirection = 0;
       this.movementState = 0;
-      this.movementCounter = 1;
       this.moving = false;
       this.angle = 0;
+      this.speed = 0.5;
    }
 
    moveForearm(){
@@ -484,6 +484,10 @@ class Character {
       this.entity.add(this.head);
    }
 
+   setSpeed (v) {
+      this.speed = v;
+   }
+
    setDirection (direction) {
       if (!this.isEquipped.weaponLeft && !this.isEquipped.weaponRight) {
          // Rotação e redirecionamento
@@ -495,7 +499,7 @@ class Character {
 
    moveCharacter() {
       if (this.moving) {
-         this.entity.translateZ(0.05);
+         this.entity.translateZ(this.speed / 10);
 
          const delta = Math.PI/40;
 
@@ -2278,13 +2282,21 @@ const setupRenderer = () => {
 const setupControls = () => {
    controls = new THREE.OrbitControls( camera, renderer.domElement );
 
-   var params = {
-    color: 0xff00ff};
+   const params = {
+      color: 0xff00ff,
+      speed: 0.5
+   };
    var gui = new dat.GUI({ autoPlace: true });
-   var folder = gui.addFolder( 'cor' );
-   folder.addColor( params, 'color' )
-         .onChange( function() { cor_uniforme= params.color; } );
-   folder.open();
+   
+   var folder1 = gui.addFolder('Cores');
+   folder1.addColor( params, 'color' )
+          .onChange( function() { cor_uniforme= params.color; } );
+   folder1.open();
+
+   var folder2 = gui.addFolder('Velocidade');
+   folder2.add(params, 'speed', 0, 1)
+          .onChange(function() {character.setSpeed(params.speed)});
+   folder2.open();
 }
 
 const setupCharacter = () => {
