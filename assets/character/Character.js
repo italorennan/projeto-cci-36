@@ -93,6 +93,9 @@ class Character {
       this.moving = false;
       this.angle = 0;
       this.speed = 0.5;
+
+      this.boundBox = new THREE.Box3(new THREE.Vector3(), new THREE.Vector3());
+      this.boundBox.setFromObject(this.entity);
    }
 
    moveForearm(){

@@ -83,7 +83,7 @@ const handleClick = (event,character) => {
 }
 
 const onLoad = ()=> {
-   alert("Aperte W,A,S,D para mover o personagem! Você também consegue mover a camera com as setas e mover os objetos com o Mouse!");
+   alert("Aperte W,A,S,D para mover o personagem! \r\nAperte as setas do teclado para mover a câmera \r\nPara mover os objetos do cenário, basta arrastar com o Mouse!");
 }
 
 const handleResize = (camera, renderer) => {

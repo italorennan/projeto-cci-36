@@ -80,8 +80,6 @@ const setupScene = () => {
 }
 
 const setupListeners = () => {
-   window.onload = eventHandler.onLoad();
-
    window.addEventListener('resize', e => eventHandler.handleResize(camera, renderer));
 
    document.body.addEventListener('click', event => {
@@ -168,7 +166,7 @@ async function init() {
    setupUniforms();
    await setupSubjects();
    setupScene();
-
+   window.onload = eventHandler.onLoad()
    animate();
 }
 

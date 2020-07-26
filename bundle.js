@@ -307,6 +307,9 @@ class Character {
       this.moving = false;
       this.angle = 0;
       this.speed = 0.5;
+
+      this.boundBox = new THREE.Box3(new THREE.Vector3(), new THREE.Vector3());
+      this.boundBox.setFromObject(this.entity);
    }
 
    moveForearm(){
@@ -2218,7 +2221,7 @@ const handleClick = (event,character) => {
 }
 
 const onLoad = ()=> {
-   alert("Aperte W,A,S,D para mover o personagem! Você também consegue mover a camera com as setas e mover os objetos com o Mouse!");
+   alert("Aperte W,A,S,D para mover o personagem! \r\nAperte as setas do teclado para mover a câmera \r\nPara mover os objetos do cenário, basta arrastar com o Mouse!");
 }
 
 const handleResize = (camera, renderer) => {
@@ -2446,8 +2449,6 @@ const setupScene = () => {
 }
 
 const setupListeners = () => {
-   window.onload = eventHandler.onLoad();
-
    window.addEventListener('resize', e => eventHandler.handleResize(camera, renderer));
 
    document.body.addEventListener('click', event => {
@@ -2534,7 +2535,7 @@ async function init() {
    setupUniforms();
    await setupSubjects();
    setupScene();
-
+   window.onload = eventHandler.onLoad()
    animate();
 }
 
