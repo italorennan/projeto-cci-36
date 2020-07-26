@@ -16,6 +16,53 @@ class Background{
       return this.backgroundElementArray;
    }
 
+   handleMouseDown(raycaster){
+      const entityArray = this.backgroundElementArray.map( element => {
+         return element.entity
+      })
+      const intersects = raycaster.intersectObjects(entityArray,true);
+
+      let intersectedBackgroundObject = this.backgroundElementArray.filter( element=> {
+         return (
+            (element.mesh == intersects[0].object || element.mesh.children.includes(intersects[0].object))&& 
+            (element.isGround == false)
+         );
+      })
+
+      console.log(intersectedBackgroundObject);
+
+      if(intersectedBackgroundObject.length > 0)
+         intersectedBackgroundObject[0].setSelected(true);
+   }
+
+   handleMouseMove(raycaster){
+
+      const ground = this.backgroundElementArray.filter( element => {
+         return element.isGround
+      })[0];
+      const groundIntersection = raycaster.intersectObjects([ground.entity],true);
+
+      const objectPosition = groundIntersection[0].point;
+      this.backgroundElementArray.forEach(element => {
+         if(element.isSelected == true && element.isGround == false )
+            element.setPosition({
+               x:objectPosition.x,
+               y:objectPosition.y,
+               z:objectPosition.z, 
+               backgroundElements:this.backgroundElementArray
+            });
+      })
+   }
+
+   handleMouseUp(){
+      this.backgroundElementArray.forEach(element => {
+         if(element.isSelected == true){
+            element.setSelected(false);
+            console.log(element);
+         }
+      })
+   } 
+
 }
 
 module.exports = Background;
@@ -24,30 +71,62 @@ const loader = require('./loader');
 
 class BackgroundElement{
    
-   constructor({modelName, position, scale}){
+   constructor({modelName, position, scale, isGround, isGroundPatch}){
       this.gltfPath = "./assets/ambient/models/" + modelName + ".glb";
       this.scale = scale || {x:1, y:1, z:1};
       this.position = position || {x:0, y:0, z:0};
+      this.isGround = isGround || false;
+      this.isGroundPatch = isGroundPatch || false;
+      this.isSelected = false;
+      this.boundBox = null;
    }
 
    loadElement = async () => {
       this.loadedElement = await loader.loadModule(this.gltfPath);
       this.entity = this.loadedElement.scene;
       this.mesh = this.loadedElement.scene.children[0];
+      this.boundBox = new THREE.Box3(new THREE.Vector3(), new THREE.Vector3());
+      this.boundBox.setFromObject(this.mesh)
    }
-   
-   setPosition = ({x, y, z}) => {
+
+   _checkCollisions = backgroundElements => {
+      let checkColisions = false
+      backgroundElements.forEach( element => {
+         if(this.entity != element.entity && this.isGround == false && element.isGround == false && element.isGroundPatch == false)
+            checkColisions = checkColisions || this.boundBox.intersectsBox(element.boundBox)
+      })
+      console.log(checkColisions)
+      return !checkColisions
+   }
+
+   setPosition = ({x, y, z, backgroundElements}) => {
+      let colisionOk = true;
+      let oldPostion = this.position;
       this.position = {x:x, y:y, z:z};
       this.mesh.position.set(x,y,z);
+      this.boundBox = new THREE.Box3(new THREE.Vector3(), new THREE.Vector3());
+      this.boundBox.setFromObject(this.mesh)
+      if(backgroundElements != undefined)
+         colisionOk = this._checkCollisions(backgroundElements);
+      if(!colisionOk)
+         this.setPosition({...oldPostion, backgroundElements})      
    }
 
    setScale = ({x,y,z}) => {
       this.mesh.scale.set(x,y,z);
+      this.boundBox = new THREE.Box3(new THREE.Vector3(), new THREE.Vector3());
+      this.boundBox.setFromObject(this.mesh)
    }
 
    setRotation = ({x,y,z}) => {
       this.mesh.rotation.set(x,y,z);
+      this.boundBox = new THREE.Box3(new THREE.Vector3(), new THREE.Vector3());
+      this.boundBox.setFromObject(this.mesh)
    }
+
+   setSelected = isSelected => {
+      this.isSelected = isSelected;
+   }   
 }
 
 module.exports = BackgroundElement;
@@ -59,16 +138,16 @@ const BackgroundElement = require('./BackgroundElement');
 const createBackground =  async () => {
    
    const background = new Background();
-   const ground = new BackgroundElement({modelName: "ground_grass"});
+   const ground = new BackgroundElement({modelName: "ground_grass", isGround: true});
    const tree = new BackgroundElement({modelName: "tree_default"});
    const stone = new BackgroundElement({modelName: "stone_largeD"});
    const mushroomRed = new BackgroundElement({modelName: "mushroom_redGroup"});
-   const pathTile1 = new BackgroundElement({modelName: "ground_pathTile" });
-   const pathTile2 = new BackgroundElement({modelName: "ground_pathTile" });
+   const pathTile1 = new BackgroundElement({modelName: "ground_pathTile", isGroundPatch: true});
+   const pathTile2 = new BackgroundElement({modelName: "ground_pathTile", isGroundPatch: true });
    const logStack = new BackgroundElement({modelName:"log_stackLarge"});
    const rockTallA = new BackgroundElement({modelName: "rock_tallA"});
    const rockTallB = new BackgroundElement({modelName: "rock_tallB"});
-   const lake = new BackgroundElement({modelName:"ground_riverTile"});
+   const lake = new BackgroundElement({modelName:"ground_riverTile", isGroundPatch: true});
 
    await mushroomRed.loadElement();
    await ground.loadElement();
@@ -81,16 +160,16 @@ const createBackground =  async () => {
    await rockTallB.loadElement();
    await lake.loadElement();
    
-   ground.setPosition({x:0,y:0,z:-10})
-   tree.setPosition({x:-10,y:0,z:-20});
-   stone.setPosition({x:12,y:0,z:-10});
-   pathTile1.setPosition({x:-5,y:0.5, z:-8});
-   pathTile2.setPosition({x:12,y:0.5, z:-23});
-   mushroomRed.setPosition({x:7,y:0,z:7});
-   logStack.setPosition({x:-15,y:0,z:0});
-   rockTallA.setPosition({x:-2,y:0,z:-45});
-   rockTallB.setPosition({x:-40, y:0, z:-10})
-   lake.setPosition({x:20,y:0.5,z:10})
+   ground.setPosition({x:0,y:0,z:-150})
+   tree.setPosition({x:-15,y:0,z:-30});
+   stone.setPosition({x:18,y:0,z:-15});
+   pathTile1.setPosition({x:-7.5,y:0.5, z:-12});
+   pathTile2.setPosition({x:18,y:0.5, z:-34.5});
+   mushroomRed.setPosition({x:10.5,y:0,z:10.5});
+   logStack.setPosition({x:-22.5,y:0,z:0});
+   rockTallA.setPosition({x:-3,y:0,z:-67.5});
+   rockTallB.setPosition({x:-60, y:0, z:-15})
+   lake.setPosition({x:30,y:0.5,z:15})
 
    pathTile2.setRotation({x:0, y:75, z:0});
    rockTallB.setRotation({x:0, y:Math.PI/2, z:0});
@@ -146,6 +225,7 @@ const {animateBow} = require("../equipments/weapons/bow");
 const {animateShield} = require("../equipments/weapons/shield");
 
 class Character {
+  
    
    constructor({gender, skinColor, hairColor, eyeColor, mouthColor, bodyColor, legColor, shoeColor, shader}) {
       this.attributes = {
@@ -162,6 +242,8 @@ class Character {
       this.entity = new THREE.Group();    
       this.weaponRight = null;
       this.weaponLeft = null;
+
+      
 
       // Criação dos membros inferiores
 
@@ -225,6 +307,9 @@ class Character {
       this.moving = false;
       this.angle = 0;
       this.speed = 0.5;
+
+      this.boundBox = new THREE.Box3(new THREE.Vector3(), new THREE.Vector3());
+      this.boundBox.setFromObject(this.entity);
    }
 
    moveForearm(){
@@ -2054,6 +2139,7 @@ module.exports = createRedgreenBox;
 const {createWeapon} = require('./assets/equipments/weapons/weapons');
 let texture='normal';
 const {changecolorgroup} = require('./assets/geometries/functions');
+let intersects;
 
 
 const handleClick = (event,character) => {
@@ -2134,18 +2220,40 @@ const handleClick = (event,character) => {
    }
 }
 
+const onLoad = ()=> {
+   alert("Aperte W,A,S,D para mover o personagem! \r\nAperte as setas do teclado para mover a câmera \r\nPara mover os objetos do cenário, basta arrastar com o Mouse!\r\nClique em uma roupa do personagem e escolha a cor no menu do canto superior direito!");
+}
+
 const handleResize = (camera, renderer) => {
    camera.aspect = window.innerWidth/window.innerHeight;
    renderer.setSize(window.innerWidth,window.innerHeight);
    camera.updateProjectionMatrix();
 }
 
-const onDocMouseDown = (event,scene,camera,character,cor_uniforme) => {
+const onMouseMove = (event, mouse, background, camera) => {
+   mouse.x = event.clientX/window.innerWidth*2-1;
+   mouse.y = -1*event.clientY/window.innerHeight*2+1;   
+   xDoMouse = mouse.x; 
+   yDoMouse = mouse.y;
+   var vectorClick = new THREE.Vector3(xDoMouse, yDoMouse, 1);
+
+   // Converte de coordenadas de tela normalizada (-1 a +1) para coordenadas de mundo
+   vectorClick = vectorClick.unproject(camera);
+
+   // Raycasting: traça um raio de um ponto a outro, verificando se colide com algum objeto
+   var raycaster = new THREE.Raycaster(camera.position, vectorClick.sub(camera.position).normalize());
+
+   background.handleMouseMove(raycaster);
+}
+
+const onDocMouseDown = (event,scene,camera,character,corUniforme,background, mouse) => {
    var xDoMouse = event.clientX;
    var yDoMouse = event.clientY;
 
-   xDoMouse = (xDoMouse / window.innerWidth) * 2 - 1;
-   yDoMouse = -(yDoMouse / window.innerHeight) * 2 + 1;
+   xDoMouse = mouse.x; 
+   yDoMouse = mouse.y;
+
+   document.body.style.cursor = "pointer";
 
    var vectorClick = new THREE.Vector3(xDoMouse, yDoMouse, 1);
 
@@ -2162,58 +2270,60 @@ const onDocMouseDown = (event,scene,camera,character,cor_uniforme) => {
    inferior=personagem.getObjectByName("inferior");
    middle=personagem.getObjectByName("middle");
 
+
+   console.log([inferior.children[0].children[0],inferior.children[1].children[0]]);   
    // Checando se bate nos sapatos
-   console.log("Personagem");
-   console.log(personagem.children);
-   var intersects = raycaster.intersectObjects([inferior.children[0].children[0],inferior.children[1].children[0]],false);
+   intersects = raycaster.intersectObjects([inferior.children[0].children[0],inferior.children[1].children[0]],false);
    
    // Se o vetor não for vazio, houve interseção do raio com algum objeto
    if(intersects.length > 0) {
       //PEGAR SÓ O SAPATO
-      console.log("SAPATO");
-      inferior.children[0].children[0].material.color.setHex(cor_uniforme);
-      inferior.children[1].children[0].material.color.setHex(cor_uniforme);
+      inferior.children[0].children[0].material.color.setHex(corUniforme);
+      inferior.children[1].children[0].material.color.setHex(corUniforme);
    }
 
    // Checando se bate nas pernas
-   var intersects = raycaster.intersectObjects([inferior.children[0].children[1],inferior.children[1].children[1],middle.children[0]],false);
+   intersects = raycaster.intersectObjects([inferior.children[0].children[1],inferior.children[1].children[1],middle.children[0]],false);
    
    // Se o vetor não for vazio, houve interseção do raio com algum objeto
    if(intersects.length > 0) {
       //PEGAR SÓ AS PERNAS
-      console.log("PERNAS")
-      inferior.children[0].children[1].material.color.setHex(cor_uniforme);
-      inferior.children[1].children[1].material.color.setHex(cor_uniforme);
-      middle.children[0].material.color.setHex(cor_uniforme);
+      inferior.children[0].children[1].material.color.setHex(corUniforme);
+      inferior.children[1].children[1].material.color.setHex(corUniforme);
+      middle.children[0].material.color.setHex(corUniforme);
    }
 
    //Checando se bate no middle
    superior = personagem.getObjectByName("superior");
    if (superior != undefined) {
-      var intersects = raycaster.intersectObjects([middle.children[1],superior.children[0].children[0],superior.children[1].children[0]],true);
+      intersects = raycaster.intersectObjects([middle.children[1],superior.children[0].children[0],superior.children[1].children[0]],true);
       
       //se o vetor não for vazio, houve interseção do raio com algum objeto
       if (intersects.length > 0) {
          //PEGAR SÓ A CAMISA
-         console.log("MIDDLE");
-         middle.children[1].material.color.setHex(cor_uniforme);
-         superior.children[0].children[0].material.color.setHex(cor_uniforme);
-         superior.children[1].children[0].material.color.setHex(cor_uniforme);
+         middle.children[1].material.color.setHex(corUniforme);
+         superior.children[0].children[0].material.color.setHex(corUniforme);
+         superior.children[1].children[0].material.color.setHex(corUniforme);
       }
    }
 
    capacete = personagem.getObjectByName("helmet");
    if (capacete != undefined) {
-      var intersects = raycaster.intersectObjects(capacete.children,true);
+      intersects = raycaster.intersectObjects(capacete.children,true);
       
       // Se o vetor não for vazio, houve interseção do raio com algum objeto
       if (intersects.length > 0) {
          //PEGAR SÓ AS CAPACETE
-         console.log("CAPACETE");
-         changecolorgroup(capacete,cor_uniforme);
+         changecolorgroup(capacete,corUniforme);
       }
    }
+   //Checando background
+   background.handleMouseDown(raycaster);
+}
 
+const onDocMouseUp = (event, background) => {
+   document.body.style.cursor = "auto";
+   background.handleMouseUp();
 }
 
 const handleChangeOutfit = (event, character) => {
@@ -2249,8 +2359,11 @@ module.exports = {
    handleResize,
    handleChangeOutfit,
    onDocMouseDown,
+   onDocMouseUp,
    handleChangeGender,
-   handleArrow
+   handleArrow,
+   onMouseMove,
+   onLoad
 }
 
 },{"./assets/equipments/weapons/weapons":17,"./assets/geometries/functions":19}],24:[function(require,module,exports){
@@ -2259,12 +2372,12 @@ const eventHandler = require('./eventHandler');
 const createBackground = require('./assets/ambient/createBackground');
 const { setupUniforms, updateTime } = require('./assets/shaders/multicolorShader');
 const dat = require('./modules/dat.gui');
-
-let camera, scene, renderer, controls;
+let camera, scene, renderer, controls, background;
+let mouse = {x:0, y:0};
 let sceneSubjects = [];
 let count = 0;
 let character;
-let cor_uniforme=0xffffff;
+let corUniforme=0xffffff;
 
 const setupCamera = () => {
    camera = new THREE.PerspectiveCamera(75, window.innerWidth/window.innerHeight, 0.1, 1000);
@@ -2290,7 +2403,7 @@ const setupControls = () => {
    
    var folder1 = gui.addFolder('Cores');
    folder1.addColor( params, 'color' )
-          .onChange( function() { cor_uniforme= params.color; } );
+          .onChange( function() { corUniforme= params.color; } );
    folder1.open();
 
    var folder2 = gui.addFolder('Velocidade');
@@ -2317,8 +2430,8 @@ const setupCharacter = () => {
 
 const setupSubjects = async () => {
    sceneSubjects.push(setupCharacter());
-   const background = await createBackground();
-   const backgroundElements = background.getBackgroundElementArray();
+   background = await createBackground();
+   backgroundElements = background.getBackgroundElementArray();
    backgroundElements.forEach( element => {
       sceneSubjects.push(element.entity);
    })
@@ -2337,7 +2450,7 @@ const setupScene = () => {
 
 const setupListeners = () => {
    window.addEventListener('resize', e => eventHandler.handleResize(camera, renderer));
-   
+
    document.body.addEventListener('click', event => {
       eventHandler.handleClick(event,character);
    });
@@ -2354,8 +2467,18 @@ const setupListeners = () => {
       eventHandler.handleArrow(event, character);
    });
 
-   window.addEventListener('mousedown', event => eventHandler.onDocMouseDown(event,scene,camera,character,cor_uniforme));
-// window.addEventListener('mousemove', event => eventHandler.onDocMouseMove(event,scene,camera));
+   window.addEventListener('mousedown',event =>{ 
+      eventHandler.onDocMouseDown(event,scene,camera,character,corUniforme, background, mouse);
+   });
+
+   window.addEventListener('mouseup', event => {
+      eventHandler.onDocMouseUp(event,background);
+   })
+
+   window.addEventListener('mousemove', event => {
+      eventHandler.onMouseMove(event,mouse, background, camera);
+   })
+
 }
 
 const setupLights = () => {
@@ -2367,21 +2490,6 @@ const setupLights = () => {
    directionalLight.castShadow = true;
    sceneSubjects.push(directionalLight);
 
-   // const light1 = new THREE.PointLight(0xc4c4c4,10);
-   // light1.position.set(0,300,500)
-   // sceneSubjects.push(light1);
-
-   // const light2 = new THREE.PointLight(0xc4c4c4,10);
-   // light2.position.set(500,100,0)
-   // sceneSubjects.push(light2);
-
-   // const light3 = new THREE.PointLight(0xc4c4c4,10);
-   // light3.position.set(0,100,-500)
-   // sceneSubjects.push(light3);
-
-   // const light4 = new THREE.PointLight(0xc4c4c4,10);
-   // light4.position.set(-500,300,0)
-   // sceneSubjects.push(light4);
 }
 
 // Movimentação dos objetos
@@ -2427,7 +2535,7 @@ async function init() {
    setupUniforms();
    await setupSubjects();
    setupScene();
-
+   window.onload = eventHandler.onLoad()
    animate();
 }
 

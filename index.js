@@ -3,12 +3,12 @@ const eventHandler = require('./eventHandler');
 const createBackground = require('./assets/ambient/createBackground');
 const { setupUniforms, updateTime } = require('./assets/shaders/multicolorShader');
 const dat = require('./modules/dat.gui');
-
-let camera, scene, renderer, controls;
+let camera, scene, renderer, controls, background;
+let mouse = {x:0, y:0};
 let sceneSubjects = [];
 let count = 0;
 let character;
-let cor_uniforme=0xffffff;
+let corUniforme=0xffffff;
 
 const setupCamera = () => {
    camera = new THREE.PerspectiveCamera(75, window.innerWidth/window.innerHeight, 0.1, 1000);
@@ -34,7 +34,7 @@ const setupControls = () => {
    
    var folder1 = gui.addFolder('Cores');
    folder1.addColor( params, 'color' )
-          .onChange( function() { cor_uniforme= params.color; } );
+          .onChange( function() { corUniforme= params.color; } );
    folder1.open();
 
    var folder2 = gui.addFolder('Velocidade');
@@ -61,8 +61,8 @@ const setupCharacter = () => {
 
 const setupSubjects = async () => {
    sceneSubjects.push(setupCharacter());
-   const background = await createBackground();
-   const backgroundElements = background.getBackgroundElementArray();
+   background = await createBackground();
+   backgroundElements = background.getBackgroundElementArray();
    backgroundElements.forEach( element => {
       sceneSubjects.push(element.entity);
    })
@@ -81,7 +81,7 @@ const setupScene = () => {
 
 const setupListeners = () => {
    window.addEventListener('resize', e => eventHandler.handleResize(camera, renderer));
-   
+
    document.body.addEventListener('click', event => {
       eventHandler.handleClick(event,character);
    });
@@ -98,8 +98,18 @@ const setupListeners = () => {
       eventHandler.handleArrow(event, character);
    });
 
-   window.addEventListener('mousedown', event => eventHandler.onDocMouseDown(event,scene,camera,character,cor_uniforme));
-// window.addEventListener('mousemove', event => eventHandler.onDocMouseMove(event,scene,camera));
+   window.addEventListener('mousedown',event =>{ 
+      eventHandler.onDocMouseDown(event,scene,camera,character,corUniforme, background, mouse);
+   });
+
+   window.addEventListener('mouseup', event => {
+      eventHandler.onDocMouseUp(event,background);
+   })
+
+   window.addEventListener('mousemove', event => {
+      eventHandler.onMouseMove(event,mouse, background, camera);
+   })
+
 }
 
 const setupLights = () => {
@@ -111,21 +121,6 @@ const setupLights = () => {
    directionalLight.castShadow = true;
    sceneSubjects.push(directionalLight);
 
-   // const light1 = new THREE.PointLight(0xc4c4c4,10);
-   // light1.position.set(0,300,500)
-   // sceneSubjects.push(light1);
-
-   // const light2 = new THREE.PointLight(0xc4c4c4,10);
-   // light2.position.set(500,100,0)
-   // sceneSubjects.push(light2);
-
-   // const light3 = new THREE.PointLight(0xc4c4c4,10);
-   // light3.position.set(0,100,-500)
-   // sceneSubjects.push(light3);
-
-   // const light4 = new THREE.PointLight(0xc4c4c4,10);
-   // light4.position.set(-500,300,0)
-   // sceneSubjects.push(light4);
 }
 
 // Movimentação dos objetos
@@ -171,7 +166,7 @@ async function init() {
    setupUniforms();
    await setupSubjects();
    setupScene();
-
+   window.onload = eventHandler.onLoad()
    animate();
 }
 

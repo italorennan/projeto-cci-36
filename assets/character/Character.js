@@ -11,6 +11,7 @@ const {animateBow} = require("../equipments/weapons/bow");
 const {animateShield} = require("../equipments/weapons/shield");
 
 class Character {
+  
    
    constructor({gender, skinColor, hairColor, eyeColor, mouthColor, bodyColor, legColor, shoeColor, shader}) {
       this.attributes = {
@@ -27,6 +28,8 @@ class Character {
       this.entity = new THREE.Group();    
       this.weaponRight = null;
       this.weaponLeft = null;
+
+      
 
       // Criação dos membros inferiores
 
@@ -90,6 +93,9 @@ class Character {
       this.moving = false;
       this.angle = 0;
       this.speed = 0.5;
+
+      this.boundBox = new THREE.Box3(new THREE.Vector3(), new THREE.Vector3());
+      this.boundBox.setFromObject(this.entity);
    }
 
    moveForearm(){
